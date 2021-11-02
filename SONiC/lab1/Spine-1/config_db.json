@@ -441,8 +441,7 @@
         "Ethernet17": {
             "admin_status": "down", 
             "alias": "Eth1/18", 
-            "descripti[ 6250.923393] serial8250: too much work for irq4
-on": "", 
+            "description": "", 
             "fec": "none", 
             "index": "18", 
             "lanes": "86", 
