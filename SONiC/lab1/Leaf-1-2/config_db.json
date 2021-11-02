@@ -25,11 +25,11 @@
         "default|ipv4_unicast|10.2.1.0/24": {}
     }, 
     "BGP_NEIGHBOR": {
-        "default|192.168.1.2": {
+        "default|Ethernet0": {
             "asn": "64601", 
             "name": "Spine-1"
         }
-    }, 
+    },
     "BGP_NEIGHBOR_AF": {
         "default|192.168.1.2|ipv4_unicast": {
             "admin_status": "true"
