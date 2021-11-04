@@ -1,0 +1,122 @@
+{
+	"database" :  {
+		"cpus" : "auto",
+		"cpu-shares" : "2048",
+		"cpuset" : "notused",
+		"memsize" : "auto"
+	},
+	"syncd" :  {
+		"cpus" : "auto",
+		"cpu-shares" : "1536",
+		"cpuset" : "notused",
+		"memsize" : "auto"
+	},
+	"swss" :  {
+		"cpus" : "auto",
+		"cpu-shares" : "1792",
+		"cpuset" : "notused",
+		"memsize" : "auto"
+	},
+	"bgp" :  {
+		"cpus" : "auto",
+		"cpu-shares" : "1536",
+		"cpuset" : "notused",
+		"memsize" : "auto"
+	},
+	"lldp":  {
+		"cpus" : "auto",
+		"cpu-shares" : "512",
+		"cpuset" : "notused",
+		"memsize" : "auto"
+	},
+	"l2mcd":  {
+		"cpus" : "auto",
+		"cpu-shares" : "1024",
+		"cpuset" : "notused",
+		"memsize" : "auto"
+	},
+	"teamd" :  {
+		"cpus" : "auto",
+		"cpu-shares" : "1280",
+		"cpuset" : "notused",
+		"memsize" : "auto"
+	},
+	"stp" :  {
+		"cpus" : "auto",
+		"cpu-shares" : "1280",
+		"cpuset" : "notused",
+		"memsize" : "auto"
+	},
+	"vrrp" :  {
+		"cpus" : "auto",
+		"cpu-shares" : "1024",
+		"cpuset" : "notused",
+		"memsize" : "auto"
+	},
+	"mgmt-framework" :  {
+		"cpus" : "auto",
+		"cpu-shares" : "512",
+		"cpuset" : "notused",
+		"memsize" : "auto"
+	},
+	"iccpd" :  {
+		"cpus" : "auto",
+		"cpu-shares" : "1280",
+		"cpuset" : "notused",
+		"memsize" : "auto"
+	},
+	"tam" :  {
+		"cpus" : "auto",
+		"cpu-shares" : "1024",
+		"cpuset" : "notused",
+		"memsize" : "auto"
+	},
+	"sflow" :  {
+		"cpus" : "auto",
+		"cpu-shares" : "512",
+		"cpuset" : "notused",
+		"memsize" : "auto"
+	},
+	"udld" :  {
+		"cpus" : "auto",
+		"cpu-shares" : "1280",
+		"cpuset" : "notused",
+		"memsize" : "auto"
+	},
+	"telemetry" :  {
+		"cpus" : "auto",
+		"cpu-shares" : "512",
+		"cpuset" : "notused",
+		"memsize" : "auto"
+	},
+	"nat" :  {
+		"cpus" : "auto",
+		"cpu-shares" : "1024",
+		"cpuset" : "notused",
+		"memsize" : "auto"
+	},
+	"dhcp_relay" :  {
+		"cpus" : "auto",
+		"cpu-shares" : "1024",
+		"cpuset" : "notused",
+		"memsize" : "auto"
+	},
+	"snmp" :  {
+		"cpus" : "auto",
+		"cpu-shares" : "512",
+		"cpuset" : "notused",
+		"memsize" : "auto"
+	},
+	"pmon" :  {
+		"cpus" : "auto",
+		"cpu-shares" : "1024",
+		"cpuset" : "notused",
+		"memsize" : "auto"
+	},
+	"radv" :  {
+		"cpus" : "auto",
+		"cpu-shares" : "1024",
+		"cpuset" : "notused",
+		"memsize" : "auto"
+	}
+}

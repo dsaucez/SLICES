@@ -1,0 +1,9 @@
+build_version: '3.1.2-Enterprise_Base'
+debian_version: '9.13'
+kernel_version: '4.9.0-11-2-amd64'
+asic_type: vs
+commit_id: '1759d99d0'
+build_date: Thu Jul  8 18:48:40 UTC 2021
+build_number: 0
+built_by: sonicbld@sonic-lvn-csg-001
+config_db_version: version_3_1_2

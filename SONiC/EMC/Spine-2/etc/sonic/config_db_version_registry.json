@@ -1,0 +1,15 @@
+{
+    "CONSTANTS" : {
+        "VERSION_MIN" : "version_1_0_2",
+        "VERSION_LATEST" : "version_3_1_2",
+        "VERSION_UNKNOWN" : "version_4096_4096_4096"
+    },
+    "CONFIG_DB_VERSIONS" : {
+        "version_1_0_2" : {
+        },
+        "version_3_1_1" : {
+        },
+        "version_3_1_2" : {
+        }
+    }
+}
