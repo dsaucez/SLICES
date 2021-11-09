@@ -1,0 +1,5 @@
+base:
+- configure terminal:
+  - interface-naming standard
+  - hostname ${name}
+- write memory

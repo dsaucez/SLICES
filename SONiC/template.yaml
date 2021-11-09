@@ -1,0 +1,9 @@
+spine:
+  ASN: 65000
+  router-id: '10.0.1.0/24'
+  name: 'spine-${id}'
+rack:
+  ASN: 65001-65100
+leaf:
+  router-id: '10.0.2.0/24'
+  name: 'leaf-${id}'
