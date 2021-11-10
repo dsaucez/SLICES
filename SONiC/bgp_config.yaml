@@ -1,0 +1,44 @@
+#
+generic:
+- interface Loopback 0:
+  - description "router-id"
+  - ip address ${ip}
+- router bgp ${ASN}:
+  - router-id ${router_id}
+  - bestpath as-path multipath-relax
+  - default ipv4-unicast
+  - address-family ipv4 unicast:
+    - redistribute connected
+    - maximum-paths 2
+#
+additionnal_spine:
+- peer-group ${peer_group}:
+  - advertisement-interval 5
+  - timers 3 9
+  - bfd
+  - remote-as external
+  - capability extended-nexthop
+  - address-family ipv4 unicast:
+    - activate
+  - address-family l2vpn evpn:
+    - activate
+#
+additionnal_leaf:
+- peer-group ${peer_group}: 
+  - advertisement-interval 5
+  - timers 3 9
+  - remote-as external
+  - capability extended-nexthop
+  - bfd
+  - address-family ipv4 unicast:
+    - activate
+    - allowas-in 2
+  - address-family l2vpn evpn:
+    - activate
+- address-family l2vpn evpn:
+  - advertise-all-vni
+  - advertise ipv4 unicast
+#
+neighbor_unnumbered:
+- neighbor interface ${port}:
+  - peer-group ${peer_group}

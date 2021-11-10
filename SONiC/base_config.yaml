@@ -1,5 +1,11 @@
-base:
+init:
 - configure terminal:
   - interface-naming standard
   - hostname ${name}
 - write memory
+interface:
+- configure terminal:
+  - interface ${port}:
+    - description ${description}
+    - ipv6 enable
+    - no shutdown 
