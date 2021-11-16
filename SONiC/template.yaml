@@ -7,3 +7,7 @@ rack:
 leaf:
   router-id: '10.0.2.0/24'
   name: 'leaf-${id}'
+management:
+  ip-range: '172.16.36.130-172.16.36.199'
+  netmask: '255.255.255.0'
+  interface: 'Eth1/1'

@@ -1,0 +1,6 @@
+interface:
+- configure terminal:
+  - interface ${port}:
+    - description "Management"
+    - ip address ${ip}
+    - no shutdown 
