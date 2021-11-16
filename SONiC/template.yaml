@@ -8,6 +8,10 @@ leaf:
   router-id: '10.0.2.0/24'
   name: 'leaf-${id}'
 management:
-  ip-range: '172.16.36.130-172.16.36.199'
+  ip-range: '172.16.36.130-172.16.36.230'
   netmask: '255.255.255.0'
   interface: 'Eth1/1'
+overlay:
+  anycast-mac-address: '00:00:00:00:01:02'
+  source-ip: '10.10.10.1-10.10.10.101'
+  base-vnid: 10000

@@ -1,0 +1,24 @@
+base:
+- configure terminal:
+  - interface Loopback 1:
+    - description "VTEP"
+    - ip address ${ip}/32
+  - interface vxlan vtep1:
+    - source-ip ${ip}
+anycast:
+- configure terminal:
+  - ip anycast-address enable
+  - ip anycast-mac-address ${mac}
+access-port:
+- configure terminal:
+  - interface ${port}:
+    - description "access"
+    - switchport access Vlan ${vid}
+    - no shutdown
+vlan:
+- configure terminal:
+  - interface Vlan ${vid}:
+      - ip anycast-address ${anycast}
+      - neigh-suppress
+  - interface vxlan vtep1:
+    - map vni ${vnid} vlan ${vid}
