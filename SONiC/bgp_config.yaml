@@ -39,6 +39,22 @@ additionnal_leaf:
   - advertise-all-vni
   - advertise ipv4 unicast
 #
+additionnal_internal:
+- peer-group ${peer_group}: 
+  - advertisement-interval 5
+  - timers 3 9
+  - remote-as internal
+  - capability extended-nexthop
+  - bfd
+  - address-family ipv4 unicast:
+    - activate
+    - allowas-in 2
+  - address-family l2vpn evpn:
+    - activate
+- address-family l2vpn evpn:
+  - advertise-all-vni
+  - advertise ipv4 unicast
+#
 neighbor_unnumbered:
 - neighbor interface ${port}:
   - peer-group ${peer_group}
