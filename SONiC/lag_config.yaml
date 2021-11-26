@@ -1,0 +1,13 @@
+#
+lag:
+- configure terminal:
+  - interface PortChannel ${channel}:
+    - description "peer-${channel}"
+    - no shutdown
+#
+lag_member:
+- configure terminal:
+  - interface ${port}:
+    - description "peer-${channel}"
+    - channel-group ${channel}
+    - no shutdown
