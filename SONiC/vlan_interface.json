@@ -1,0 +1,9 @@
+{
+    "VLAN": {
+        "Vlan10": {
+            "members": [
+                "Ethernet8"
+            ]
+        }
+    }
+}
