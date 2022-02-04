@@ -80,7 +80,7 @@ they must all respect the same interconnection with the switches.
 
 ## Clusters interconnect
 
-### Spine-and-leaf option
+### _Spine-and-leaf_ option
 
 A trendy and scalable solution is to build the infrastructure following the 
 _spine-and-leaf_ model.
@@ -113,11 +113,75 @@ _s_ Ggps must be connected to the backbone with a total uplink capacity at least
 equal to _m * n * s_ Gbps. The capacity is spread equally between each
 (_spine_,_leaf_) pair of a pod.
 
+Physical links can be bundled to provide enough uplink capacity between a _leaf_
+switch and a _spine_ switch.
+
 In this architecture Internet connectivity is treated as any other pod composed
 of the Internet facing routers and all the accounting and security appliances
 (e.g., firewall, gateways). It also means that any device from a pod access
 Internet by going first through a _spine_ switch.
 
-### Ad-hoc option
+### Relaxed _spine-and-leaf_ option
 
-### Retained proposition
+The clos-topology offered by the _spine-and-leaf_ architecture offers the
+advantages presented above but it also comes at the cost of complex operational
+management of cabling if pods are deployed in different locations or managed
+by different administrative entities, which is the case of the SophiaNodes where
+Eurecom and Inria independently manage parts of the pods
+(i.e., compute and radio clusters) in their own premises.
+
+In such a situation we suggest to keep the _spine-and-leaf_ architecture only
+within one administrative entity (e.g., one for Eurecom and one for Inria) and
+interconnect the two entities via only one pod, as shown bellow.
+
+![Relaxed _spine-and-leaf_ architecture](sophia_node-relaxed-spine-leaf.svg)
+
+In this case, each entity composing the SophiaNode builds a _spine-and-leaf_
+infrastructure.  The example above shows only one _spine_ switch per entity, but
+it does not preclude the use of more than one such switch if needed.
+
+One pod is selected in each entity to be in charge of inter-connecting the
+entities of the SophiaNode. Each _leaf_ switch of the former pod is conncted
+to one _leaf_ switch of the latter pod.
+
+### _Partial mesh_ option
+
+The _spine-and-leaf_ and the relaxed _spine-and-leaf_ options proposed above
+offer the advantage of being generic and symetrical, which simplifies
+automation and scaling. However, one may argue that these architecture really
+become usefeull at scale and they were right, particularly since the SophiaNode
+does not need to provide high availability guarantees.
+
+Another solution is to use a partial mesh as shown below.
+
+![Partial mesh](sophia_node-partial-mesh.svg)
+
+In the _partial mesh_, clusters are directly connected with every other cluster
+of the same administrative entity and connectivty to the outside (e.g., another
+entity or the Internet) goes through a dedicated egress siwtch.
+
+Each switch of the cluster is connected to the egress switch and to one switch
+of each other cluster of the administrative entity via uplink.
+
+The uplink capacity is computed in the same way as for the _spine-and-leaf_
+architecture in order that no congestion can occur between clusters of the same
+entity. The capacity for the egress link is determined according to the needs.
+
+The _partial mesh_ option is particularly adapted to the situation where
+external connectivity is unknown at the time of the design or when it is
+expected to have numerous peering links.
+
+### _Hub-and-spoke_ option
+
+In the _hub-and-spoke_ architecture, there is a central point to interconnects
+all the clusters and external links as shown in the figure below.
+
+![Hub and spoke](sophia_node-hub-and-poke.svg)
+
+This solution is particularly adapted if one very high performance switch is
+available and if there is no requirements in terms of resiliency of the
+infrastructure.
+
+The uplink capacity is computed in the same way as for the _spine-and-leaf_ 
+architecture in order that no congestion can occur between clusters of the same
+entity.
