@@ -1,4 +1,4 @@
-# Interconnection of nodes in the SophiaNode
+# SophiaNode Network Architecture
 
 The SophiaNode is composed of 4 clusters:
  * 2 _compute_ clusters and
