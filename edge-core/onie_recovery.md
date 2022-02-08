@@ -1,4 +1,4 @@
-# Edge-Core Wedge100BF ONIE recover procedures
+# Edge-Core Wedge100BF ONIE recovery procedures
 
 ## USB recovery for Wedge100BF-32QS
 
@@ -30,3 +30,6 @@ md5 Wedge100BF-32QS-r0_ONIE_v2018_05_00_10.iso: `4cc1045578f250c3c692a7622d48fb9
 2. Select _ONIE: Embed ONIE_
 3. The switch reboots after completion
 4. DONE
+
+### Source
+https://support.edge-core.com/hc/en-us/articles/900000185743--Wedge100BF-series-ONIE-recover-procedures
