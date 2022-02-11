@@ -34,8 +34,8 @@ Antipolis campus. In this context, Eurecom and Inria are two disjoined entities
 with their own administration and policies. In the following we call them
 _administrative domains_.
 
-The administrative domain of Eurecom is composed of one _compute cluster and one
-_radio cluster_ and so is the Inria administrative domain. As set of **X** 
+The administrative domain of Eurecom is composed of one _compute_ cluster and
+one _radio cluster_ and so is the Inria administrative domain. As set of **X** 
 optical fibre links is shared between Eurecom and Inria and used to interconnect
 the two domains. Except these optical links all other assets fall under only
 one administrative domain, either Eurecom or Inria.
@@ -84,7 +84,7 @@ clusters are not described here.
 > BACKGROUND ON FABRIC AND EVPN TO BE ADDED HERE
 
 
-## _Compute_ cluster architecture
+## Compute cluster architecture
 
 Even though the exact compute nodes to deploy in the _compute_ clusters are not
 standardised, we recommend the following network architecture to build each
@@ -287,3 +287,5 @@ infrastructure.
 The uplink capacity is computed in the same way as for the spine-and-leaf
 architecture such that no congestion can occur between clusters of the same
 administrative domain.
+
+## SDN Controller

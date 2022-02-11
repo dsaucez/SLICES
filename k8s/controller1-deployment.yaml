@@ -1,0 +1,60 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: controller1
+spec:
+  selector:
+    matchLabels:
+      app: controller1
+  template:
+    metadata:
+      labels:
+        app: controller1
+    spec:
+      containers:
+      - name: controller1
+        image: onosproject/onos:2.7-latest
+        resources:
+          limits:
+            memory: "4Gi"
+            cpu: "1000m"
+        ports:
+        - containerPort: 8181
+        - containerPort: 8101
+        - containerPort: 5005
+        - containerPort: 830
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: controller1-service
+spec:
+  selector:
+    app: controller1
+  ports:
+  - name: a
+    port: 8181
+    targetPort: 8181
+  - name: b
+    port: 8101
+    targetPort: 8101
+  - name: c
+    port: 5005
+    targetPort: 5005
+  - name: d
+    port: 830
+    targetPort: 830
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: controller1-service-public
+spec:
+  selector:
+    app: controller1
+  type: NodePort
+  ports:
+  - port: 8181
+    targetPort: 8181
+    nodePort: 30001
