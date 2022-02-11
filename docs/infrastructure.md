@@ -15,7 +15,7 @@ entities, some others are only owned and managed by a single entity.
 In previous generations of testbeds, radio and compute resources were the only
 resources of interest for the experimenters and the interconnection
 infrastructure was then hidden. However, when it comes to 5G, the
-interconnection itself (e.g., optical fiber links and switches) plays take place
+interconnection itself (e.g., optical fibre links and switches) plays take place
 in the treatment of the workload and they shall be exposed to the testbed users.
 
 In this node, we omit to discuss the compute and radio resources and focus on
@@ -30,23 +30,23 @@ been used and discuss their advantages and drawbacks.
 ## Background
 
 The SophiaNode is shared between Eurecom and Inria premises on the Sophia
-Antipolis campus. In this context, Eurecom and Inria are two disjoined entitites
+Antipolis campus. In this context, Eurecom and Inria are two disjoined entities
 with their own administration and policies. In the following we call them
 _administrative domains_.
 
-The administrative domain of Eurecom is composed of one _compute cluser_ and one
+The administrative domain of Eurecom is composed of one _compute cluster and one
 _radio cluster_ and so is the Inria administrative domain. As set of **X** 
-optical fiber links is shared between Eurecom and Inria and used to interconnect
+optical fibre links is shared between Eurecom and Inria and used to interconnect
 the two domains. Except these optical links all other assets fall under only
 one administrative domain, either Eurecom or Inria.
 
-Nevertheless, the compute clusters are standardized from a networking point of
+Nevertheless, the compute clusters are standardised from a networking point of
 view. They are ultimately x86 clusters where compute processes (e.g.,
 containers) can be deployed and orchestrated on the fly, for example with docker
 [[docker](https://www.docker.com)] and kubernetes
 [[k8s](https://kubernetes.io)].
 
-The radio clusters are specialized clusters built according to the specifc needs
+The radio clusters are specialised clusters built according to the specific needs
 of the partner. For example, the radio cluster of Inria is integrated in the
 R2LAB testbed [[R2LAB](https://r2lab.inria.fr)] to leverage its anechoic
 chamber.
@@ -73,8 +73,8 @@ linked to the fact that the operations are performed in a tested instead of on
 an actual environment.
 
 We do not describe the control network in this document as it is very specific
-to each production environement. Nevertheless, we strongly recommend to
-use a dedicated independent network infrastructure for it. It may be convininent
+to each production environment. Nevertheless, we strongly recommend to
+use a dedicated independent network infrastructure for it. It may be convenient
 to provide public internet connectivity to the switches and devices via this
 infrastructure.
 
@@ -86,8 +86,8 @@ clusters are not described here.
 
 ## _Compute_ cluster architecture
 
-Even though the excat compute nodes to deploy in the _compute_ clusters are not
-standardized, we recommand the following network architecure to build each
+Even though the exact compute nodes to deploy in the _compute_ clusters are not
+standardised, we recommend the following network architecture to build each
 cluster.
 
 ![_Compute_ cluster](sophia_node-compute_cluster.svg)
@@ -131,17 +131,17 @@ nodes of the rack would be connected to their ToR or EoR switches instead of
 being connected to the two main switches of the cluster. Every ToR (resp. EoR)
 is equally connected to each aggregation switch and the capacity between
 a ToR (resp. EoR) and an aggregation switch must be at least equal to the
-cummulated capacity of the ToR (resp. EoR) with its connected compute nodes. In
+cumulated capacity of the ToR (resp. EoR) with its connected compute nodes. In
 a similar way, the uplink of an aggregation switch must be at least equal to
-the cummulated capacity the switch has with all the ToR (resp. EoR) switches
+the cumulated capacity the switch has with all the ToR (resp. EoR) switches
 connected to it.
 
-To support cluster size increase by maximizing density, breakout cables shall
+To support cluster size increase by maximising density, breakout cables shall
 be used to connect the server ports to the switch ports.
 
 ## Clusters interconnect
 
-In the previous section we defined the standardized network architecture of 
+In the previous section we defined the standardised network architecture of 
 compute clusters. In this section, we present different alternatives to 
 interconnect the clusters composing the SophiaNode.
 
@@ -152,7 +152,7 @@ _spine-and-leaf_ model.
 
 With the spine-and-leaf architecture, the _spine_ switches compose the
 backbone of the network and the _leaf_ switches connect the devices to the
-network. Devices and leaf siwtches are grouped in _pods_. within our
+network. Devices and leaf switches are grouped in _pods_. within our
 terminology, a cluster corresponds to a pod and an aggregation switch
 corresponds to a leaf switches. Every leaf switch is connected to all the
 spine switches as illustrated in the figure below with two compute clusters,
@@ -173,16 +173,16 @@ switches of a pod in order to carry control traffic such as multi-chassis link
 aggregation (but no data traffic ever transit on these links).
 
 The uplink capacity, i.e., the _(spine, leaf)_ connections, must be
-carefully provisionned such that the entirer traffic generated by a pod can be
+carefully provisioned such that the entier traffic generated by a pod can be
 sent to the backbone without causing congestion.
 
 For example, a compute cluster of _m_ compute nodes with _n_ ports running at
-_s_ Ggps must be connected to the backbone with a total uplink capacity at least
+_s_ Gbps must be connected to the backbone with a total uplink capacity at least
 equal to _m * n * s_ Gbps. The capacity is spread equally between each
 _(spine, leaf)_ pair of a pod.
 
-Physical links can be bundled to provide enough uplink capacity between a leaf
-switch and a spine switch, should one link be insufficient.
+Several physical links can be bundled to provide enough uplink capacity between
+a leaf switch and a spine switch, should one link be insufficient.
 
 In this architecture Internet connectivity is treated as any other pod composed
 of the Internet facing routers and all the accounting and security appliances
@@ -207,7 +207,7 @@ figure below.
 ![Relaxed _spine-and-leaf_ architecture](sophia_node-relaxed-spine-leaf.svg)
 
 In this case, each administrative domain builds a spine-and-leaf infrastructure.
-For clarity reaosns the example above shows only one spine switch per entity,
+For clarity reasons the example above shows only one spine switch per entity,
 but nothing prevents the networks to be as large as needed (e.g., 2 spine
 switches, 4 pods...).
 
@@ -217,7 +217,7 @@ Each leaf switch of the selected pod of an administrative domain must be
 connected to at least one leaf switch of the selected pod of each other
 administrative domains. This link is called _peering link_ and its capacity must
 be at least equal to the aggregated capacity of the uplink and data links of
-the leaf switch. If one link is not sufficient to fullfill that requirements,
+the leaf switch. If one link is not sufficient to fulfil that requirements,
 multiple links can be used and bound together with link aggregation techniques.
 
 The relaxed spine-and-leaf architecture proposed here is a tradeoff between
@@ -235,36 +235,47 @@ selected peering link since no congestion can ever occur while peering
 administrative domain or when leaving the leaf switches of the selected pod of
 the remote administrative domain).
 
-### _Partial mesh_ option
+### Partial mesh option
 
-The _spine-and-leaf_ and the relaxed _spine-and-leaf_ options proposed above
-offer the advantage of being generic and symetrical, which simplifies
-automation and scaling. However, one may argue that these architecture really
-become usefeull at scale and they were right, particularly since the SophiaNode
-does not need to provide high availability guarantees.
-
-Another solution is to use a partial mesh as shown below.
+The spine-and-leaf and the relaxed spine-and-leaf options proposed above are
+generic and symetrical, which simplifies automation and scaling. These solutions
+shine at scale and when availability is a key point. In the following we explore
+simpler architectures, such as the _partial mesh_ illustrated bellow.
 
 ![Partial mesh](sophia_node-partial-mesh.svg)
 
-In the _partial mesh_, clusters are directly connected with every other cluster
-of the same administrative entity and connectivty to the outside (e.g., another
-entity or the Internet) goes through a dedicated egress siwtch.
+In the partial mesh, clusters are directly connected with every other clusters
+of the same administrative domain and connectivity to the outside (e.g., another
+administrative domain or the Internet) goes through a dedicated egress switch.
 
-Each switch of the cluster is connected to the egress switch and to one switch
-of each other cluster of the administrative entity via uplink.
+Each local switch of the cluster is connected to one local switch of each other
+cluster of the administrative domain via uplink. The uplink capacity is computed
+in the same way as for the spine-and-leaf architecture such that no congestion
+can occur between clusters of the same administrative domain. For example, a
+compute cluster of _m_ compute nodes with _n_ ports running at _s_ Gbps must be
+connected to the backbone with a total uplink capacity at least equal to
+_m * n * s_ Gbps. The capacity is spread equally over the uplinks of the
+cluster. Several physical links can be bundled to provide enough uplink
+capacity, should one link be insufficient.
 
-The uplink capacity is computed in the same way as for the _spine-and-leaf_
-architecture in order that no congestion can occur between clusters of the same
-entity. The capacity for the egress link is determined according to the needs.
+Each local switch of the cluster is connected to the egress switch of the
+cluster via an _egress link_. Several physical links can be bundled to provide
+enough egress link capacity, should one link be insufficient. The capacity for
+the egress link is determined according to the needs.
 
-The _partial mesh_ option is particularly adapted to the situation where
+The egress switch is connected to the egress switch of the other administrative
+domain via a link called _peering link_. The capacity of the peering link must
+be at least equal to the aggregated capacity of the egress links connected to
+it. If one link is not sufficient to fulfil that requirements, multiple links
+can be used and bound together with link aggregation techniques.
+
+The partial mesh option is particularly adapted to the situation where
 external connectivity is unknown at the time of the design or when it is
 expected to have numerous peering links.
 
-### _Hub-and-spoke_ option
+### Hub-and-spoke option
 
-In the _hub-and-spoke_ architecture, there is a central point to interconnects
+In the _hub-and-spoke_ architecture, there is a central point to interconnect
 all the clusters and external links as shown in the figure below.
 
 ![Hub and spoke](sophia_node-hub-and-poke.svg)
@@ -273,6 +284,6 @@ This solution is particularly adapted if one very high performance switch is
 available and if there is no requirements in terms of resiliency of the
 infrastructure.
 
-The uplink capacity is computed in the same way as for the _spine-and-leaf_ 
-architecture in order that no congestion can occur between clusters of the same
-entity.
+The uplink capacity is computed in the same way as for the spine-and-leaf
+architecture such that no congestion can occur between clusters of the same
+administrative domain.

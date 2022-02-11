@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e" pages="18">
     <diagram name="compute cluster" id="k5F0d53CtE2n-Nb5VAEW">
-        <mxGraphModel dx="900" dy="758" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="349" dy="758" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="T5c6sLha9GCUekm3np2Q-0"/>
                 <mxCell id="T5c6sLha9GCUekm3np2Q-1" parent="T5c6sLha9GCUekm3np2Q-0"/>
@@ -599,7 +599,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="Mesh" id="glVwyzqxgBMDQsaAqnT8">
-        <mxGraphModel dx="2019" dy="758" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1176" dy="758" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="4Z-I_ceef87LCqr9rMOw-0"/>
                 <mxCell id="4Z-I_ceef87LCqr9rMOw-1" parent="4Z-I_ceef87LCqr9rMOw-0"/>
@@ -926,7 +926,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="Hub and spoke" id="Ht2lgTkkggYqsimJa69n">
-        <mxGraphModel dx="2019" dy="758" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1176" dy="758" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="9O4TAal_h3BXmbUjaoem-0"/>
                 <mxCell id="9O4TAal_h3BXmbUjaoem-1" parent="9O4TAal_h3BXmbUjaoem-0"/>
@@ -1131,7 +1131,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="Relaxed spine-and-leaf" id="oqwJr9v0os55nC-Ay5C6">
-        <mxGraphModel dx="2019" dy="758" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1227" dy="758" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="a7pwQZcmx3j1w7hEGp5R-0"/>
                 <mxCell id="a7pwQZcmx3j1w7hEGp5R-1" parent="a7pwQZcmx3j1w7hEGp5R-0"/>
