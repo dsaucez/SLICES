@@ -1,0 +1,15 @@
+dist: xenial
+
+language: python
+
+services:
+  - docker
+
+python:
+  - "3.5"
+
+install:
+  - make deps
+
+script:
+  - make check check-sr check-gtp NGSDN_TUTORIAL_SUDO=sudo
