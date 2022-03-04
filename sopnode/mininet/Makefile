@@ -52,6 +52,8 @@ stop:
 
 restart: reset start
 
+restart-v4: reset start-v4
+
 onos-cli:
 	$(info *** Connecting to the ONOS CLI... password: rocks)
 	$(info *** Top exit press Ctrl-D)
