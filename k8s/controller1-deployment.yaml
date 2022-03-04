@@ -49,7 +49,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: controller1-service-public
+  name: controller1-service-public-ui
 spec:
   selector:
     app: controller1
@@ -57,4 +57,17 @@ spec:
   ports:
   - port: 8181
     targetPort: 8181
-    nodePort: 30001
+    nodePort: 31181
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: controller1-service-public-cli
+spec:
+  selector:
+    app: controller1
+  type: NodePort
+  ports:
+  - port: 8101
+    targetPort: 8101
+    nodePort: 31101
