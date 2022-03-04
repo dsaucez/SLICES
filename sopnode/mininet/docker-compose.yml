@@ -31,6 +31,6 @@ services:
     volumes:
       - ./tmp/onos:/root/onos/apache-karaf-4.2.8/data/tmp
     environment:
-      - ONOS_APPS=gui2,drivers.bmv2,lldpprovider,hostprovider
+      - ONOS_APPS=gui2 drivers.bmv2 #,lldpprovider,hostprovider
     links:
       - mininet

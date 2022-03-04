@@ -44,21 +44,6 @@
         "mySid": "3:201:2::",
         "isSpine": true
       }
-    },
-    "device:spine2": {
-      "basic": {
-        "managementAddress": "grpc://mininet:50004?device_id=1",
-        "driver": "stratum-bmv2",
-        "pipeconf": "org.onosproject.ngsdn-tutorial",
-        "locType": "grid",
-        "gridX": 600,
-        "gridY": 400
-      },
-      "fabricDeviceConfig": {
-        "myStationMac": "00:bb:00:00:00:02",
-        "mySid": "3:202:2::",
-        "isSpine": true
-      }
     }
   },
   "ports": {
