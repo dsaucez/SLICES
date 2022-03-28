@@ -22,25 +22,35 @@ The issue is that compilation fails for the open source SONiC for the p4 platfor
 
 - [x] provide a `kubernetes` image on R2lab
   this has the following capabilities
-  * all kube code is preinstalled and ready to run
   * firewalling is turned off
-  * in `/root/kube-install/kube-install.sh` 
+  * all kube code is preinstalled and ready to run in `/root/kube-install`  
+    (a `git pull` won't harm, as you know the images are rather costly to produce...)
+  * `/root/kube-install/kube-install.sh` 
     is a command that allows to create and join clusters
-      * master node would typically do
-        `/root/kube-install/kube-install.sh create-cluster`
-      * run the same, still on master, but with `show-join` as the subcommand, to display the command for workers to join
+  * **cluster creation**
+    `kube-install.sh create-cluster`
+  * **joining a cluster**
+    (for now this is on the `devel` branch only, so on the w2-w3 cluster only)
+    * worker side  
+      `kube-install.sh join-cluster sopnode-l1.inria.fr`
+    * leader side  
+      `kube-install.sh join-command`
+      will just display the command for a worker node to join  
+
+
 
 ### connect *sopnode* and R2lab
 
 the thing is, the R2lab nodes are NAT'ed behind faraday, so it's a one-way street from the nodes to `sopnode-l1`  
 so, plan is to
 
-- [ ] tweak `kube-install.sh` so that the deployed cluster enables `konnectivity` as a means to maintain connectivity between nodes and control-plane  
+- [x] tweak `kube-install.sh` so that the deployed cluster features `konnectivity` as a means to maintain connectivity between nodes and control-plane  
   https://kubernetes.io/docs/tasks/extend-kubernetes/setup-konnectivity/
+  this is 
+- [ ] open up firewalling between the faraday and sopnode subnets  
+  **pending** in https://support.inria.fr/Ticket/Display.html?id=223958
+- [ ] test adding R2lab nodes in the cluster  
   ***ongoing...***
+- [ ] when that works, we're going to need to rebuild the production cluster on `sopnode-l1`
   
-## epilogue
-
-originally this has started in https://dropsu.sorbonne-universite.fr/apps/onlyoffice/s/c4nx5AkK2NKNtSL?fileId=99561549
-
 
