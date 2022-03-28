@@ -2,18 +2,15 @@
 
 Steps required to run OAI 5G on our F35 k8s cluster.
 
-Relevant OAI documentation:
+Relevant OAI documentation from Sagar Arora <[sagar.arora@eurecom.fr](mailto:sagar.arora@eurecom.fr)>:
 
 - [https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed/-/blob/master/docs/DEPLOY\_SA5G\_HC.md](https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed/-/blob/master/docs/DEPLOY_SA5G_HC.md) 
 
-Nota: Eurecom folks advise to run the pods as regular users, not as root  as it is safer. 
-TBD: Check if we can let our k8s cluster visible for all users.
-
 ## Retrieve the OAI CN5G release.
 
-- `git clone https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed.git`
-- `cd oai-cn5g-fed/`
-- `git switch update-charts`
+- `$ git clone https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed.git`
+- `$ cd oai-cn5g-fed/`
+- `$ git switch update-charts`
 
 ## Prerequisites
 
@@ -21,17 +18,17 @@ Following installations should be appended later to our k8s cluster creation
 
 ### Helm installation
 
-- `curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3`
-- `chmod 700 get_helm.sh`
+- `$ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3`
+- `$ chmod 700 get_helm.sh`
 - edit `get_helm.sh` to set `HELM_INSTALL_DIR` to `/bin` instead of `/usr/local/bin`
-- `./get_helm.sh`
-- `helm repo add bitnami https://charts.bitnami.com/bitnami`
-- `helm repo update`
+- `$ ./get_helm.sh`
+- `$ helm repo add bitnami https://charts.bitnami.com/bitnami`
+- `$ helm repo update`
 
 ### Multus installation
 
-- `mkdir multus; cd multus; git clone https://github.com/k8snetworkplumbingwg/multus-cni.git && cd multus-cni`
-- `cat ./deployments/multus-daemonset-thick-plugin.yml | kubectl apply -f - `
+- `$ mkdir multus; cd multus; git clone https://github.com/k8snetworkplumbingwg/multus-cni.git && cd multus-cni`
+- `$ cat ./deployments/multus-daemonset-thick-plugin.yml | kubectl apply -f - `
 
 ### k8s PersistentVolume creation
 A PersistentVolume is required for the OAI 5G mysql database pod.
@@ -54,7 +51,7 @@ spec:
   hostPath:
     path: "/mnt/data"
 ```
-- `kubectl apply -f pv-mysql.yaml`
+- `$ kubectl apply -f pv-mysql.yaml`
 
 ## OAI CN5G Configuration
 
@@ -72,7 +69,8 @@ provisioning
   storageClass: local-storage
 ```
 
-- add new SIM cards information in the *AuthenticationSubscription* table, e.g. for SIM01:
+- add R2lab SIM cards information in the *AuthenticationSubscription* table, e.g., for SIM01:
+
 ```
 
     INSERT INTO `AuthenticationSubscription` (`ueid`, `authenticationMethod`, `encPermanentKey`, `protectionParameterId`, `sequenceNumber`, `authenticationManagementField`, `algorithmId`, `encOpcKey`, `encTopcKey`, `vectorGenerationInHss`, `n5gcAuthMethod`, `rgAuthenticationInd`, `supi`) VALUES
@@ -133,12 +131,12 @@ Edit chart/oai-amf/scripts/smf.conf:
 Assumption: mysql-volume PersistentVolume is available on the k8s cluster, you can check with `kubectl get pv`
 
 
-- `kubectl create ns oai5g; kns oai5g`
-- `cd oai-cn5g-fed/charts`
+- `$ kubectl create ns oai5g; kns oai5g`
+- `$ cd oai-cn5g-fed/charts`
 
 You can deploy automatically all CN5G pods with:
 
-- `helm_chart.sh install oai5g`
+- `$ helm_chart.sh install oai5g`
 
 Or you can deploy them manually with  (optional :
 
@@ -162,15 +160,15 @@ $ helm install upf oai-spgwu-tiny/
 $ helm list 
 ```
 
-To debug a deployment, use:
+To debug a deployment, use following options:
 
-`helm install --debug --dry-run mysql mysql/`
+`$ helm install --debug --dry-run mysql mysql/`
 
 
-To check the deployment:
+To check the 5GCN deployment:
 
 ```
-helm list
+$ helm list
 NAME 	NAMESPACE	REVISION	UPDATED                                 	STATUS  	CHART             	APP VERSION
 amf  	oai5g    	1       	2022-03-28 12:31:09.207013802 +0200 CEST	deployed	oai-amf-1.4       	1.4
 ausf 	oai5g    	1       	2022-03-28 12:30:28.327699833 +0200 CEST	deployed	oai-ausf-1.4      	1.4
@@ -183,7 +181,7 @@ udr  	oai5g    	1       	2022-03-28 12:29:47.477579718 +0200 CEST	deployed	oai-u
 ```
 
 ```
-kubectl get po
+$ kubectl get po
 NAME                             READY   STATUS    RESTARTS   AGE
 mysql-b8bcd6b8-clxc7             1/1     Running   0          3h16m
 oai-amf-5b8885b85c-tp7dw         2/2     Running   0          3h14m
@@ -194,6 +192,16 @@ oai-spgwu-tiny-774fcf5f7-78958   2/2     Running   0          3h13m
 oai-udm-69b75db7bf-4v9t6         2/2     Running   0          3h15m
 oai-udr-55d5cb58ff-pmxkn         2/2     Running   0          3h15m
 ```
+Then, run:
+
+```
+$ kubectl logs oai-smf-7dcfcbdb9c-2lsjq -c smf | grep 'Received N4 ASSOCIATION SETUP RESPONSE from an UPF'
+[2022-03-28T12:32:01.919851] [smf] [smf_n4 ] [info ] Received N4 ASSOCIATION SETUP RESPONSE from an UPF
+
+$ kubectl logs oai-spgwu-tiny-774fcf5f7-78958 -c spgwu | grep 'Received SX HEARTBEAT REQUEST' | wc -l
+2951 (should be more than 1)
+```
+
 
 
 
