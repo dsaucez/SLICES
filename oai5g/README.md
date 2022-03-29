@@ -202,7 +202,115 @@ $ kubectl logs oai-spgwu-tiny-774fcf5f7-78958 -c spgwu | grep 'Received SX HEART
 2951 (should be more than 1)
 ```
 
+## OAI 5G RAN-emulator 
 
 
+### oai-gnb pod
+
+Nota: `oai-gnb` will run with `--sa -E --rfsim` options
+
+Set the *master* parameter to `"eth0"` in the `charts/oai-gnb/templates/multus.yaml` chart
+
+```
+{{- if .Values.multus.create }}
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: {{ .Chart.Name }}-{{ .Values.namespace }}-net1
+spec:
+  config: '{
+      "cniVersion": "0.3.0",
+      "type": "macvlan",
+      "master": "eth0",
+      "mode": "bridge",
+      "ipam": {
+        "type": "static",
+        "addresses": [
+                {
+                        "address": {{- cat .Values.multus.ipadd "/" .Values.multus.netmask | nospace | quote }}
+                }
+        ]
+      }
+    }'
+{{- end }}
+```
+
+Set the parameters *namespace* to `"oai5g"` and *repository*  to `"docker.io/rdefosseoai/oai-gnb"` in the manifest `charts/oai-gnb/values.yaml`
+
+```
+namespace: "oai5g"
+
+nfimage:   # image name either locally present or in a public/private repository
+  registry: local
+  repository: docker.io/rdefosseoai/oai-gnb           
+```
+
+Then deploy the oai-gnb pod with:
+
+`oai-cn5g-fed/charts $ helm install oai-gnb oai-gnb/`
+
+To check the gnB logs, run:
+
+*kubectl logs \`kubectl get po | grep gnb | awk '{print $1}'\` -c gnb*
+
+### oai-nr-ue pod
+
+Set the *master* parameter to `"eth0"` in the `charts/oai-gnb/templates/multus.yaml` chart
+
+```
+{{- if .Values.multus.create }}
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: {{ .Chart.Name }}-{{ .Values.namespace }}-net1
+spec:
+  config: '{
+      "cniVersion": "0.3.0",
+      "type": "macvlan",
+      "master": "eth0",
+      "mode": "bridge",
+      "ipam": {
+        "type": "static",
+        "addresses": [
+                {
+                        "address": {{- cat .Values.multus.ipadd "/" .Values.multus.netmask | nospace | quote }}
+                }
+        ]
+      }
+    }'
+{{- end }}
+```
+
+
+Set the following parameters in the manifest `charts/oai-nr-ue/values.yaml`: *namespace, repository, rfSimulator, fullImsi, fullKey, opc*.
+
+For now, the rfSimulator should be manually retrieved using:
+
+ *kubectl describe po \`kubectl get po | grep gnb | awk '{print $1}'\` | grep IP:* 
+
+```
+namespace: "oai5g"
+
+nfimage:
+  registry: local
+  repository: docker.io/rdefosseoai/oai-nr-ue     
+...
+config:
+  timeZone: "Europe/Paris"
+  rfSimulator: "10.244.1.103"    # ip-address of gnb rf-sim
+  fullImsi: "208990100001121"       # make sure all the below entries are present in the subscriber database
+  fullKey: "fec86ba6eb707ed08905757b1bb44b8f"
+  opc: "8e27b6af0e692e750f32667a3b14605d"
+...      
+    
+```
+
+Then, deploy the oai-nr-ue pod with:
+
+`oai-cn5g-fed/charts $ helm install nr-ue oai-nr-ue/`
+
+To check the logs, run:
+
+*kubectl logs \`kubectl get po | grep nr-ue | awk '{print $1}'\` -c nr-ue*
 
 
