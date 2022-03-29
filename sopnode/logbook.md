@@ -40,16 +40,29 @@ The issue is that compilation fails for the open source SONiC for the p4 platfor
 
 ### connect *sopnode* and R2lab
 
-- [x] OK
+- [x] one node at a time - OK
   ```
-  nodes 1
-  rload -i kubernetes
-  s1
+  # typical set up
+  rload -i kubernetes 1
+  ssh root@fit01
   [fit01] kube-install.sh join-cluster r2lab@sopnode-l1.inria.fr
   ```
+- [ ] en masse joins
+  for instance, to do it en masse
+  ```
+  nodes -a ~4 ~13 ~15 ~31 ~37
+  rload -i kubernetes
+  rwait
+  map kube-install.sh join-cluster r2lab@sopnode-l1.inria.fr
+  ```
+  however this kind of synchronous approach seems to cause a burst and some nodes fail to reach - to be investigated...
 - [ ] study consequences of the R2lab workflow  
   users will never leave properly !  
   so see how the k8s cluster reacts to a R2lab node being re-imaged
   - [x] apparently the k8s cluster realizes rather quick that the node is down
-  - [ ] however it might make sense to help it by doing an explicit `kubectl delete node` on stale nodes
-  - [ ] what happens if the same node tries to join again after it is re-imaged - (and the cluster is not cleaned up)
+  - [ ] however it might make sense to help it by doing an explicit `kubectl delete node` on stale nodes  
+  **DOES NOT SEEM TOO SERIOUS ?** 
+  - [ ] what happens if the same node tries to join again after it is re-imaged - (and the cluster is not cleaned up)  
+  so here the answer is, no big deal, the cluster realizes on its own (in about one minute) that the node has gone; it gets marked 'NotReady'; the same node re-imaged later on can join again with no particular fuss (the time for re-imaging seems enough :)
+  - [ ] now all this was with an empty load (no pod on the fit nodes);
+    of course when pods are going to be running on the nodes all this might need more care...
