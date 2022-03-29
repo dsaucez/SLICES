@@ -49,6 +49,8 @@ so, plan is to
   this is 
 - [ ] open up firewalling between the faraday and sopnode subnets  
   **pending** in https://support.inria.fr/Ticket/Display.html?id=223958
+  - [x] port 6443 is open
+  - [ ] port 22 is pending (can still do tests though)
 - [ ] test adding R2lab nodes in the cluster  
   ***ongoing...***
 - [ ] when that works, we're going to need to rebuild the production cluster on `sopnode-l1`
