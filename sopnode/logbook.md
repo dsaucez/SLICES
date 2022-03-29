@@ -51,7 +51,7 @@ so, plan is to
   **pending** in https://support.inria.fr/Ticket/Display.html?id=223958
   - [x] port 6443 is open
   - [ ] port 22 is pending (can still do tests though)
-- [ ] test adding R2lab nodes in the cluster  
-  ***ongoing...***
+- [x] test adding R2lab nodes in the cluster: YES!
+  
 - [ ] when that works, we're going to need to rebuild the production cluster on `sopnode-l1`
   
