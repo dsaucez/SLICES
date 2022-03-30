@@ -13,10 +13,8 @@ The issue is that compilation fails for the open source SONiC for the p4 platfor
 - [x] 4 poweredge r640 are setup on these hostnames
   `sopnode-l1.inria.fr` - k8s control-plane
   `sopnode-w{1,2,3}.inria.fr` - k8s worker
-- [x] k8s cluster created on `sopnode-l1`
-  to join, use this command on the master node
-  `/root/kube-install/kube-install.sh show-join`
-  and copy-paste on the worker node that wants to join
+- [x] k8s *production* cluster created on `sopnode-l1` with `sopnode-w1` as a worker
+- [x] k8s *devel* cluster created on `sopnode-w2` with `sopnode-w3` as a worker
 
 ### deploy k8s on R2lab
 
@@ -25,31 +23,46 @@ The issue is that compilation fails for the open source SONiC for the p4 platfor
   * firewalling is turned off
   * all kube code is preinstalled and ready to run in `/root/kube-install`  
     (a `git pull` won't harm, as you know the images are rather costly to produce...)
-  * `/root/kube-install/kube-install.sh` 
-    is a command that allows to create and join clusters
+- [x] based on a super lightweight bash tool named `kube-install.sh`  
+  <https://github.com/parmentelat/kube-install>
   * **cluster creation**
-    `kube-install.sh create-cluster`
+    `kube-install.sh create-cluster`  
+    this sets up a `konnectivity` service
   * **joining a cluster**
-    (for now this is on the `devel` branch only, so on the w2-w3 cluster only)
     * worker side  
-      `kube-install.sh join-cluster sopnode-l1.inria.fr`
+      `kube-install.sh join-cluster r2lab@sopnode-l1.inria.fr`  
+      note that here the `r2lab` user is only used to enter in the master node
+      and get the token needed to join (by actually running the command below)
     * leader side  
       `kube-install.sh join-command`
       will just display the command for a worker node to join  
 
 
-
 ### connect *sopnode* and R2lab
 
-the thing is, the R2lab nodes are NAT'ed behind faraday, so it's a one-way street from the nodes to `sopnode-l1`  
-so, plan is to
-
-- [x] tweak `kube-install.sh` so that the deployed cluster features `konnectivity` as a means to maintain connectivity between nodes and control-plane  
-  https://kubernetes.io/docs/tasks/extend-kubernetes/setup-konnectivity/
-  this is 
-- [ ] open up firewalling between the faraday and sopnode subnets  
-  **pending** in https://support.inria.fr/Ticket/Display.html?id=223958
-- [ ] test adding R2lab nodes in the cluster  
-  ***ongoing...***
-- [ ] when that works, we're going to need to rebuild the production cluster on `sopnode-l1`
-  
+- [x] one node at a time - OK
+  ```
+  # typical set up
+  rload -i kubernetes 1
+  ssh root@fit01
+  [fit01] kube-install.sh join-cluster r2lab@sopnode-l1.inria.fr
+  ```
+- [ ] en masse joins
+  for instance, to do it en masse
+  ```
+  nodes -a ~4 ~13 ~15 ~31 ~37
+  rload -i kubernetes
+  rwait
+  map kube-install.sh join-cluster r2lab@sopnode-l1.inria.fr
+  ```
+  however this kind of synchronous approach seems to cause a burst and some nodes fail to reach - to be investigated...
+- [ ] study consequences of the R2lab workflow  
+  users will never leave properly !  
+  so see how the k8s cluster reacts to a R2lab node being re-imaged
+  - [x] apparently the k8s cluster realizes rather quick that the node is down
+  - [ ] however it might make sense to help it by doing an explicit `kubectl delete node` on stale nodes  
+  **DOES NOT SEEM TOO SERIOUS ?** 
+  - [ ] what happens if the same node tries to join again after it is re-imaged - (and the cluster is not cleaned up)  
+  so here the answer is, no big deal, the cluster realizes on its own (in about one minute) that the node has gone; it gets marked 'NotReady'; the same node re-imaged later on can join again with no particular fuss (the time for re-imaging seems enough :)
+  - [ ] now all this was with an empty load (no pod on the fit nodes);
+    of course when pods are going to be running on the nodes all this might need more care...
