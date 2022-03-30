@@ -1,4 +1,7 @@
-## Install ONL on the switch
+# Instructions to run fabric-tna with SDE 9.7.0
+
+## ONL
+### Install ONL on the switch
 Download https://github.com/opennetworkinglab/OpenNetworkLinux/releases/download/v1.4.3/ONL-onf-ONLPv2_ONL-OS_2021-07-16.2159-5195444_AMD64_INSTALLED_INSTALLER 
 locally.
 
@@ -27,9 +30,10 @@ After some time ONL should be installed and the switch reboots by itself.
 Connect to the switch with credentials `root/onl` (e.g., `ssh -i .ssh/id_rsa_silecs root@sopnode-sw2-eth0`).
 
 
-## Install k8s on the switch
+## k8s
+### Install k8s on the switch
 
-## Join the cluster
+### Join the cluster
 Edit `/etc/systemd/system/kubelet.service.d/10-kubeadm.conf` to add `--cgroup-driver=cgroupfs` in the `KUBELET_CONFIG_ARGS` arguments.
 
 The file should look like:
@@ -89,7 +93,7 @@ And use this config while running `kubectl` by setting the `KUBECONFIG` environe
 Listing the nodes in the cluster (`kubectl get node`) should work.
 
 
-## Configure switch
+### Configure switch
 ```bash
 kubectl label node sopnode-sw2-eth0 node-role.kubernetes.io=switch
 ```
@@ -98,10 +102,8 @@ kubectl label node sopnode-sw2-eth0 node-role.kubernetes.io=switch
 kubectl taint nodes sopnode-sw2-eth0 node-role.kubernetes.io=switch:NoSchedule
 ```
 
-# Stratum
+## Stratum
 ```bash
-cd /root
-docker pull stratumproject/stratum-bfrt:22.03-9.7.1
 echo "vm.nr_hugepages = 128" >> /etc/sysctl.conf
 sysctl -p /etc/sysctl.conf
 mkdir /mnt/huge
@@ -110,33 +112,125 @@ mount -t hugetlbfs nodev /mnt/huge
 
 In a separate terminal
 ```bash
+cd /root
 git clone https://github.com/stratum/stratum.git
+cd stratum
+git checkout e2640fc
 
+export SDE_VERSION=9.7.0
 export CHASSIS_CONFIG=/root/stratum/stratum/hal/config/x86-64-accton-wedge100bf-32x-r0/chassis_config.pb.txt
-stratum/stratum/hal/bin/barefoot/docker/start-stratum-container.sh -enable_onlp=false -bf_switchd_background=false
+stratum/hal/bin/barefoot/docker/start-stratum-container.sh -enable_onlp=false -bf_switchd_background=false -experimental_enable_p4runtime_translation -incompatible_enable_bfrt_legacy_bytestring_responses
 ```
 
-
-
-# ONOS
+## ONOS
 ```bash
-docker run --rm --tty --detach --publish 8181:8181 --publish 8101:8101 --publish 5005:5005 --publish 830:830 --name onos onosproject/onos:2.2.3
+docker run --rm --tty --detach --publish 8181:8181 --publish 8101:8101 --publish 5005:5005 --publish 830:830 --name onos onosproject/onos:2.7.0
 ```
-
-To access ONOS CLI: `ssh -p 8101 onos@localhost` with credentials `onos/rocks`.
 
 Once ONOS is started, tunnel to the GUI
 ```bash
 ssh -A -i ~/.ssh/id_rsa_silecs -L 8181:localhost:8181 root@sopnode-sw2-eth0.inria.fr
 ```
+and access the GUI via your browser: `http://localhost:8181/onos/ui/login.html` with credentials `onos/rocks`.
 
-and access the GUI via your browser: `http://localhost:8181/onos/ui/login.html` with credentials `onos/rocks`
+To access ONOS CLI: `ssh -p 8101 onos@localhost` with the same credentials `onos/rocks`.
 
+Activate Barefoot drivers and segment routing, e.g., via the ONOS CLI with
 
+```bash
+onos@root > app activate org.onosproject.drivers.barefoot
+```
 
-## Useful debug commands
+## SD-Fabric
+
+Download SDE 9.7.0 from 
+`https://www.intel.com/content/www/us/en/secure/confidential/collections/programmable-ethernet-switch-products/p4-suite/p4-studio.html?wapkw=P4%20studio&s=Newest`.
+
+assuming that the tar ball is called `bf-sde-9.7.0.tgz`, create the following dockerfile
+
+```Dockerfile
+FROM ubuntu:18.04
+ADD bf-sde-9.7.0.tgz .
+WORKDIR bf-sde-9.7.0/p4studio
+RUN ./install-p4studio-dependencies.sh
+RUN ./p4studio profile apply ./profiles/all-tofino.yaml
+ENV PATH="/bf-sde-9.7.0/install/bin/:${PATH}"
+```
+
+and build the docker image with
+```bash
+docker build  -t p4-studio -f Dockerfile .
+```
+
+This image is required for compiling P4 pipelines as it runs in docker.
+
+```bash
+git clone https://github.com/stratum/fabric-tna.git
+cd fabric-tna/
+git checkout 126aba9
+```
+
+Edit `tofino-netcfg.json` to become
+```json
+{
+  "devices": {
+    "device:sopnode-sw2": {
+      "basic": {
+        "managementAddress": "grpc://138.96.245.12:9559?device_id=1",
+        "driver": "stratum-tofino",
+        "pipeconf": "org.stratumproject.fabric.montara_sde_9_7_0"
+      }
+    }
+  }
+}
+```
+
+```bash
+export SDE_VERSION=9.7.0
+export SDE_DOCKER_IMG=p4-studio
+make fabric
+make pipeconf
+make build PROFILES="fabric"
+```
+
+```bash
+make pipeconf-install ONOS_HOST=localhost
+make netcfg ONOS_HOST=localhost
+```
+
+## HELP
+### Useful debug commands
 * `journalctl -u kubelet`
 * `systemctl stop kubelet`
 * `kubectl get node -o custom-columns=NAME:.metadata.name,TAINT:.spec.taints`
 * `kubectl get nodes -lnode-role.kubernetes.io=switch`
+* `kubectl get nodes -o wide`
 * `docker exec -it <stratum container name or ID> attach-bf-shell.sh`
+* Read ONOS logs: run the `log:tail` command in the ONOS CLI
+* `pipeconfs` command in the ONOS CLI
+
+## BACKUP
+Configure network in ONOS via the REST API `http://localhost:8181/onos/v1/network/configuration/` with credentials `onos/rocks` (for posting a configuration, use `POST` method and `application/json` content type).
+
+Simple 
+```json
+{
+  "devices" : {
+    "device:sopnode-sw2" : {
+      "segmentrouting" : {
+        "ipv4NodeSid" : 101,
+        "ipv4Loopback" : "138.96.245.12",
+        "routerMac" : "00:90:fb:6e:5e:e4",
+        "isEdgeRouter" : true,
+        "adjacencySids" : []
+      },
+      "basic" : {
+        "name": "sopnode-sw2",
+        "managementAddress": "grpc://138.96.245.12:9339?device_id=1",
+        "driver": "stratum-tofino",
+        "pipeconf": "org.stratumproject.fabric.montara_sde_9_5_0"
+      }
+    }
+  }
+}
+```
