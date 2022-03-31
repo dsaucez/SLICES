@@ -18,7 +18,7 @@ infrastructure was then hidden. However, when it comes to 5G, the
 interconnection itself (e.g., optical fibre links and switches) plays take place
 in the treatment of the workload and they shall be exposed to the testbed users.
 
-In this node, we omit to discuss the compute and radio resources and focus on
+In this note, we omit to discuss the compute and radio resources and focus on
 the network architecture used to interconnect all components of the SophiaNode.
 The peculiarities of the SophiaNode make it a perfect case study to understand
 how to inter-connect equipment from both a logical and a physical point of view.
@@ -83,8 +83,9 @@ clusters are not described here.
 
 > BACKGROUND ON FABRIC AND EVPN TO BE ADDED HERE
 
+## Physical interconnect
 
-## Compute cluster architecture
+### Compute cluster architecture
 
 Even though the exact compute nodes to deploy in the _compute_ clusters are not
 standardised, we recommend the following network architecture to build each
@@ -139,13 +140,13 @@ connected to it.
 To support cluster size increase by maximising density, breakout cables shall
 be used to connect the server ports to the switch ports.
 
-## Clusters interconnect
+### Clusters interconnect
 
 In the previous section we defined the standardised network architecture of 
 compute clusters. In this section, we present different alternatives to 
 interconnect the clusters composing the SophiaNode.
 
-### Spine-and-leaf option
+#### Spine-and-leaf option
 
 A trendy and scalable solution is to build the infrastructure following the 
 _spine-and-leaf_ model.
@@ -189,7 +190,7 @@ of the Internet facing routers and all the accounting and security appliances
 (e.g., firewall, gateways). It also means that any device from a pod accesses
 Internet by going first through a spine switch.
 
-### Relaxed spine-and-leaf option
+#### Relaxed spine-and-leaf option
 
 The clos-topology offered by the spine-and-leaf architecture offers the
 advantages presented above but it also comes at the cost of complex operational
@@ -235,7 +236,7 @@ selected peering link since no congestion can ever occur while peering
 administrative domain or when leaving the leaf switches of the selected pod of
 the remote administrative domain).
 
-### Partial mesh option
+#### Partial mesh option
 
 The spine-and-leaf and the relaxed spine-and-leaf options proposed above are
 generic and symetrical, which simplifies automation and scaling. These solutions
@@ -273,7 +274,7 @@ The partial mesh option is particularly adapted to the situation where
 external connectivity is unknown at the time of the design or when it is
 expected to have numerous peering links.
 
-### Hub-and-spoke option
+#### Hub-and-spoke option
 
 In the _hub-and-spoke_ architecture, there is a central point to interconnect
 all the clusters and external links as shown in the figure below.
@@ -288,4 +289,13 @@ The uplink capacity is computed in the same way as for the spine-and-leaf
 architecture such that no congestion can occur between clusters of the same
 administrative domain.
 
-## SDN Controller
+## Logical interconnect
+
+The above section discusses potential physical interconnection of elements in the network. In this section, we propose a high level discussion on how the interconnection can be implemented. We first consider the situation where legacy network protocols are used to operate the network. We then discuss how SDN could be used to operate the network.
+
+### Legacy protocol approach
+
+### SDN approach
+Various definition of Software-Defined Networking (SDN) exist but the most commonly agreed one is that SDN decouples network control and forwarding functions in order to be directly programmable by a (logically) centralized unit called the _controller_.
+
+In this case, all the control logic is operated by one controller that has a global knowledge of the infrastructure. It is worth noting that the controller can be implemented in a distributed manner. For example, the [ONOS](https://opennetworking.org/onos/) controller relies on Apache Kafka to distribute its state over multiple instances and make network wide decision coherently.
