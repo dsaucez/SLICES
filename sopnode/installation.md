@@ -11,7 +11,7 @@ Then copy it to fedora-serv in the EdgeCore image directory
 scp ~/Downloads/ONL-onf-ONLPv2_ONL-OS_2021-07-16.2159-5195444_AMD64_INSTALLED_INSTALLER fedora-serv.inria.fr:/var/www/html/pub/inria/proj/diana/sopnode/edgecore/images/
 ```
 
-From `src-diana`, connect to the switch via the drac (e.g., sw2) with credentials `admin/admin`
+From `srv-diana`, connect to the switch via the drac (e.g., sw2) with credentials `admin/admin`
 
 ```bash
 ssh -F /dev/null admin@sopnode-sw2-drac.inria.fr
@@ -33,6 +33,22 @@ Connect to the switch with credentials `root/onl` (e.g., `ssh -i .ssh/id_rsa_sil
 ## k8s
 ### Install k8s on the switch
 
+```bash
+sudo apt-get update && sudo apt-get install -y apt-transport-https
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+sudo apt-get install -y kubectl kubeadm kubelet
+sudo apt install python-pip
+sudo pip install docker
+```
+
+
+According to [https://github.com/ivanfioravanti/kubernetes-the-hard-way-on-azure/issues/30](https://github.com/ivanfioravanti/kubernetes-the-hard-way-on-azure/issues/30):
+```bash
+ ln -s /run/resolvconf/ /run/systemd/resolve
+ ```
+
 ### Join the cluster
 Edit `/etc/systemd/system/kubelet.service.d/10-kubeadm.conf` to add `--cgroup-driver=cgroupfs` in the `KUBELET_CONFIG_ARGS` arguments.
 
@@ -52,7 +68,12 @@ ExecStart=
 ExecStart=/usr/bin/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELET_KUBEADM_ARGS $KUBELET_EXTRA_ARGS
 ```
 
-Add the line `apiVersion: kubelet.config.k8s.io/v1beta1` to `/var/lib/kubelet/config.yaml`. If the file does not exist, create it.
+Add the lines `apiVersion: kubelet.config.k8s.io/v1beta1` and `kind: KubeletConfiguration` to `/var/lib/kubelet/config.yaml`. If the file does not exist, create it.
+
+```bash
+kubeadm init
+kubeadm reset
+```
 
 Reload daemon
 ```bash
@@ -118,9 +139,14 @@ cd stratum
 git checkout e2640fc
 
 export SDE_VERSION=9.7.0
-export CHASSIS_CONFIG=/root/stratum/stratum/hal/config/x86-64-accton-wedge100bf-32x-r0/chassis_config.pb.txt
 stratum/hal/bin/barefoot/docker/start-stratum-container.sh -enable_onlp=false -bf_switchd_background=false -experimental_enable_p4runtime_translation -incompatible_enable_bfrt_legacy_bytestring_responses
 ```
+
+If the chassis is not detected correctly then use the `CHASSIS_CONFIG` environement variable to explicity state the chassis configuration to be used (here below the config for a Wedge100bg-32x) and then start stratum as above.
+```bash
+export CHASSIS_CONFIG=/root/stratum/stratum/hal/config/x86-64-accton-wedge100bf-32x-r0/chassis_config.pb.txt
+```
+
 
 ## ONOS
 ```bash
@@ -209,7 +235,7 @@ make netcfg ONOS_HOST=localhost
 * Read ONOS logs: run the `log:tail` command in the ONOS CLI
 * `pipeconfs` command in the ONOS CLI
 
-## BACKUP
+### APIs
 Configure network in ONOS via the REST API `http://localhost:8181/onos/v1/network/configuration/` with credentials `onos/rocks` (for posting a configuration, use `POST` method and `application/json` content type).
 
 Simple 
@@ -234,3 +260,60 @@ Simple
   }
 }
 ```
+
+
+The following example (`kubectl apply -f <filename.yaml>`) avoids the pod to be deployed on the switches.
+
+```yaml
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: compute-pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-role.kubernetes.io
+            operator: NotIn
+            values:
+            - switch
+  containers:
+  - name: compute-srv
+    image: nginx
+    ports:
+    - containerPort: 80
+```
+
+The following example ensures that the pod is deployed on the switches.
+
+```yaml
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: switch-pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-role.kubernetes.io
+            operator: In
+            values:
+            - switch
+  containers:
+  - name: switch-srv
+    image: nginx
+    ports:
+    - containerPort: 80
+    ```
