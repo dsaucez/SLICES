@@ -1,0 +1,19 @@
+---
+- name: ONOS
+  hosts: controllers
+  remote_user: root
+  tasks:
+    - name: Start ONOS
+      docker_container:
+        name: onos
+        image: onosproject/onos:2.7.0
+        state: started
+        restart: yes
+        ports:
+        - "8181:8181"
+        - "8101:8101"
+        - "5005:5005"
+        - "830:830"
+        tty: yes
+        auto_remove: yes
+        detach: yes

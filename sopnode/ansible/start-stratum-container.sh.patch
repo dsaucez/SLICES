@@ -1,0 +1,11 @@
+--- stratum/hal/bin/barefoot/docker/start-stratum-container.sh	2022-04-05 10:00:39.290559780 +0000
++++ start-stratum-container.sh	2022-04-05 12:34:45.672521604 +0000
+@@ -44,7 +44,7 @@
+ 
+ # Start Stratum.
+ set -x
+-docker run -it --rm --privileged \
++docker run -d --rm --privileged \
+     -v /dev:/dev -v /sys:/sys  \
+     -v /lib/modules/$(uname -r):/lib/modules/$(uname -r) \
+     --env PLATFORM=$PLATFORM \
