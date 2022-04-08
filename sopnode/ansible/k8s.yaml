@@ -1,0 +1,34 @@
+---
+- name: Install k8s
+  hosts: switches
+  remote_user: root
+  tasks:
+  # check https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_key_module.html
+    - name: Update APT cache
+      ansible.builtin.apt:
+        update_cache: yes
+        allow_unauthenticated: yes
+    - name: Git
+      ansible.builtin.apt:
+        name: git
+        allow_unauthenticated: yes
+        autoclean: yes
+        state: present
+    - name: conntrack
+      ansible.builtin.apt:
+        name: conntrack
+        allow_unauthenticated: yes
+        autoclean: yes
+        state: present
+    - name: PIP
+      ansible.builtin.apt:
+        name: python-pip
+        allow_unauthenticated: yes
+        autoclean: yes
+        state: present
+    - name: Prepare kubeadm
+      ansible.builtin.lineinfile:
+        path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+        regexp: '(?!.*?--cgroup-driver=cgroupfs)^Environment="KUBELET_CONFIG_ARGS=(.*)"$'
+        backrefs: yes
+        line: 'Environment="KUBELET_CONFIG_ARGS=--cgroup-driver=cgroupfs \1"'
