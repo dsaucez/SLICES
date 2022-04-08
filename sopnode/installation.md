@@ -27,24 +27,38 @@ onie-nos-install http://fedora-serv/pub/inria/proj/diana/sopnode/edgecore/images
 
 After some time ONL should be installed and the switch reboots by itself.
 
-Connect to the switch with credentials `root/onl` (e.g., `ssh -i .ssh/id_rsa_silecs root@sopnode-sw2-eth0`).
+Once the switch is started, add your public key for ssh key authentication (default credentials are `root/onl`).
+```bash
+ssh-copy-id -i .ssh/id_rsa_silecs root@sopnode-sw2-eth0
+```
 
+Now you can connect to the switch `ssh -i .ssh/id_rsa_silecs root@sopnode-sw2-eth0`).
+
+Install required dependencies
+
+```bash
+apt update -y
+apt install -y git
+apt install -y conntrack
+apt install -y python-pip
+pip install docker
+```
 
 ## k8s
 ### Install k8s on the switch
 
+
 ```bash
-sudo apt-get update && sudo apt-get install -y apt-transport-https
+apt install -y apt-transport-https
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
-sudo apt-get update
-sudo apt-get install -y kubectl kubeadm kubelet
-sudo apt install python-pip
-sudo pip install docker
+apt update -y
+apt install -y kubectl kubeadm kubelet
 ```
 
+> **NOTE:** ONL is based on Debian Stretch, however Google doesn't provide recent debian packages for this release. Hence the use of the Ubuntu Xenial package instead as it works perfectly fine on Debian Stretch. If you wan to manually install k8s, follow [Installing kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/) instructions.
 
-According to [https://github.com/ivanfioravanti/kubernetes-the-hard-way-on-azure/issues/30](https://github.com/ivanfioravanti/kubernetes-the-hard-way-on-azure/issues/30):
+Kubelet looks up in `/run/systemd/resolve` but it doesn't exist as-is in ONL, according to [https://github.com/ivanfioravanti/kubernetes-the-hard-way-on-azure/issues/30](https://github.com/ivanfioravanti/kubernetes-the-hard-way-on-azure/issues/30) the fix is:
 ```bash
  ln -s /run/resolvconf/ /run/systemd/resolve
  ```
@@ -68,21 +82,14 @@ ExecStart=
 ExecStart=/usr/bin/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELET_KUBEADM_ARGS $KUBELET_EXTRA_ARGS
 ```
 
-Add the lines `apiVersion: kubelet.config.k8s.io/v1beta1` and `kind: KubeletConfiguration` to `/var/lib/kubelet/config.yaml`. If the file does not exist, create it.
-
 ```bash
-kubeadm init
-kubeadm reset
-```
-
-Reload daemon
-```bash
-systemctl daemon-reload
+mkdir -p /var/lib/kubelet/
+mkdir -p /etc/kubernetes/manifests
 ```
 
 Join the cluster with
 ```bash
-kubeadm join 138.96.245.50:6443 --token nq9tul.5lcfspkhhit6slbf --discovery-token-ca-cert-hash sha256:13cd02b6d960bd53ae6de4c9d2f1d0e0e32c12e1fd40e06db977d89a0d4267b4 --v=5
+kubeadm join sopnode-w2.inria.fr:6443 --token <TOKEN-DATA> --discovery-token-unsafe-skip-ca-verification
 ```
 
 Make a kubectl config file, e.g., in `~/admin.yaml` with the following content:
@@ -91,34 +98,38 @@ Make a kubectl config file, e.g., in `~/admin.yaml` with the following content:
 apiVersion: v1
 clusters:
 - cluster:
-    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUMvakNDQWVhZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQjRYRFRJeU1ERXlOekUwTURBMU0xb1hEVE15TURFeU5URTBNREExTTFvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTTlBCjM4RHpXaHdKMHh2c2h0OW52SnFiSnRxc1lseEJSQUpUMHlhSDNDYWVhOGZNdWRMQXlweGZjemQ5LzliR09FRFAKMFJDTHpGM1NtaHhDdEk0aGlkYWlyVmZIZlFBay9PRVAxbWZLcWhxYzd4Zmw5OTdwU3MzUHIvSjdiQzdxL3dHZgpyOVVWVkVuSmxHLzBkUllLZDJUVXN0MEdBeHRFR1RqTkZZMlhZLzdMK0lvTkd1TUVwd1VzVVlLWXgxenlKOFZ5CkxnVFdnc1VmdUovMldpaFZCOEFzTTVYYkJtdGJKNUw3bzBqSlhnc1UxSzRPUjVta04rOFp3MzBYaGx0dllxT2QKOWgyamNXYWl3aVBGRlhENVhSTWxVN2kyMmRIRzNqMlo3QVJDelEyKzhXRnNoZmZsN25rQ3hKdGdIUExTNmxmRgpuVjdRcWM4VVlWSEFqN2twUEJVQ0F3RUFBYU5aTUZjd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCCi93UUZNQU1CQWY4d0hRWURWUjBPQkJZRUZQYmlkK3AzaW84RkpUaE9jdjF5RHM5TUNKZ3JNQlVHQTFVZEVRUU8KTUF5Q0NtdDFZbVZ5Ym1WMFpYTXdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBSSsxc3BCQVZZOTVmdUFsaElsWQpnT0M5Y21rYmJyakVkV1F0ZzErenhNVHhNOWhPYUZOL2xXMWF3bUJXNFJLMkppaStLemsvQ3VhU1F6UjJlZEhhCjVYQ2Nua0F6NVcvR3ZmeEFOZHp2R2lDQlhEZm44OEpPL0dIMk1rOEMrQzNYV3VReVBQaE9MTVRNN3NOcjhpbHEKU29tMFBmWFhjN2FMcXg0Q3Nyd09QdlJ1QklUSlNoV0s0OGRLM256WHZZaTFZYmoreXdLRU4xS095TmVnbTREdgpIZ1NhS1NiUkxBRjdjbllWYWJ0azhYQkwzZ1RYWnlCanBYai9pUENCWXpVSDNBSTFycUp1RzNnbU5DcnhPb0VTClg0OG5Pdk8yMnhoUm5pM1p4NnBXV2xqME4xeGIzWmRoVXl2dXRLc3Y0SUlRNUppN05ic0FlYkNtTWs2SWJiamQKM0pRPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
-    server: https://138.96.245.50:6443
-  name: kubernetes
+    certificate-authority-data: <CERTIFICATE-AUTHORITY-DATA>
+    server: https://sopnode-w2.inria.fr:6443
+  name: devel
 contexts:
 - context:
-    cluster: kubernetes
+    cluster: devel
+    namespace: oai5g
     user: kubernetes-admin
-  name: kubernetes-admin@kubernetes
-current-context: kubernetes-admin@kubernetes
+  name: kubernetes-admin@devel
+current-context: kubernetes-admin@devel
 kind: Config
 preferences: {}
 users:
 - name: kubernetes-admin
   user:
-    client-certificate-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURJVENDQWdtZ0F3SUJBZ0lJTjljdVZ6WEVHMVV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TWpBeE1qY3hOREF3TlROYUZ3MHlNekF4TWpjeE5EQXdOVFJhTURReApGekFWQmdOVkJBb1REbk41YzNSbGJUcHRZWE4wWlhKek1Sa3dGd1lEVlFRREV4QnJkV0psY201bGRHVnpMV0ZrCmJXbHVNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQTFkNWxkYzlIK2RqeEJydkYKT2MzaE02SVA0OGQwUXFFMWdQY2pyZzU0Nk04blFCSEoyS3krKzE5aGtkUVlUbnExbTA0NWM0NnNLSkdJcE1xUQo2UEswZ2tOMDk3eFhvNFE5V3pvRldJYjNBZXNRYmw4SGtSL2NOVjNBODVvVHZVM1VKZzZzTXY5bTNodDJzSWV3Ck1aNDBCaTBmRzc4WG5McHorUVNJYldaNzJuUkdqVThXdDlUdmVFM3E0dVdTdExIMzhreFpCclgvc21IY0hXK0YKR24rWVBHWitzOHdtYnBnS3VGcjRBSEp1MkpaclU4cktBQUpmbzhXMWxxM0tKMzR3K1YybUUzNndLbXUya0dJWgowYWNpdGVBSEQ3dWtzc3RKR3gxYms2bFNJQzhjWTBMSzd6K0dEcExLNSsvV1VjL3Y0R0xCd2dTVWhDYzF1dzZKCkJQRStDd0lEQVFBQm8xWXdWREFPQmdOVkhROEJBZjhFQkFNQ0JhQXdFd1lEVlIwbEJBd3dDZ1lJS3dZQkJRVUgKQXdJd0RBWURWUjBUQVFIL0JBSXdBREFmQmdOVkhTTUVHREFXZ0JUMjRuZnFkNHFQQlNVNFRuTDljZzdQVEFpWQpLekFOQmdrcWhraUc5dzBCQVFzRkFBT0NBUUVBaktrNmJLYUpOMC9vYldXVFp4VkdHZHdOaTF4K05qOEF1cmhkCk16SW1xVkI2bFJnUDhWTnZTTnpxcExMMi9MNXRqWUR0ZmNWby8zTW9NK2FmTTVmVXNzZ2F0cFJDd1dwMXhDdE8KYVNPS1FCajNyQzhLdnIwY3p1R1hwZXprNVFrSC93THlsRm16NXdTdDdvRmVpS1VzY2dmK2kwZXladDZnVGRVZApFQi8rbGx3UHBvS1IyaHVzWEtUQmtJUTZuRUQ5SnhVUGVybVVmT0lHb3hzRGhBMWdoRnUxdEsxU09kVXB1a053CmNOcXdnUEgvUzl1M0JCSUpZYytDZUtqKzB1WXowTmluVmtjSTRJY0V6WXk4RVZ4T3hYT0YrYitwSU96ZVY4Vk8KcDlycDZ0WS9DeFh4U3JNZkUxM2M4bEhPOXlVNENkenI4cFF5NjR4all2Ty9ZSTMzOEE9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
-    client-key-data: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcEFJQkFBS0NBUUVBMWQ1bGRjOUgrZGp4QnJ2Rk9jM2hNNklQNDhkMFFxRTFnUGNqcmc1NDZNOG5RQkhKCjJLeSsrMTloa2RRWVRucTFtMDQ1YzQ2c0tKR0lwTXFRNlBLMGdrTjA5N3hYbzRROVd6b0ZXSWIzQWVzUWJsOEgKa1IvY05WM0E4NW9UdlUzVUpnNnNNdjltM2h0MnNJZXdNWjQwQmkwZkc3OFhuTHB6K1FTSWJXWjcyblJHalU4Vwp0OVR2ZUUzcTR1V1N0TEgzOGt4WkJyWC9zbUhjSFcrRkduK1lQR1orczh3bWJwZ0t1RnI0QUhKdTJKWnJVOHJLCkFBSmZvOFcxbHEzS0ozNHcrVjJtRTM2d0ttdTJrR0laMGFjaXRlQUhEN3Vrc3N0Skd4MWJrNmxTSUM4Y1kwTEsKN3orR0RwTEs1Ky9XVWMvdjRHTEJ3Z1NVaENjMXV3NkpCUEUrQ3dJREFRQUJBb0lCQVFDbG1DV0hLby9ZYkpsegpWVUJJbVppZG1nWWpuL1B0QTFXaUhibUtzN242eVNyaStPTUkyZmltT2h3YUJkY3NMT2NnOFZpYW1RWEVBNnVCCnJUYTJwL1lNUnA3eWt1cG91YU9vVnl4OGQwUWFRQi9nMWNQT0lwVW0zUWpobFpOaktEZnpuN2pGWSt3S1hjbHcKdGg4K3kvZ01NRE8rRUNBQVFuNDVlY0VJdENtQjRzcGhGYUlmaU1XMjRJNVR5b3BieTVYdEZJVjRTdjkvLzlVWgphTWpmS3pPK2dMc1o5bGRFRXpPdU56R0UxUFQ5ZnRYR3RzdG1ydDUwS1JKVkErM0ZGN3QvYTMrQjcxY2YwNjFuClAvd1Q1eWo4OStWTXVlZFhhNmdaVWRPaTRONkh0cXFxL2pZSFBSRXpIcDJtcjZoMUM2WklGeGRiSkswK2toM2oKUUdNY0FmMUJBb0dCQU5aakZSc0ptczE3c2w4RlMzWTcweEx5TG00aThjVmI3dFBibS80L3dib2FaeUd4eEQ2MwpuYzZSUHFPNE50QysyYU9hUUxvWmhhdVpsbTZwQ2IyWWZwbVphUXpnRGFFenErRHhxelZzRVV0SThFQnVWeXlwCi9kemlhY0dXMUhIMlBJc1NnKzRPam1pZ05GaDhaelBybjZRZ2d2NzFraWRYUEl4ZU9nRDZzS0YvQW9HQkFQOWgKanlwdVhTTm1ybFBkZWY2Uy9sM0FxTkpvV0U3STZZQjdUdzQ0WlRsQmZ1UWVKM1hFa1BBNndFK2UyaG1Xak1hNgpaM2FndkFxdEhrRERVQUd5WGFxTXdtL2l4TmJlVVZnZ3IxNVg3Vy9zVG56emZOTlNIdFNHaTVTT1E2ZTlDQkUwCnhhTldocDAvb2pUaXNEczNlTmhzZHQ2WVVwUzJHZ1ZsTzlITGdoRjFBb0dBZDNaWTRXc1Z0dUR4d1I4ck1LUWYKZHhRNnFTYVJ3Sjc4MDFNeGRwakNjOWlZbFY4QWNzNVFnalhQU04yeXRkbFRYMlhxSVlsdFFmVGdyYU5HQ1Q4NwpkSTNXeXRUaTQydnVuL2NxcHljajcrYWg4ZFZLZ0ZudFd6TlRLUXZLTUFLOU0rWEtYRklDS3V6eW5rZ2NIZ056ClBycmJKQVZsUHNUT3VZMGNGMFdhUFRNQ2dZRUE1REdJZTZHaUY3L29oWWVoT3BpZU1hZTFNazJLbXR0cnlpSmsKd1pBaTRzWmpXL0tWeitXVW5SUGlRMEx1SDI4bTIydzBod3VZK3ZFMTF5aXVsTldNWEpqcUpJKzgwMEpUN1N0SAppRVdKSkRsQzZPT281aXE2NGF4WGpLYVNUWS9iWllTQ0ZURjdsNGNFcWJ6bFBBU1ZOczIwYWJJeUdDK2ZrTEtrCmdSSVhad0VDZ1lCQ1VWZXlJUzY4L0ZLaXh6bjI2c2xpaEhYQVdMdW1YWWZKSDJRUXprOHB4Mm92YmdRZWljNXoKWE9IaFdDMU4zYjUzMkpDNmxURVNKdWFvM2UwY1ZTek0yL3dSUHN6SUE2dkwxS2NCVFhKY2xydzRXaGI4Z1V0bApPb2NrSXh4MFk2WnVMN2E3YkNYUGZsbEVpbjROYUFGd2Nnd3R6OCsrWlBJbHBvakZGZHBrWHc9PQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=
+    client-certificate-data: <CLIENT-CERTIFICATE-DATA>
+    client-key-data: <CLIENT-KEY-DATA>
 ```
 
 And use this config while running `kubectl` by setting the `KUBECONFIG` environement variable to point to the file, e.g., `export KUBECONFIG=~/admin.yaml`.
 
 Listing the nodes in the cluster (`kubectl get node`) should work.
 
-
 ### Configure switch
+
+To identify the switch as a switch in the cluster, put a label.
+
 ```bash
 kubectl label node sopnode-sw2-eth0 node-role.kubernetes.io=switch
 ```
 
+Avoid the switches to be used in k8s scheduling with
 ```bash
 kubectl taint nodes sopnode-sw2-eth0 node-role.kubernetes.io=switch:NoSchedule
 ```
