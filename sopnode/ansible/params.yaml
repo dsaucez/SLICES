@@ -1,0 +1,7 @@
+---
+master: DATA+OMITTED
+namespace: DATA+OMITTED
+token: DATA+OMITTED
+certificate_authority_data : REDACTED
+client_certificate_data: REDACTED
+client_key_data: REDACTED

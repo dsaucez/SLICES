@@ -3,32 +3,74 @@
   hosts: switches
   remote_user: root
   tasks:
-  # check https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_key_module.html
-    - name: Update APT cache
+    - name: Remove unstable ONL APT repo
+      ansible.builtin.file:
+        path: /etc/apt/sources.list.d/multistrap-onl.list
+        state: absent
+    - name: Install dependencies
       ansible.builtin.apt:
-        update_cache: yes
-        allow_unauthenticated: yes
-    - name: Git
+        name:
+          - git
+          - conntrack
+          - python-pip
+          - apt-transport-https
+          - ca-certificates
+        autoclean: yes
+        update_cache: true
+        state: present
+    - name: Install docker python package
+      pip:
+        name: docker
+    - name: Add k8s APT key
+      ansible.builtin.apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
+    - name: Add k8s repository into sources list
+      ansible.builtin.apt_repository:
+        repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+        state: present
+        update_cache: true
+    - name: Create a symbolic link /run/systemd/resolve -> /run/resolvconf/
+      ansible.builtin.file:
+        src: /run/resolvconf/ 
+        dest: /run/systemd/resolve
+        state: link
+    - name: Create ~/.kube
+      ansible.builtin.file:
+        path: ~/.kube/
+        state: directory
+    - name: Create /var/lib/kubelet/ directory
+      ansible.builtin.file:
+        path: /var/lib/kubelet/
+        state: directory
+    - name: Create /etc/kubernetes/manifests directory
+      ansible.builtin.file:
+        path: /etc/kubernetes/manifests
+        state: directory
+    - name: Install k8s
       ansible.builtin.apt:
-        name: git
-        allow_unauthenticated: yes
+        name:
+          - kubectl
+          - kubeadm
+          - kubelet
         autoclean: yes
         state: present
-    - name: conntrack
-      ansible.builtin.apt:
-        name: conntrack
-        allow_unauthenticated: yes
-        autoclean: yes
-        state: present
-    - name: PIP
-      ansible.builtin.apt:
-        name: python-pip
-        allow_unauthenticated: yes
-        autoclean: yes
-        state: present
+    - name: Configuring Kube config file
+      ansible.builtin.template:
+        src: kubectl.config.j2
+        dest: ~/.kube/config
     - name: Prepare kubeadm
       ansible.builtin.lineinfile:
         path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
         regexp: '(?!.*?--cgroup-driver=cgroupfs)^Environment="KUBELET_CONFIG_ARGS=(.*)"$'
         backrefs: yes
         line: 'Environment="KUBELET_CONFIG_ARGS=--cgroup-driver=cgroupfs \1"'
+    - name: Join k8s cluster
+      shell: |
+        kubeadm join --token {{ token }} \
+                     --discovery-token-unsafe-skip-ca-verification \
+                    {{ master }}:6443
+    - name: Label the node as a switch
+      shell: kubectl label node {{ ansible_hostname }} node-role.kubernetes.io=switch
+    - name: Avoid the switches to be used in k8s scheduling
+      shell: kubectl taint nodes {{ ansible_hostname }} node-role.kubernetes.io=switch:NoSchedule

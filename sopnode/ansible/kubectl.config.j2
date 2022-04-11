@@ -1,0 +1,20 @@
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: {{ certificate_authority_data }}
+    server: https://{{ master }}:6443
+  name: devel
+contexts:
+- context:
+    cluster: devel
+    namespace: {{ namespace }}
+    user: kubernetes-admin
+  name: kubernetes-admin@devel
+current-context: kubernetes-admin@devel
+kind: Config
+preferences: {}
+users:
+- name: kubernetes-admin
+  user:
+    client-certificate-data: {{ client_certificate_data }}
+    client-key-data: {{ client_key_data }}
