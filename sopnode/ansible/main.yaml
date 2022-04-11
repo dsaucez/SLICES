@@ -1,0 +1,6 @@
+---
+- name: Install k8s
+  hosts: switches
+  remote_user: root
+  roles:
+    - role: stratum

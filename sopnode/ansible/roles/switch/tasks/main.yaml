@@ -1,0 +1,6 @@
+---
+- name: Label the node as a switch
+  shell: kubectl label node {{ ansible_hostname }} node-role.kubernetes.io=switch
+
+- name: Avoid the switches to be used in k8s scheduling
+  shell: kubectl taint nodes {{ ansible_hostname }} node-role.kubernetes.io=switch:NoSchedule

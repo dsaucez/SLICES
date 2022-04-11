@@ -1,0 +1,48 @@
+---
+# Dependencies for k8s
+- include_tasks: setup.yaml
+
+# Install k8s
+- name: Install k8s
+  ansible.builtin.apt:
+    name:
+      - kubectl
+      - kubeadm
+      - kubelet
+    autoclean: yes
+    state: present
+
+- name: Create a symbolic link /run/systemd/resolve -> /run/resolvconf/
+  ansible.builtin.file:
+    src: /run/resolvconf/ 
+    dest: /run/systemd/resolve
+    state: link
+- name: Create ~/.kube
+  ansible.builtin.file:
+    path: ~/.kube/
+    state: directory
+- name: Create /var/lib/kubelet/ directory
+  ansible.builtin.file:
+    path: /var/lib/kubelet/
+    state: directory
+- name: Create /etc/kubernetes/manifests directory
+  ansible.builtin.file:
+    path: /etc/kubernetes/manifests
+    state: directory
+
+- name: Configuring Kube config file
+  ansible.builtin.template:
+    src: kubectl.config.j2
+    dest: ~/.kube/config
+
+- name: Configuring Kube config file
+  ansible.builtin.template:
+    src: kubectl.config.j2
+    dest: ~/.kube/config
+
+- name: Prepare kubeadm
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    regexp: '(?!.*?--cgroup-driver=cgroupfs)^Environment="KUBELET_CONFIG_ARGS=(.*)"$'
+    backrefs: yes
+    line: 'Environment="KUBELET_CONFIG_ARGS=--cgroup-driver=cgroupfs \1"'

@@ -1,0 +1,14 @@
+---
+debian_dependencies:
+  - name: git
+    state: present
+  - name: conntrack
+    state: present
+  - name: python-pip
+    state: present
+  - name: curl
+    state: present
+
+python_packages:
+    - name: docker
+      version: 4.4.4

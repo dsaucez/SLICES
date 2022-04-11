@@ -1,0 +1,6 @@
+---
+- name: Join k8s cluster
+  shell: |
+    kubeadm join --token {{ token }} \
+                  --discovery-token-unsafe-skip-ca-verification \
+                {{ master }}:6443
