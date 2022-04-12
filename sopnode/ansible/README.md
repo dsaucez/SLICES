@@ -1,6 +1,9 @@
 ## Install dependencies
 ```bash
 ansible-galaxy collection install ansible.posix
+ansible-galaxy collection install community.kubernetes
+ansible-galaxy collection install cloud.common
+ansible-galaxy collection install kubernetes.core
 ```
 
 ## Run playbooks
