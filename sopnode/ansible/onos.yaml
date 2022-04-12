@@ -3,23 +3,74 @@
   hosts: controllers
   remote_user: root
   tasks:
-    - name: Start ONOS
-      docker_container:
-        name: onos
-        image: onosproject/onos:2.7.0
-        state: started
-        restart: yes
-        ports:
-        - "8181:8181"
-        - "8101:8101"
-        - "5005:5005"
-        - "830:830"
-        tty: yes
-        auto_remove: yes
-        detach: yes
+    - name: install Python dependencies
+      pip:
+        name: kubernetes
+        state: present
+
+    - name: Create ONOS namespace 
+      kubernetes.core.k8s:
+        name: onos-ns
+        api_version: v1
+        kind: Namespace
+        state: present
+
+    - name: Deploy ONOS
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: onos-deployment
+            namespace: onos-ns
+            labels:
+              app: onos
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                app: onos
+            template:
+              metadata:
+                labels:
+                  app: onos
+              spec:
+                containers:
+                - name: onos
+                  image: onosproject/onos:2.7.0
+                  ports:
+                  - containerPort: 830
+                  - containerPort: 5005
+                  - containerPort: 8101
+                  - containerPort: 8181
+
+    - name: Deploy ONOS-service
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: onos-service
+            namespace: onos-ns
+          spec:
+            selector:
+              app: onos 
+            ports:
+            - protocol: TCP
+              port: 8181
+              targetPort: 8181
+      register: onos_cluster
+
+    - debug:
+        msg:
+          - "ONOS clusterIP is {{ onos_cluster.result.spec.clusterIP }}"
+          - "ssh -A -i ~/.ssh/id_rsa_silecs -L 8181:{{ onos_cluster.result.spec.clusterIP }}:8181 root@sopnode-sw2-eth0.inria.fr"
+
     - name: Activate Barefoot Drivers (may take up to 5 minutes)
       uri:
-        url: http://{{ ansible_hostname }}:8181/onos/v1/applications/org.onosproject.drivers.barefoot/active
+        url: http://{{ onos_cluster.result.spec.clusterIP }}:8181/onos/v1/applications/org.onosproject.drivers.barefoot/active
         user: onos
         password: rocks
         method: POST
@@ -27,19 +78,52 @@
       until: _result.status == 200
       retries: 30 # 30 * 10s = 300s = 5min
       delay: 10   # Every 10s
-    - name: Install pipeconfs
-      shell: "make pipeconf-install ONOS_HOST=localhost"
-      args:
-        chdir: fabric-tna
-      environment:
-        SDE_VERSION: 9.7.0
-        SDE_DOCKER_IMG: p4-studio
-    - name: Push netcfg
-      shell: "make netcfg ONOS_HOST=localhost"
-      args:
-        chdir: fabric-tna
-      environment:
-        SDE_VERSION: 9.7.0
-        SDE_DOCKER_IMG: p4-studio
-      
 
+    - name: check if fabric-tna is built
+      stat:
+        path: ~/fabric-tna/target/fabric-tna-1.2.0-SNAPSHOT.oar
+      register: fabric_oar
+
+    - name: Make fabric
+      shell: make fabric
+      args:
+        chdir: fabric-tna
+      environment:
+        SDE_VERSION: 9.7.0
+        SDE_DOCKER_IMG: p4-studio
+      when: fabric_oar.stat.exists == false
+
+    - name: Make pipeconf
+      shell: make pipeconf
+      args:
+        chdir: fabric-tna
+      environment:
+        SDE_VERSION: 9.7.0
+        SDE_DOCKER_IMG: p4-studio
+      when: fabric_oar.stat.exists == false
+
+    - name: Build profiles
+      shell: make build PROFILES="fabric"
+      args:
+        chdir: fabric-tna
+      environment:
+        SDE_VERSION: 9.7.0
+        SDE_DOCKER_IMG: p4-studio
+      when: fabric_oar.stat.exists == false
+
+    - name: Install pipeconfs
+      shell: "make pipeconf-install ONOS_HOST={{ onos_cluster.result.spec.clusterIP }}"
+      args:
+        chdir: fabric-tna
+      environment:
+        SDE_VERSION: 9.7.0
+        SDE_DOCKER_IMG: p4-studio
+      when: fabric_oar.stat.exists == true
+
+    - name: Push netcfg
+      shell: "make netcfg ONOS_HOST={{ onos_cluster.result.spec.clusterIP }}"
+      args:
+        chdir: fabric-tna
+      environment:
+        SDE_VERSION: 9.7.0
+        SDE_DOCKER_IMG: p4-studio
