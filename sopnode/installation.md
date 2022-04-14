@@ -223,6 +223,10 @@ Edit `tofino-netcfg.json` to become
 ```
 
 ```bash
+export ONOS_HOST=localhost
+```
+
+```bash
 export SDE_VERSION=9.7.0
 export SDE_DOCKER_IMG=p4-studio
 make fabric
@@ -231,9 +235,30 @@ make build PROFILES="fabric"
 ```
 
 ```bash
-make pipeconf-install ONOS_HOST=localhost
-make netcfg ONOS_HOST=localhost
+make pipeconf-install
+make netcfg
 ```
+
+> ### Container base compilation for fabric-tna building
+> It is possible to compile fabric-tna from a container instead of from the host. The trick is to make the container use the host's docker engine and so to use the same absolute path inside the container and outside the container (in the example below we use `/tmp/XXX`)
+> 
+>```Dockerfile
+>FROM ubuntu:20.04
+>RUN apt update -y
+>RUN apt install -y docker.io nano build-essential git curl
+>```
+>
+>```bash
+>docker build -t ubuntu-dev:20.04 -f Dockerfile .
+>```
+>
+>Launch the container
+>```bash
+>docker run -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/XXX/:/tmp/XXX -e ONOS_HOST=<ONOS_HOST_IP> --rm -ti ubuntu-dev:20.04
+>```
+>
+>Go to `/tmp/XXX` directory and then compile as above.
+
 
 ## HELP
 ### Useful debug commands
