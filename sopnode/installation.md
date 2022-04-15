@@ -268,6 +268,7 @@ make netcfg
 * `kubectl get nodes -lnode-role.kubernetes.io=switch`
 * `kubectl get nodes -o wide`
 * `docker exec -it <stratum container name or ID> attach-bf-shell.sh`
+* `kubectl exec --namespace onos-ns --stdin --tty pod-5cbf84749f-79ztg  -- bash`
 * Read ONOS logs: run the `log:tail` command in the ONOS CLI
 * `pipeconfs` command in the ONOS CLI
 
