@@ -217,6 +217,20 @@ Edit `tofino-netcfg.json` to become
         "driver": "stratum-tofino",
         "pipeconf": "org.stratumproject.fabric.montara_sde_9_7_0"
       }
+    },
+    "device:sopnode-sw1": {
+      "basic": {
+        "managementAddress": "grpc://138.96.245.11:9559?device_id=1",
+        "driver": "stratum-tofino",
+        "pipeconf": "org.stratumproject.fabric.montara_sde_9_7_0"
+      }
+    },
+    "device:sopnode-sw3": {
+      "basic": {
+        "managementAddress": "grpc://138.96.245.13:9559?device_id=1",
+        "driver": "stratum-tofino",
+        "pipeconf": "org.stratumproject.fabric.montara_sde_9_7_0"
+      }
     }
   }
 }

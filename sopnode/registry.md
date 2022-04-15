@@ -1,5 +1,7 @@
 # Deploy docker registry
 
+First it is needed to generate a certificate for the registry as it uses TLS.
+
 ## Certificate creation
 
 Prepare a directory where to store the certificate and its associated key, e.g., `certs`
@@ -7,17 +9,47 @@ Prepare a directory where to store the certificate and its associated key, e.g.,
 mkdir certs
 ```
 
-Generate the certificate
+```ini
+#registry-service.conf
+[ req ]
+prompt = no
+distinguished_name = dn
+req_extensions = req_ext
+
+[ dn ]
+CN = registry-service
+emailAddress = damien.saucez@inria.fr
+O = Inria
+OU = Diana
+L = Sophia Antipolis
+ST = 06
+C = FR
+
+[ req_ext ]
+subjectAltName = DNS: registry-service
+```
+
+```ini
+#v3.ext
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always,issuer:always
+basicConstraints       = CA:TRUE
+keyUsage               = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment, keyAgreement, keyCertSign
+subjectAltName         = DNS:registry-service
+issuerAltName          = issuer:copy
+```
 
 ```bash
-openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 -nodes \
-  -keyout certs/registry-service.key -out certs/registry-service.crt -extensions san -config \
-  <(echo "[req]"; 
-    echo distinguished_name=req; 
-    echo "[san]"; 
-    echo subjectAltName=DNS:registry-service,DNS:registry-service,IP:10.98.130.107
-    ) \
-  -subj "/CN=registry-service"
+openssl genrsa -out keypair.key 4096
+```
+
+```bash
+openssl req -new -out registry-service.csr -newkey rsa:4096 -nodes -sha256 -keyout registry-service.key -config registry-service.conf 
+```
+
+Generate a CA signed certificate, assuming the CA certificate and key are in the `CA` directory.
+```bash
+openssl x509 -req -days 365 -in registry-service.csr -CA CA/ca.crt -CAkey CA/ca.key -CAcreateserial  -out registry-service.crt -extfile v3.ext
 ```
 
 ## Instantiate the registry
@@ -32,26 +64,34 @@ Deploy the certificate to all docker hosts that will use the registry
 mkdir -p /etc/docker/certs.d/registry-service:443
 ```
 
-Copy the generated certificate as a CA file:
+Copy the CA certificate as a CA file for the registry:
 
 ```bash
-cp certs/registry-service.crt /etc/docker/certs.d/registry-service:443/ca.crt
+cp CA/ca.crt /etc/docker/certs.d/registry-service:443/ca.crt
+```
+
+In kubernetes it can be useful to deploy the certificate and keys in a secret
+
+```bash
+kubectl create secret tls registry-service-secret --cert=registry-service.crt --key=registry-service.key
 ```
 
 ## Use images from the registry
 
+It is assumed here that `registry-service` resolves to an address listened by the registry.
+
 To publish an image to the registry, first tag it
 
 ```bash
-docker tag <image> registry.example.com:5000/<image>
+docker tag <image> registry-service:443/<image>
 ```
 then push it to the registry
 
 ```bash
-docker push registry.example.com:5000/<image>
+docker push registry-service:443/<image>
 ```
 
 To use the image on a docker host:
 ```bash
-docker run --rm -ti registry.example.com:5000/<image>
+docker run --rm -ti registry-service:443/<image>
 ```

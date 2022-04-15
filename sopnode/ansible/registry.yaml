@@ -3,104 +3,7 @@
   hosts: controllers
   remote_user: root
   tasks:
-    - name: Deploy certificates (ConfigMap)
-      kubernetes.core.k8s:
-        state: present
-        definition:
-          apiVersion: v1
-          kind: ConfigMap
-          metadata:
-            name: certificates
-            namespace: onos-ns
-          data:
-            cert.pem: |
-              -----BEGIN CERTIFICATE-----
-              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
-              H6ydXr0ZC+M=
-              -----END CERTIFICATE-----
-            key.pem: |
-              -----BEGIN PRIVATE KEY-----
-              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
-              a9TppBwhf39y0PFC4EZjLTOujFntOb9S
-              -----END PRIVATE KEY-----
-
+    # Assuming creation of the secret with kubectl create secret tls registry-service-secret --cert=registry-service.crt --key=registry-service.key
     - name: Deploy registry
       kubernetes.core.k8s:
         state: present
@@ -124,8 +27,8 @@
               spec:
                 volumes:
                   - name: certificates
-                    configMap:
-                      name: certificates
+                    secret:
+                      secretName: registry-service-secret
                 containers:
                 - name: onos
                   image: registry:2
@@ -133,41 +36,14 @@
                   - name: REGISTRY_HTTP_ADDR
                     value: 0.0.0.0:443
                   - name: REGISTRY_HTTP_TLS_CERTIFICATE
-                    value: /certs/cert.pem
+                    value: /certs/tls.crt
                   - name: REGISTRY_HTTP_TLS_KEY
-                    value: /certs/key.pem
+                    value: /certs/tls.key
                   ports:
                   - containerPort: 443
                   volumeMounts:
                     - name: certificates
                       mountPath: /certs
-
-    - name: Deploy test-ct
-      kubernetes.core.k8s:
-        state: present
-        definition:
-          apiVersion: apps/v1
-          kind: Deployment
-          metadata:
-            name: test-ct
-            namespace: onos-ns
-            labels:
-              app: test-ct
-          spec:
-            replicas: 1
-            selector:
-              matchLabels:
-                app: test-ct
-            template:
-              metadata:
-                labels:
-                  app: test-ct
-              spec:
-                containers:
-                - name: test-ct
-                  image: ubuntu
-                  command: ["sleep"]
-                  args: ["3600"]
 
     - name: Deploy registry-service
       kubernetes.core.k8s:
