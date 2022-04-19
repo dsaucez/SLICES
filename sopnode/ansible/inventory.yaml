@@ -3,16 +3,32 @@ all:
     switches:
       hosts:
         sopnode-sw1-eth0.inria.fr:
-          ansible_ssh_private_key_file: /workspaces/SLICES/sopnode/ansible/id_rsa_silecs
-          ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+#          ansible_ssh_private_key_file: /workspaces/SLICES/sopnode/ansible/id_rsa_silecs
+#          ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
         sopnode-sw2-eth0.inria.fr:
           ansible_ssh_private_key_file: /workspaces/SLICES/sopnode/ansible/id_rsa_silecs
           ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+#        sopnode-sw3-eth0.inria.fr:
+#          ansible_ssh_private_key_file: /workspaces/SLICES/sopnode/ansible/id_rsa_silecs
+#          ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+    controllers:
+      hosts:
+#          ansible_ssh_private_key_file: /workspaces/SLICES/sopnode/ansible/id_rsa_silecs
+#          ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+#        sopnode-sw2-eth0.inria.fr:
+#          ansible_ssh_private_key_file: /workspaces/SLICES/sopnode/ansible/id_rsa_silecs
+#          ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
         sopnode-sw3-eth0.inria.fr:
           ansible_ssh_private_key_file: /workspaces/SLICES/sopnode/ansible/id_rsa_silecs
           ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
-    controllers:
+    masters:
       hosts:
+#        sopnode-sw1-eth0.inria.fr:
+#          ansible_ssh_private_key_file: /workspaces/SLICES/sopnode/ansible/id_rsa_silecs
+#          ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
         sopnode-sw2-eth0.inria.fr:
           ansible_ssh_private_key_file: /workspaces/SLICES/sopnode/ansible/id_rsa_silecs
           ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+#        sopnode-sw3-eth0.inria.fr:
+#          ansible_ssh_private_key_file: /workspaces/SLICES/sopnode/ansible/id_rsa_silecs
+#          ansible_ssh_common_args: '-o StrictHostKeyChecking=no'

@@ -1,0 +1,10 @@
+---
+- name: Install k8s master
+  hosts: masters
+  remote_user: root
+  roles:
+    - role: k8s-master
+# TO BE DONE Automatically:
+# kubeadm init --pod-network-cidr=10.244.10.0/16 --upload-certs
+# export KUBECONFIG=/etc/kubernetes/admin.conf
+# kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml

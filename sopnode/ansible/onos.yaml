@@ -136,6 +136,7 @@
         SDE_VERSION: 9.7.0
         SDE_DOCKER_IMG: p4-studio
       when: fabric_oar.stat.exists == false
+      register: build_profiles
 
     #FIXME: wait for ONOS to be READY
     - name: Install pipeconfs
@@ -145,7 +146,7 @@
       environment:
         SDE_VERSION: 9.7.0
         SDE_DOCKER_IMG: p4-studio
-      when: fabric_oar.stat.exists == true
+      when: fabric_oar.stat.exists == true or build_profiles.failed == false
 
     - name: Push netcfg
       shell: "make netcfg ONOS_HOST={{ onos_cluster.result.spec.clusterIP }}"

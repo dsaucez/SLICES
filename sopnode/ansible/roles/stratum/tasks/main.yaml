@@ -1,16 +1,4 @@
 ---
-- name: Setting hugepages
-  ansible.posix.sysctl:
-    name: vm.nr_hugepages
-    value: "128"
-    state: present
-- name: Mount hugepage
-  ansible.posix.mount:
-    name: /mnt/huge
-    src: nodev
-    fstype: hugetlbfs
-    opts: "pagesize=1GB"
-    state: mounted
 - name: Retrieve stratum
   ansible.builtin.git:
     repo: https://github.com/stratum/stratum.git
