@@ -47,22 +47,34 @@ The issue is that compilation fails for the open source SONiC for the p4 platfor
   ssh root@fit01
   [fit01] kube-install.sh join-cluster r2lab@sopnode-l1.inria.fr
   ```
-- [ ] en masse joins
+- [x] en masse joins
   for instance, to do it en masse
   ```
-  nodes -a ~4 ~13 ~15 ~31 ~37
+  [faraday]
+  nodes -a 
+  n- 4 14 18 31 37
   rload -i kubernetes
   rwait
   map kube-install.sh join-cluster r2lab@sopnode-l1.inria.fr
   ```
-  however this kind of synchronous approach seems to cause a burst and some nodes fail to reach - to be investigated...
-- [ ] study consequences of the R2lab workflow  
+  this turned out to work reliably on my first attempt to join these 32 nodes simultaneously with kube-install-v0.4
+- [x] study consequences on the R2lab workflow  
   users will never leave properly !  
   so see how the k8s cluster reacts to a R2lab node being re-imaged
   - [x] apparently the k8s cluster realizes rather quick that the node is down
-  - [ ] however it might make sense to help it by doing an explicit `kubectl delete node` on stale nodes  
-  **DOES NOT SEEM TOO SERIOUS ?** 
-  - [ ] what happens if the same node tries to join again after it is re-imaged - (and the cluster is not cleaned up)  
-  so here the answer is, no big deal, the cluster realizes on its own (in about one minute) that the node has gone; it gets marked 'NotReady'; the same node re-imaged later on can join again with no particular fuss (the time for re-imaging seems enough :)
-  - [ ] now all this was with an empty load (no pod on the fit nodes);
-    of course when pods are going to be running on the nodes all this might need more care...
+  - [x] from a sopnode, the following bash functions are available
+    - `fit-nodes` `fit-deads` `fit-alives` gives list of fit nodes in the cluster, whether they are alive or not
+    - `fit-drain-nodes` `fit-delete-nodes` to cleanse the cluster from any reference to a fit node
+
+- [x] en masse leave
+  ```
+  [faraday]
+  map kube-install.sh destroy-cluster
+
+  [sopnode]
+  fit-drain-nodes
+  fit-delete-nodes
+  ```
+- [x] labelling and selecting nodes  
+  * use `fit-label-nodes` from a sopnode box once the nodes have joined the cluster; this sets `r2lab/node=true` on all R2lab nodes (actually all nodes returned by `fit-nodes`)
+  * see https://github.com/parmentelat/kube-install/tree/devel/kiada for examples of how this can be used to select a particular node, or any node on the R2lab or the sopnode side
