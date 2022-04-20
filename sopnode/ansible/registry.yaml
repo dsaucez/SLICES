@@ -1,6 +1,6 @@
 ---
 - name: REGISTRY
-  hosts: controllers
+  hosts: masters
   remote_user: root
   tasks:
     # Assuming that secrets were created before with

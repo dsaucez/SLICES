@@ -1,0 +1,37 @@
+- name: Create certificate directory
+  ansible.builtin.file:
+    path: certs
+    state: directory
+
+- name: Configuring v3 extension
+  ansible.builtin.template:
+    src: v3.ext.j2
+    dest: certs/v3.ext
+
+- name: Generate an OpenSSL private key
+  community.crypto.openssl_privatekey:
+    path: certs/{{ certificate.common_name }}.pem
+    type: RSA
+    size: 4096
+
+- name: Generate an OpenSSL Certificate Signing Request
+  community.crypto.openssl_csr:
+    path: certs/{{ certificate.common_name }}.csr
+    privatekey_path: certs/{{ certificate.common_name }}.pem
+    common_name: '{{ certificate.common_name }}'
+    subject_alt_name: "{{ item.value | map('regex_replace', '^', 'DNS:') | list }}"
+  with_dict:
+    dns_server: '{{ certificate.subjectAltName }}'
+
+- name: Generate an OpenSSL certificate signed with the CA certificate
+  shell: openssl x509 -req -days 365 -in registry-service.csr -CA {{ certificate.ca_path }} -CAkey {{ certificate.ca_privatekey_path }} -CAcreateserial  -out registry-service.crt -extfile v3.ext
+  args:
+    chdir: certs
+
+#- name: Generate an OpenSSL certificate signed with the CA certificate
+#  community.crypto.x509_certificate:
+#    path: certs/{{ certificate.common_name }}.crt
+#    csr_path: certs/{{ certificate.common_name }}.csr
+#    ownca_path: '{{ certificate.ca_path }}'
+#    ownca_privatekey_path: '{{ certificate.ca_privatekey_path }}'
+#    provider: ownca

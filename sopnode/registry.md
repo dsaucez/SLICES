@@ -40,10 +40,6 @@ issuerAltName          = issuer:copy
 ```
 
 ```bash
-openssl genrsa -out keypair.key 4096
-```
-
-```bash
 openssl req -new -out registry-service.csr -newkey rsa:4096 -nodes -sha256 -keyout registry-service.key -config registry-service.conf 
 ```
 
