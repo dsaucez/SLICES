@@ -2,5 +2,5 @@ subjectKeyIdentifier   = hash
 authorityKeyIdentifier = keyid:always,issuer:always
 basicConstraints       = CA:TRUE
 keyUsage               = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment, keyAgreement, keyCertSign
-#subjectAltName         = DNS:registry-service
+#subjectAltName         = DNS:{{ certificate.common_name}}
 issuerAltName          = issuer:copy

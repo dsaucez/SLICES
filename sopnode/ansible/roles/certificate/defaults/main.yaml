@@ -2,6 +2,6 @@
 certificate:
   ca_path: /etc/kubernetes/pki/ca.crt
   ca_privatekey_path: /etc/kubernetes/pki/ca.key
-  common_name: registry-service
+  common_name: '{{ certificate_name }}'
   subjectAltName:
-    - registry-service
+    - '{{ certificate_name }}'
