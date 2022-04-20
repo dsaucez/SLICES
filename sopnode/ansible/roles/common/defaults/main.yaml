@@ -12,3 +12,5 @@ debian_dependencies:
 python_packages:
     - name: docker
       version: 4.4.4
+    - name: kubernetes
+      version: 18.20.0
