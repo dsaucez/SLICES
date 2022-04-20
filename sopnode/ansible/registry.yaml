@@ -1,9 +1,11 @@
 ---
-- name: ONOS
+- name: REGISTRY
   hosts: controllers
   remote_user: root
   tasks:
-    # Assuming creation of the secret with kubectl create secret tls registry-service-secret --cert=registry-service.crt --key=registry-service.key
+    # Assuming that secrets were created before with
+    #           kubectl create secret tls registry-service-secret --cert=registry-service.crt --key=registry-service.key
+    #           kubectl create secret generic auth-secret --from-file=htpasswd
     - name: Deploy registry
       kubernetes.core.k8s:
         state: present
@@ -12,7 +14,7 @@
           kind: Deployment
           metadata:
             name: registry
-            namespace: onos-ns
+            namespace: default
             labels:
               app: registry
           spec:
@@ -29,8 +31,13 @@
                   - name: certificates
                     secret:
                       secretName: registry-service-secret
+                  - name: repo-vol
+                    emptyDir: {}
+                  - name: auth-vol
+                    secret:
+                      secretName: auth-secret
                 containers:
-                - name: onos
+                - name: registry
                   image: registry:2
                   env:
                   - name: REGISTRY_HTTP_ADDR
@@ -39,11 +46,22 @@
                     value: /certs/tls.crt
                   - name: REGISTRY_HTTP_TLS_KEY
                     value: /certs/tls.key
+                  - name: REGISTRY_AUTH
+                    value: "htpasswd"
+                  - name: REGISTRY_AUTH_HTPASSWD_REALM
+                    value: "Registry Realm"
+                  - name: REGISTRY_AUTH_HTPASSWD_PATH
+                    value: "/auth/htpasswd"
                   ports:
                   - containerPort: 443
                   volumeMounts:
                     - name: certificates
                       mountPath: /certs
+                    - name: repo-vol
+                      mountPath: /var/lib/registry
+                    - name: auth-vol
+                      mountPath: "/auth"
+                      readOnly: true
 
     - name: Deploy registry-service
       kubernetes.core.k8s:
@@ -53,7 +71,7 @@
           kind: Service
           metadata:
             name: registry-service
-            namespace: onos-ns
+            namespace: default
           spec:
             selector:
               app: registry
