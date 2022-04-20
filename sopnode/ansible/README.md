@@ -4,6 +4,9 @@ ansible-galaxy collection install ansible.posix
 ansible-galaxy collection install community.kubernetes
 ansible-galaxy collection install cloud.common
 ansible-galaxy collection install kubernetes.core
+ansible-galaxy collection install community.crypto
+ansible-galaxy collection install community.general
+ansible-galaxy collection install community.docker
 ```
 
 ## Run playbooks
