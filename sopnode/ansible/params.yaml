@@ -5,7 +5,11 @@ token: DATA+OMITTED
 certificate_authority_data : REDACTED
 client_certificate_data: REDACTED
 client_key_data: REDACTED
-auths:
+auth:
   - login: DATA+OMITTED
-    password: DATA+OMITTED
-auths_file: REDACTED
+    password: REDACTED
+auth_file: DATA+OMITTED
+registry_name: DATA+OMITTED
+path:
+  certificate: DATA+OMITTED
+  authentication: DATA+OMITTED
