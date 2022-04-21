@@ -5,6 +5,7 @@
   - name: Create the token
     shell: kubeadm token create --ttl 15m
     register: admin_token
+  # Credit: inspired from https://stackoverflow.com/a/47811099  
   - name: "Save the token to a dummy host"
     add_host:
       name:   "K8Stoken_HOLDER"
