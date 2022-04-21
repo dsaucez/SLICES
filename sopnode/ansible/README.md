@@ -12,7 +12,8 @@ ansible-galaxy collection install community.docker
 ## Run playbooks
 
 ```bash
-ansible-playbook  -i inventory.yaml master.yaml --extra-vars "@params.yaml"
+ansible-playbook  -i inventory.yaml k8s-master.yaml --extra-vars "@params.yaml"
+ansible-playbook  -i inventory.yaml k8s-node.yaml --extra-vars "@sw1.params.yaml"
 ansible-playbook  -i inventory.yaml onos.yaml --extra-vars "@params.yaml"
 ansible-playbook  -i inventory.yaml registry.yaml --extra-vars "@params.yaml"
 ansible-playbook  -i inventory.yaml stratum.yaml --extra-vars "@params.yaml"
