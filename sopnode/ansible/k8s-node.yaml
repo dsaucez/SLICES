@@ -1,0 +1,19 @@
+- name: Create a token on k8s master
+  hosts: masters
+  remote_user: root
+  tasks:
+  - name: Create the token
+    shell: kubeadm token create --ttl 15m
+    register: admin_token
+  - name: "Save the token to a dummy host"
+    add_host:
+      name:   "K8Stoken_HOLDER"
+      _token:  "{{ admin_token.stdout_lines[0] }}"
+
+- name: Deploy k8s nodes
+  hosts: switches
+  remote_user: root
+  vars:
+    token: "{{ hostvars['K8Stoken_HOLDER']['_token'] }}"
+  roles:
+    - role: k8s-node
