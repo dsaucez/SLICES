@@ -1,15 +1,17 @@
 ---
-master: DATA+OMITTED
-namespace: DATA+OMITTED
-token: DATA+OMITTED
-certificate_authority_data : REDACTED
-client_certificate_data: REDACTED
-client_key_data: REDACTED
+#registry config
+registry_name: DATA+OMITTED
 auth:
   - login: DATA+OMITTED
-    password: REDACTED
+    password: DATA+OMITTED
+  - login: DATA+OMITTED
+    password: DATA+OMITTED
 auth_file: DATA+OMITTED
-registry_name: DATA+OMITTED
 path:
   certificate: DATA+OMITTED
   authentication: DATA+OMITTED
+
+# k8s config
+kube_config_local_path: DATA+OMITTED
+master: DATA+OMITTED
+subnet: DATA+OMITTED

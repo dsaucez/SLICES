@@ -22,10 +22,6 @@
     htpasswd_image_name: "{{ lookup( 'password', '/dev/null length=32' ) | to_uuid }}"
   when: auth is defined
 
-- name: htpasswd generator image name
-  debug:
-    var: htpasswd_image_name
-
 - name: Copy Dockerfile
   ansible.builtin.copy:
     src: Dockerfile

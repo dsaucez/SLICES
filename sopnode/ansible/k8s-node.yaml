@@ -2,19 +2,40 @@
   hosts: masters
   remote_user: root
   tasks:
+
+  - name: Create temporary build directory
+    ansible.builtin.tempfile:
+      state: directory
+      suffix: build
+    delegate_to: localhost
+    register: tempfile
+
+  - name: Get configuration
+    ansible.builtin.fetch:
+      src: /etc/kubernetes/admin.conf
+      dest: "{{ tempfile.path }}/kube_config"
+      flat: yes
+
   - name: Create the token
     shell: kubeadm token create --ttl 15m
     register: admin_token
+
   # Credit: inspired from https://stackoverflow.com/a/47811099  
   - name: "Save the token to a dummy host"
     add_host:
-      name:   "K8Stoken_HOLDER"
+      name:   "ansible_dummy_host"
       _token:  "{{ admin_token.stdout_lines[0] }}"
+      _kube_config: "{{ tempfile.path }}/kube_config"
+      _master: '{{ ansible_default_ipv4.address }}'
 
-- name: Deploy k8s nodes
+- name: Install k8s nodes
   hosts: switches
   remote_user: root
   vars:
-    token: "{{ hostvars['K8Stoken_HOLDER']['_token'] }}"
+    token: "{{ hostvars['ansible_dummy_host']['_token'] }}"
+    kube_config_local_path: "{{ hostvars['ansible_dummy_host']['_kube_config'] }}"
+    master: "{{ hostvars['ansible_dummy_host']['_master'] }}"
+
   roles:
     - role: k8s-node
+    - role: k8s-ca-certificate

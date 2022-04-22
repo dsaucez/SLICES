@@ -1,0 +1,8 @@
+- name: Initialize the master node
+  shell: 'kubeadm init --pod-network-cidr={{ subnet }} --upload-certs'
+  register: kubeadm_init
+
+- name: Load network services
+  shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
