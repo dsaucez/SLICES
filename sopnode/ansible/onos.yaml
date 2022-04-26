@@ -138,6 +138,7 @@
       when: fabric_oar.stat.exists == false
       register: build_profiles
 
+    # NOTE:XXX: #1
     - name: Wait for ONOS deployment to be ready
       shell: kubectl get deployment onos-deployment --namespace onos-ns -o=jsonpath='{.status.readyReplicas}/{.status.replicas}'
       register: _onos_deployment
