@@ -2,7 +2,18 @@
   shell: 'kubeadm init --pod-network-cidr={{ subnet }} --upload-certs'
   register: kubeadm_init
 
-- name: Load network services
-  shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+- name: Set Calico installation instructions
+  ansible.builtin.template:
+    src: calico.yaml.j2
+    dest: calico.yaml
+
+- name: Install Calico
+  shell: kubectl create -f calico.yaml
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+# XXX: should make a loopback to be cleaner
+- name: Impose Calico to use admin interface for IP_AUTODETECTION_METHOD
+  shell: 'kubectl set env daemonset/calico-node -n kube-system IP_AUTODETECTION_METHOD=interface=ma1'
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
