@@ -4202,6 +4202,9 @@ spec:
               name: kubernetes-services-endpoint
               optional: true
           env:
+            # XXX
+            - name: IP_AUTODETECTION_METHOD
+              value: "interface=ma1"
             - name: KUBERNETES_NODE_NAME
               valueFrom:
                 fieldRef:
@@ -4229,6 +4232,8 @@ spec:
               name: kubernetes-services-endpoint
               optional: true
           env:
+            - name: IP_AUTODETECTION_METHOD
+              value: "{{ IP_AUTODETECTION_METHOD }}"
             # Name of the CNI config file to create.
             - name: CNI_CONF_NAME
               value: "10-calico.conflist"
@@ -4280,6 +4285,8 @@ spec:
               name: kubernetes-services-endpoint
               optional: true
           env:
+            - name: IP_AUTODETECTION_METHOD
+              value: "{{ IP_AUTODETECTION_METHOD }}"
             # Use Kubernetes API as the backing datastore.
             - name: DATASTORE_TYPE
               value: "kubernetes"
