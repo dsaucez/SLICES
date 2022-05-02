@@ -144,3 +144,9 @@ so the NAT on faraday does not behave as expected in this particular instance
 
 I have reasons to believe that fixing this would help a lot, because before I played with the github address, I was trying with the apiserver IP adress (sopnode-w2)
 and the same was happening; i.e. the konnectivity-agent container seems unable to connect to the API server on the master node
+
+**EDIT**
+
+there's one big difference indeed  
+* once NAT has rewritten the packet with a 192.168.3.3 dest address, this packet is routable by faraday
+* but when it is rewritten as 10.244.x.x, then this falls out of the current routes, and so I guess it gets expelled back on the outside somehow
