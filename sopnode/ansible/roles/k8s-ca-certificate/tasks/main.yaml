@@ -9,7 +9,7 @@
     dest: /usr/local/share/ca-certificates/kubernetes/ca.crt
     state: link
 
-- name: Add k8s CA certificate (2/3)
+- name: Add k8s CA certificate (3/3)
   shell: update-ca-certificates
 
 - name: Load k8s CA certificate in docker

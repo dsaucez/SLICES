@@ -27,11 +27,3 @@
   shell: openssl x509 -req -days 365 -in {{ certificate.common_name}}.csr -CA {{ certificate.ca_path }} -CAkey {{ certificate.ca_privatekey_path }} -CAcreateserial  -out {{ certificate.common_name}}.crt -extfile {{ certificate.common_name }}.v3.ext
   args:
     chdir: '{{ certificate_path }}'
-
-#- name: Generate an OpenSSL certificate signed with the CA certificate
-#  community.crypto.x509_certificate:
-#    path: '{{ certificate_path }}/{{ certificate.common_name }}.crt'
-#    csr_path: '{{ certificate_path }}/{{ certificate.common_name }}.csr'
-#    ownca_path: '{{ certificate.ca_path }}'
-#    ownca_privatekey_path: '{{ certificate.ca_privatekey_path }}'
-#    provider: ownca

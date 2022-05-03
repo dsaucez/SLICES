@@ -2,7 +2,18 @@
   shell: 'kubeadm init --pod-network-cidr={{ subnet }} --upload-certs'
   register: kubeadm_init
 
-- name: Load network services
-  shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+- name: Create a symbolic link /etc/kubernetes/admin.conf -> ~/.kube/config
+  ansible.builtin.file:
+    src: /etc/kubernetes/admin.conf
+    dest: ~/.kube/config
+    state: link
+
+- name: Set Calico installation instructions
+  ansible.builtin.template:
+    src: calico.yaml.j2
+    dest: calico.yaml
+
+- name: Install Calico
+  shell: kubectl create -f calico.yaml
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
