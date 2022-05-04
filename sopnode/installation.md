@@ -288,7 +288,7 @@ Edit `tofino-netcfg.json` to become
 }
 ```
 
-For BMv2 switches, use `"pipeconf": "org.stratumproject.fabric.bmv2" instead of `"pipeconf": "org.stratumproject.fabric.montara_sde_9_7_0"`
+For BMv2 switches, use `"pipeconf": "org.stratumproject.fabric.bmv2"` instead of `"pipeconf": "org.stratumproject.fabric.montara_sde_9_7_0"` and `"driver": "stratum-bmv2"` instead of `"driver": "stratum-tofino"`.
 
 ```bash
 export ONOS_HOST=localhost
