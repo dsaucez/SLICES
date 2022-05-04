@@ -110,8 +110,16 @@
         path: ~/fabric-tna/target/fabric-tna-1.2.0-SNAPSHOT.oar
       register: fabric_oar
 
+    - name: Retrieve fabric-tna
+      ansible.builtin.git:
+        repo: https://github.com/stratum/fabric-tna.git
+        dest: fabric-tna
+        version: 126aba9
+        force: yes
+      when: fabric_oar.stat.exists == false
+
     - name: Make fabric
-      shell: make fabric
+      shell: make {{ fabric_profile | default('fabric') }}
       args:
         chdir: fabric-tna
       environment:
@@ -129,7 +137,7 @@
       when: fabric_oar.stat.exists == false
 
     - name: Build profiles
-      shell: make build PROFILES="fabric"
+      shell: make build PROFILES="{{ fabric_profile | default('fabric') }}"
       args:
         chdir: fabric-tna
       environment:
@@ -155,6 +163,7 @@
         SDE_DOCKER_IMG: p4-studio
       when: fabric_oar.stat.exists == true or build_profiles.failed == false
 
+    # NOTE:XXX: #5
     - name: Push netcfg
       shell: "make netcfg ONOS_HOST={{ onos_cluster.result.spec.clusterIP }}"
       args:

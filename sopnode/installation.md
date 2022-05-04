@@ -236,6 +236,60 @@ Edit `tofino-netcfg.json` to become
 }
 ```
 
+```json
+{
+  "devices": {
+    "device:sopnode-sw1": {
+      "segmentrouting" : {
+        "ipv4NodeSid" : 101,
+        "ipv4Loopback" : "192.168.1.101",
+        "routerMac" : "00:90:fb:71:64:71",
+        "isEdgeRouter" : true,
+        "adjacencySids" : []
+      },
+      "basic": {
+        "name": "sw1",
+        "managementAddress": "grpc://138.96.245.11:9559?device_id=1",
+        "driver": "stratum-tofino",
+        "pipeconf": "org.stratumproject.fabric.montara_sde_9_7_0"
+      }
+    },
+    "device:sopnode-sw2": {
+      "segmentrouting" : {
+        "ipv4NodeSid" : 102,
+        "ipv4Loopback" : "192.168.1.102",
+        "routerMac" : "00:90:fb:6e:5e:e4",
+        "isEdgeRouter" : true,
+        "adjacencySids" : []
+      },
+      "basic": {
+        "name": "sw2",
+        "managementAddress": "grpc://138.96.245.12:9559?device_id=1",
+        "driver": "stratum-tofino",
+        "pipeconf": "org.stratumproject.fabric.montara_sde_9_7_0"
+      }
+    },
+    "device:sopnode-sw3": {
+      "segmentrouting" : {
+        "ipv4NodeSid" : 103,
+        "ipv4Loopback" : "192.168.1.103",
+        "routerMac" : "00:90:fb:73:e2:d8",
+        "isEdgeRouter" : true,
+        "adjacencySids" : []
+      },
+      "basic": {
+        "name": "sw3",
+        "managementAddress": "grpc://138.96.245.13:9559?device_id=1",
+        "driver": "stratum-tofino",
+        "pipeconf": "org.stratumproject.fabric.montara_sde_9_7_0"
+      }
+    }
+  }
+}
+```
+
+For BMv2 switches, use `"pipeconf": "org.stratumproject.fabric.bmv2" instead of `"pipeconf": "org.stratumproject.fabric.montara_sde_9_7_0"`
+
 ```bash
 export ONOS_HOST=localhost
 ```
