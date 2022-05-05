@@ -150,3 +150,60 @@ and the same was happening; i.e. the konnectivity-agent container seems unable t
 there's one big difference indeed  
 * once NAT has rewritten the packet with a 192.168.3.3 dest address, this packet is routable by faraday
 * but when it is rewritten as 10.244.x.x, then this falls out of the current routes, and so I guess it gets expelled back on the outside somehow
+
+# troubleshooting BGP
+
+May 5 - we observe that the calico-node pod on the FIT side doesn't make it to the `Ready` state
+
+in order to troubleshoot that, I have captured the bgp traffic as seen on both faraday and fit23
+
+```
+tcpdump host 138.96.245.52 and port bgp -nn -c 20 
+```
+
+and here's what I see (the pcap files are added to this repo too)
+
+* the traffic makes it to the node all right
+* however there are some TCP-Reset packets (outlined in red by wireshark) that look pretty suspicious
+* beyond that, I do not speak BGP so I can't tell more about the effectiveness of all this
+
+![](faraday-bgp.png)
+![](fit23-bgp.png)
+
+
+# tests
+
+assuming we have
+* one master on the sopnode side (abbrev L for leader)
+* one worker on the sopnode side (abbrev W for worker)
+* one worker on the R2lab side (NAT'ed behind faraday.inria.fr) (abbrev F for fit)
+
+and assuming we have one pod in each node that has fedora35 and all the usual networking tools (ping, tcpdump, ip, host, hostname, ....)
+
+Notations
+
+| sign | meaning | comment |
+|-|-|-|
+| L | pod in L |
+| LN | public IP address of the leader node | 138.96.x.x |
+| W | pod in W |
+| WN | public IP address of the worker node | 138.96.x.x - same subnet as L |
+| F | pod in F |
+| FN | private IP address of the fit node | (192.168.0.3)| 
+| | |routable in the faraday island |
+| D | the k8s DNS service | 10.96.0.10 |
+| 8 | external dns | 8.8.8.8 |
+| GH | one github machine | 140.82.121.4 |
+| | with a web service alive on 443 |
+
+here's what we'd like to be have 
+
+| from | to | link | desired | observed |
+|-|-|-|-|-|
+| L | L | ping | yes | |
+| L | LN | ping | yes | |
+| L | W | ping | yes | |
+| L | F | ping | yes | | 
+| L | GH | nc on 443 | yes | |
+
+*to be completed..*
