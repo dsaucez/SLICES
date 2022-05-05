@@ -156,6 +156,7 @@ there's one big difference indeed
 May 5 - we observe that the calico-node pod on the FIT side doesn't make it to the `Ready` state
 
 in order to troubleshoot that, I have captured the bgp traffic as seen on both faraday and fit23
+(and also, but later on, from w2)
 
 ```
 tcpdump host 138.96.245.52 and port bgp -nn -c 20 
@@ -167,8 +168,15 @@ and here's what I see (the pcap files are added to this repo too)
 * however there are some TCP-Reset packets (outlined in red by wireshark) that look pretty suspicious
 * beyond that, I do not speak BGP so I can't tell more about the effectiveness of all this
 
-![](faraday-bgp.png)
+## bgp traffic observed on the FIT node
 ![](fit23-bgp.png)
+
+## bgp traffic observed on faraday
+![](faraday-bgp.png)
+
+## bgp traffic observed (later on) on w2
+![](w2-bgp.png)
+
 
 
 # tests
