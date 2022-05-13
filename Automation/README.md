@@ -1,5 +1,3 @@
-Material related to the evaluation of automation tools in the context of the SLICES project.
-
 # BMV2
 
 ## BMV2 INSTALLATION 
