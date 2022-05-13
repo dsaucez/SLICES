@@ -65,7 +65,7 @@ git clone https://github.com/p4lang/PI.git
 cd PI
 git submodule update --init --recursive
 ./autogen.sh
-./configure --with-proto --without-internal-rpc --without-cli --without-bmv2 --with-sysrepo
+./configure --with-proto --without-internal-rpc --without-cli --without-bmv2 [--with-sysrepo]
 make
 sudo make install
 sudo ldconfig
@@ -77,7 +77,7 @@ git clone https://github.com/p4lang/behavioral-model.git bmv2_tmp
 cd bmv2_tmp
 sudo ./install_deps.sh
 ./autogen.sh
-./configure
+./configure --with-pi [--without-thrift] [--without-nanomsg]
 make
 sudo make install  # if you need to install bmv2
 ```
