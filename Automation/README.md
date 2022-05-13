@@ -90,13 +90,16 @@ sudo apt-get update
 sudo apt install p4lang-p4c
 ```
 ### docker ubuntu
+Docker need to be installed for stratum to run
 ### bmv2 stratum
 ```console
 git clone https://github.com/stratum/stratum.git
 cd stratum
 sudo chmod 666 /var/run/docker.sock
 ./setup_dev_env.sh
-#now you are inside the container
+```
+now you are inside the container
+```console
 bazel build //stratum/hal/bin/bmv2:stratum_bmv2_deb
 cp -f /stratum/bazel-bin/stratum/hal/bin/bmv2/stratum_bmv2_deb.deb /stratum/
 [sudo] apt-get update
