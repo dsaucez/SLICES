@@ -1,0 +1,7 @@
+---
+certificate:
+  ca_path: /etc/kubernetes/pki/ca.crt
+  ca_privatekey_path: /etc/kubernetes/pki/ca.key
+  common_name: '{{ certificate_name }}'
+  subjectAltName:
+    - '{{ certificate_name }}'

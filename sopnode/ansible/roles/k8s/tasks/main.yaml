@@ -30,16 +30,6 @@
     path: /etc/kubernetes/manifests
     state: directory
 
-- name: Configuring Kube config file
-  ansible.builtin.template:
-    src: kubectl.config.j2
-    dest: ~/.kube/config
-
-- name: Configuring Kube config file
-  ansible.builtin.template:
-    src: kubectl.config.j2
-    dest: ~/.kube/config
-
 - name: Prepare kubeadm
   ansible.builtin.lineinfile:
     path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf

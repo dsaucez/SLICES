@@ -1,13 +1,4 @@
 ---
-- name: Install dependencies
-  ansible.builtin.apt:
-    name:
-      - apt-transport-https
-      - ca-certificates
-    autoclean: yes
-    update_cache: true
-    state: present
-
 - name: Add k8s APT key
   ansible.builtin.apt_key:
     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg

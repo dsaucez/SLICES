@@ -1,0 +1,52 @@
+- name: Create authentication directory
+  ansible.builtin.file:
+    path: '{{ authentication_path }}'
+    state: directory
+
+- name: Copy authentication file
+  ansible.builtin.copy:
+    src:  '{{ auth_file }}'
+    dest: '{{ authentication_path }}/htpasswd'
+    mode: '0600'
+  when: auth_file is defined
+
+- name: Create authentication file
+  ansible.builtin.file:
+    path: '{{ authentication_path }}/htpasswd'
+    state: touch
+    mode: '0600'
+  when: auth_file is not defined
+
+- name: Generate random htpasswd generator image name
+  set_fact:
+    htpasswd_image_name: "{{ lookup( 'password', '/dev/null length=32' ) | to_uuid }}"
+  when: auth is defined
+
+- name: Copy Dockerfile
+  ansible.builtin.copy:
+    src: Dockerfile
+    dest: '{{ authentication_path }}/Dockerfile'
+  when: auth is defined
+
+- name: Build the htpasswd generator
+  community.docker.docker_image:
+    build:
+      path: '{{ authentication_path }}'
+    name: '{{ htpasswd_image_name }}'
+    source: build
+  when: auth is defined
+
+- name: Add users to the authentication file
+  shell: docker run --rm {{ htpasswd_image_name }} {{ item.login }} {{ item.password }} >> htpasswd
+  args:
+    chdir: '{{ authentication_path }}'
+  with_items: "{{ auth }}"
+  loop_control:
+    label: "{{ item.login }}"
+  when: auth is defined
+
+- name: Remove the htpasswd generator image
+  community.docker.docker_image:
+    state: absent
+    name: '{{ htpasswd_image_name }}'
+  when: auth is defined

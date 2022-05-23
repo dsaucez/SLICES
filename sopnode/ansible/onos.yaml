@@ -15,6 +15,27 @@
         kind: Namespace
         state: present
 
+    - name: Deploy shared state (ConfigMap)
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: startup-scripts
+            namespace: onos-ns
+          data:
+            activate-barefoot: |
+              #!/bin/bash
+              host=$(hostname -s)
+              status_code=$(curl -u onos:rocks --silent --output /dev/null --write-out '%{http_code}' -X POST http://${host}:8181/onos/v1/applications/org.onosproject.drivers.barefoot/active)
+              if [ ${status_code} == "200" ]
+              then
+                      exit 0
+              else
+                      exit 1
+              fi
+
     - name: Deploy ONOS
       kubernetes.core.k8s:
         state: present
@@ -36,6 +57,10 @@
                 labels:
                   app: onos
               spec:
+                volumes:
+                  - name: startup
+                    configMap:
+                      name: startup-scripts
                 containers:
                 - name: onos
                   image: onosproject/onos:2.7.0
@@ -44,6 +69,18 @@
                   - containerPort: 5005
                   - containerPort: 8101
                   - containerPort: 8181
+                  volumeMounts:
+                    - name: startup
+                      mountPath: /startup
+                  startupProbe:
+                    exec:
+                      command:
+                        - /bin/bash
+                        - /startup/activate-barefoot
+                    failureThreshold: 6
+                    initialDelaySeconds: 10
+                    periodSeconds: 10
+                    timeoutSeconds: 10
 
     - name: Deploy ONOS-service
       kubernetes.core.k8s:
@@ -68,24 +105,21 @@
           - "ONOS clusterIP is {{ onos_cluster.result.spec.clusterIP }}"
           - "ssh -A -i ~/.ssh/id_rsa_silecs -L 8181:{{ onos_cluster.result.spec.clusterIP }}:8181 root@sopnode-sw2-eth0.inria.fr"
 
-    - name: Activate Barefoot Drivers (may take up to 5 minutes)
-      uri:
-        url: http://{{ onos_cluster.result.spec.clusterIP }}:8181/onos/v1/applications/org.onosproject.drivers.barefoot/active
-        user: onos
-        password: rocks
-        method: POST
-      register: _result
-      until: _result.status == 200
-      retries: 30 # 30 * 10s = 300s = 5min
-      delay: 10   # Every 10s
-
     - name: check if fabric-tna is built
       stat:
         path: ~/fabric-tna/target/fabric-tna-1.2.0-SNAPSHOT.oar
       register: fabric_oar
 
+    - name: Retrieve fabric-tna
+      ansible.builtin.git:
+        repo: https://github.com/stratum/fabric-tna.git
+        dest: fabric-tna
+        version: 126aba9
+        force: yes
+      when: fabric_oar.stat.exists == false
+
     - name: Make fabric
-      shell: make fabric
+      shell: make {{ fabric_profile | default('fabric') }}
       args:
         chdir: fabric-tna
       environment:
@@ -103,13 +137,22 @@
       when: fabric_oar.stat.exists == false
 
     - name: Build profiles
-      shell: make build PROFILES="fabric"
+      shell: make build PROFILES="{{ fabric_profile | default('fabric') }}"
       args:
         chdir: fabric-tna
       environment:
         SDE_VERSION: 9.7.0
         SDE_DOCKER_IMG: p4-studio
       when: fabric_oar.stat.exists == false
+      register: build_profiles
+
+    # NOTE:XXX: #1
+    - name: Wait for ONOS deployment to be ready
+      shell: kubectl get deployment onos-deployment --namespace onos-ns -o=jsonpath='{.status.readyReplicas}/{.status.replicas}'
+      register: _onos_deployment
+      until: _onos_deployment.stdout == "1/1"
+      retries: 30 # 30 * 10s = 300s = 5min
+      delay: 10   # Every 10s
 
     - name: Install pipeconfs
       shell: "make pipeconf-install ONOS_HOST={{ onos_cluster.result.spec.clusterIP }}"
@@ -118,7 +161,12 @@
       environment:
         SDE_VERSION: 9.7.0
         SDE_DOCKER_IMG: p4-studio
-      when: fabric_oar.stat.exists == true
+      when: fabric_oar.stat.exists == true or build_profiles.failed == false
+
+    - name: make netcfg
+      ansible.builtin.template:
+        src: netcfg.j2
+        dest:  fabric-tna/tofino-netcfg.json
 
     - name: Push netcfg
       shell: "make netcfg ONOS_HOST={{ onos_cluster.result.spec.clusterIP }}"

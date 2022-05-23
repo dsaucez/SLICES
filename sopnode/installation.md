@@ -217,9 +217,81 @@ Edit `tofino-netcfg.json` to become
         "driver": "stratum-tofino",
         "pipeconf": "org.stratumproject.fabric.montara_sde_9_7_0"
       }
+    },
+    "device:sopnode-sw1": {
+      "basic": {
+        "managementAddress": "grpc://138.96.245.11:9559?device_id=1",
+        "driver": "stratum-tofino",
+        "pipeconf": "org.stratumproject.fabric.montara_sde_9_7_0"
+      }
+    },
+    "device:sopnode-sw3": {
+      "basic": {
+        "managementAddress": "grpc://138.96.245.13:9559?device_id=1",
+        "driver": "stratum-tofino",
+        "pipeconf": "org.stratumproject.fabric.montara_sde_9_7_0"
+      }
     }
   }
 }
+```
+
+```json
+{
+  "devices": {
+    "device:sopnode-sw1": {
+      "segmentrouting" : {
+        "ipv4NodeSid" : 101,
+        "ipv4Loopback" : "192.168.1.101",
+        "routerMac" : "00:90:fb:71:64:71",
+        "isEdgeRouter" : true,
+        "adjacencySids" : []
+      },
+      "basic": {
+        "name": "sw1",
+        "managementAddress": "grpc://138.96.245.11:9559?device_id=1",
+        "driver": "stratum-tofino",
+        "pipeconf": "org.stratumproject.fabric.montara_sde_9_7_0"
+      }
+    },
+    "device:sopnode-sw2": {
+      "segmentrouting" : {
+        "ipv4NodeSid" : 102,
+        "ipv4Loopback" : "192.168.1.102",
+        "routerMac" : "00:90:fb:6e:5e:e4",
+        "isEdgeRouter" : true,
+        "adjacencySids" : []
+      },
+      "basic": {
+        "name": "sw2",
+        "managementAddress": "grpc://138.96.245.12:9559?device_id=1",
+        "driver": "stratum-tofino",
+        "pipeconf": "org.stratumproject.fabric.montara_sde_9_7_0"
+      }
+    },
+    "device:sopnode-sw3": {
+      "segmentrouting" : {
+        "ipv4NodeSid" : 103,
+        "ipv4Loopback" : "192.168.1.103",
+        "routerMac" : "00:90:fb:73:e2:d8",
+        "isEdgeRouter" : true,
+        "adjacencySids" : []
+      },
+      "basic": {
+        "name": "sw3",
+        "managementAddress": "grpc://138.96.245.13:9559?device_id=1",
+        "driver": "stratum-tofino",
+        "pipeconf": "org.stratumproject.fabric.montara_sde_9_7_0"
+      }
+    }
+  }
+}
+```
+
+For BMv2 switches, use `"pipeconf": "org.stratumproject.fabric.bmv2"` instead of `"pipeconf": "org.stratumproject.fabric.montara_sde_9_7_0"` and `"driver": "stratum-bmv2"` instead of `"driver": "stratum-tofino"`.
+
+```bash
+export ONOS_HOST=localhost
 ```
 
 ```bash
@@ -231,9 +303,30 @@ make build PROFILES="fabric"
 ```
 
 ```bash
-make pipeconf-install ONOS_HOST=localhost
-make netcfg ONOS_HOST=localhost
+make pipeconf-install
+make netcfg
 ```
+
+> ### Container base compilation for fabric-tna building
+> It is possible to compile fabric-tna from a container instead of from the host. The trick is to make the container use the host's docker engine and so to use the same absolute path inside the container and outside the container (in the example below we use `/tmp/XXX`)
+> 
+>```Dockerfile
+>FROM ubuntu:20.04
+>RUN apt update -y
+>RUN apt install -y docker.io nano build-essential git curl
+>```
+>
+>```bash
+>docker build -t ubuntu-dev:20.04 -f Dockerfile .
+>```
+>
+>Launch the container
+>```bash
+>docker run -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/XXX/:/tmp/XXX -e ONOS_HOST=<ONOS_HOST_IP> --rm -ti ubuntu-dev:20.04
+>```
+>
+>Go to `/tmp/XXX` directory and then compile as above.
+
 
 ## HELP
 ### Useful debug commands
@@ -243,6 +336,7 @@ make netcfg ONOS_HOST=localhost
 * `kubectl get nodes -lnode-role.kubernetes.io=switch`
 * `kubectl get nodes -o wide`
 * `docker exec -it <stratum container name or ID> attach-bf-shell.sh`
+* `kubectl exec --namespace onos-ns --stdin --tty pod-5cbf84749f-79ztg  -- bash`
 * Read ONOS logs: run the `log:tail` command in the ONOS CLI
 * `pipeconfs` command in the ONOS CLI
 

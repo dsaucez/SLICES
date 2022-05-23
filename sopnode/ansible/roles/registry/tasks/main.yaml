@@ -1,0 +1,91 @@
+- name: Create certificate secret
+  shell: 'kubectl create secret tls {{ registry_name }}-certificate-secret --cert={{ certificate_path }}/{{ registry_name }}.crt --key={{ certificate_path }}/{{ registry_name }}.pem'
+
+- name: Create authentication secret
+  shell: 'kubectl create secret generic {{ registry_name }}-authentication-secret --from-file={{ authentication_path }}/htpasswd'
+
+- name: Deploy registry
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: '{{ registry_name }}'
+        namespace: default
+        labels:
+          app: '{{ registry_name }}'
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: '{{ registry_name }}'
+        template:
+          metadata:
+            labels:
+              app: '{{ registry_name }}'
+          spec:
+            volumes:
+              - name: certificates
+                secret:
+                  secretName: '{{ registry_name }}-certificate-secret'
+              - name: repo-vol
+                emptyDir: {}
+              - name: auth-vol
+                secret:
+                  secretName: '{{ registry_name }}-authentication-secret'
+            containers:
+            - name: '{{ registry_name }}'
+              image: registry:2
+              env:
+              - name: REGISTRY_HTTP_ADDR
+                value: 0.0.0.0:443
+              - name: REGISTRY_HTTP_TLS_CERTIFICATE
+                value: /certs/tls.crt
+              - name: REGISTRY_HTTP_TLS_KEY
+                value: /certs/tls.key
+              - name: REGISTRY_AUTH
+                value: "htpasswd"
+              - name: REGISTRY_AUTH_HTPASSWD_REALM
+                value: "Registry Realm"
+              - name: REGISTRY_AUTH_HTPASSWD_PATH
+                value: "/auth/htpasswd"
+              ports:
+              - containerPort: 443
+              volumeMounts:
+                - name: certificates
+                  mountPath: /certs
+                - name: repo-vol
+                  mountPath: /var/lib/registry
+                - name: auth-vol
+                  mountPath: "/auth"
+                  readOnly: true
+
+- name: Deploy registry service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: '{{ registry_name }}'
+        namespace: default
+      spec:
+        selector:
+          app: '{{ registry_name }}'
+        ports:
+        - protocol: TCP
+          port: 443
+          targetPort: 443
+
+- name: Instructions to use the registry with docker
+  debug:
+    msg: 'docker login {{ registry_name }}:443 -u <login> -p <password>'
+
+- name: Instructions to use the registry with k8s
+  debug:
+    msg: 
+    - 'kubectl create secret docker-registry <desired_name_of_your_secret> --docker-server={{ registry_name }}:443 --docker-username=<login> --docker-password=<password>'
+    - 'Use imagePullSecrets in the spec of the pod'
+    - 'imagePullSecrets:'
+    - '  - name: <desired_name_of_your_secret>'
