@@ -47,22 +47,106 @@ The issue is that compilation fails for the open source SONiC for the p4 platfor
   ssh root@fit01
   [fit01] kube-install.sh join-cluster r2lab@sopnode-l1.inria.fr
   ```
-- [ ] en masse joins
+- [x] en masse joins
   for instance, to do it en masse
   ```
-  nodes -a ~4 ~13 ~15 ~31 ~37
+  [faraday]
+  nodes -a 
+  n- 4 14 18 31 37
   rload -i kubernetes
   rwait
   map kube-install.sh join-cluster r2lab@sopnode-l1.inria.fr
   ```
-  however this kind of synchronous approach seems to cause a burst and some nodes fail to reach - to be investigated...
-- [ ] study consequences of the R2lab workflow  
+  this turned out to work reliably on my first attempt to join these 32 nodes simultaneously with kube-install-v0.4
+- [x] study consequences on the R2lab workflow  
   users will never leave properly !  
   so see how the k8s cluster reacts to a R2lab node being re-imaged
   - [x] apparently the k8s cluster realizes rather quick that the node is down
-  - [ ] however it might make sense to help it by doing an explicit `kubectl delete node` on stale nodes  
-  **DOES NOT SEEM TOO SERIOUS ?** 
-  - [ ] what happens if the same node tries to join again after it is re-imaged - (and the cluster is not cleaned up)  
-  so here the answer is, no big deal, the cluster realizes on its own (in about one minute) that the node has gone; it gets marked 'NotReady'; the same node re-imaged later on can join again with no particular fuss (the time for re-imaging seems enough :)
-  - [ ] now all this was with an empty load (no pod on the fit nodes);
-    of course when pods are going to be running on the nodes all this might need more care...
+  - [x] from a sopnode, the following bash functions are available
+    - `fit-nodes` `fit-deads` `fit-alives` gives list of fit nodes in the cluster, whether they are alive or not
+    - `fit-drain-nodes` `fit-delete-nodes` to cleanse the cluster from any reference to a fit node
+
+- [x] en masse leave
+  ```
+  [faraday]
+  map kube-install.sh destroy-cluster
+
+  [sopnode]
+  fit-drain-nodes
+  fit-delete-nodes
+  ```
+- [x] labelling and selecting nodes  
+  * use `fit-label-nodes` from a sopnode box once the nodes have joined the cluster; this sets `r2lab/node=true` on all R2lab nodes (actually all nodes returned by `fit-nodes`)
+  * see https://github.com/parmentelat/kube-install/tree/devel/kiada for examples of how this can be used to select a particular node, or any node on the R2lab or the sopnode side
+
+# troubleshooting notes
+
+I just realized something odd, which I believe is strongly connected to our issue
+
+## setup
+
+I have the w2+w3 cluster up and running
+
+I add to that a fit node (in my case it was fit03) and I create a pod inside that node (fping = fedora + some basic network tools)
+
+## experiment
+
+### connectivity from fit03's root context
+
+of course the R2lab nodes have NAT'ed connectivity to the outside, so I can run this (140.82.121.4 is a public IP assigned to `github.com`)
+
+```
+[root@fit03 ~]# nc -z -v -w 3 140.82.121.4 443 && echo OK
+Ncat: Version 7.91 ( https://nmap.org/ncat )
+Ncat: Connected to 140.82.121.4:443.
+Ncat: 0 bytes sent, 0 bytes received in 0.03 seconds.
+OK
+```
+
+right, now, the funny thing is, I can't seem to run that **from the container** inside fit03
+
+```
+[root@fit03 ~]# container_id=$(crictl ps | grep fping | awk '{print $1}')
+[root@fit03 ~]# crictl exec $container_id nc -z -v -w 3 140.82.121.4 443 && echo OK
+nc: connect to 140.82.121.4 port 443 (tcp) failed: Connection timed out
+FATA[0003] execing command in container: command terminated with exit code 1
+```
+
+### traffic on the wire
+
+I have gathered the tcpdump traffic for these 2 runs, each time from faraday and from fit03
+
+#### the OK run
+
+basically the normal traffic should look like this
+
+![](faraday-node-root-pcap.png)
+
+except that when captured on fit03 I have all the 138.96.16.97 (faraday.inria.fr) replaced with 192.168.3.3 (fit03) because that traffic is inside the NAT area
+
+#### the KO run
+
+when the connection attempt is made from the pod's container, here's what we capture from the fit03 root context
+
+![](fit03-konn-agent-pcap.png)
+
+so, clearly the first SYN,ACK packet that should come back from github to the node does make it back to here
+
+and so, observing the very same attempt but from faraday this time, we get this
+
+![](faraday-konn-agent.pcap.png)
+
+so, what this means is, github receives the SYN and does answer with a SYN,ACK packet, which gets rewritten by NAT into the 10.244.x.x address for the pod, except that this SYN,ACK packet never makes it back to fit03 |
+
+### conclusion
+
+so the NAT on faraday does not behave as expected in this particular instance
+
+I have reasons to believe that fixing this would help a lot, because before I played with the github address, I was trying with the apiserver IP adress (sopnode-w2)
+and the same was happening; i.e. the konnectivity-agent container seems unable to connect to the API server on the master node
+
+**EDIT**
+
+there's one big difference indeed  
+* once NAT has rewritten the packet with a 192.168.3.3 dest address, this packet is routable by faraday
+* but when it is rewritten as 10.244.x.x, then this falls out of the current routes, and so I guess it gets expelled back on the outside somehow
