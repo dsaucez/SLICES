@@ -91,7 +91,7 @@ Even though the exact compute nodes to deploy in the _compute_ clusters are not
 standardized, we recommend the following network architecture to build each
 cluster.
 
-![_Compute_ cluster](sophia_node-compute_cluster.svg)
+![_Compute_ cluster](figures/sophia_node-compute_cluster.svg)
 
 The cluster is composed of two _aggregation switches_. The aggregation switches
 are equally connected to the backbone. Optionally the two switches can be
@@ -159,7 +159,7 @@ corresponds to a leaf switches. Every leaf switch is connected to all the
 spine switches as illustrated in the figure below with two compute clusters,
 two radio clusters, Internet connectivity, and two spine switches.
 
-![Spine-and-leaf architecture](sophia_node-spine-leaf.svg)
+![Spine-and-leaf architecture](figures/sophia_node-spine-leaf.svg)
 
 The spine-and-leaf is particularly suitable for situations with heavy data
 traffic between pods. It also offers the advantage that traffic always crosses
@@ -205,7 +205,7 @@ instead of having one spine-and-leaf network covering two administrative
 domains. The joint between the separated administrative domains is shown in the
 figure below.
 
-![Relaxed _spine-and-leaf_ architecture](sophia_node-relaxed-spine-leaf.svg)
+![Relaxed _spine-and-leaf_ architecture](figures/sophia_node-relaxed-spine-leaf.svg)
 
 In this case, each administrative domain builds a spine-and-leaf infrastructure.
 For clarity reasons the example above shows only one spine switch per entity,
@@ -243,7 +243,7 @@ generic and symmetrical, which simplifies automation and scaling. These solution
 shine at scale and when availability is a key point. In the following we explore
 simpler architectures, such as the _partial mesh_ illustrated bellow.
 
-![Partial mesh](sophia_node-partial-mesh.svg)
+![Partial mesh](figures/sophia_node-partial-mesh.svg)
 
 In the partial mesh, clusters are directly connected with every other clusters
 of the same administrative domain and connectivity to the outside (e.g., another
@@ -279,7 +279,7 @@ expected to have numerous peering links.
 In the _hub-and-spoke_ architecture, there is a central point to interconnect
 all the clusters and external links as shown in the figure below.
 
-![Hub and spoke](sophia_node-hub-and-poke.svg)
+![Hub and spoke](figures/sophia_node-hub-and-poke.svg)
 
 This solution is particularly adapted if one very high performance switch is
 available and if there is no requirements in terms of resiliency of the
