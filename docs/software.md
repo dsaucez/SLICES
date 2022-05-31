@@ -21,3 +21,5 @@ we use them to implement 5G User Plane Function (UPF) with SD-FABRIC
 
 The switches are grouped together within a kubernetes cluster
 [[k8s](https://kubernetes.io)] that also integrates computes nodes.
+
+Software automation and documentation are available in [/sopnode](/sopnode/).
