@@ -32,6 +32,11 @@ Deploy ONOS:
 ansible-playbook  -i inventory.yaml onos.yaml --extra-vars "@params.yaml"
 ```
 
+Add switches to the fabric
+```bash
+ansible-playbook  -i inventory.yaml fabric-switch.yaml --extra-vars "@params.yaml"
+```
+
 Deploy stratum on switches
 ```bash
 ansible-playbook  -i inventory.yaml stratum.yaml --extra-vars "@params.yaml"
