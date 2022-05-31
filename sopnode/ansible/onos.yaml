@@ -114,7 +114,7 @@
       ansible.builtin.git:
         repo: https://github.com/stratum/fabric-tna.git
         dest: fabric-tna
-        version: 126aba9
+        version: tags/1.1.0
         force: yes
       when: fabric_oar.stat.exists == false
 
