@@ -120,7 +120,7 @@ I have gathered the tcpdump traffic for these 2 runs, each time from faraday and
 
 basically the normal traffic should look like this
 
-![](faraday-node-root-pcap.png)
+![](traces/faraday-node-root-pcap.png)
 
 except that when captured on fit03 I have all the 138.96.16.97 (faraday.inria.fr) replaced with 192.168.3.3 (fit03) because that traffic is inside the NAT area
 
@@ -128,13 +128,13 @@ except that when captured on fit03 I have all the 138.96.16.97 (faraday.inria.fr
 
 when the connection attempt is made from the pod's container, here's what we capture from the fit03 root context
 
-![](fit03-konn-agent-pcap.png)
+![](traces/fit03-konn-agent-pcap.png)
 
 so, clearly the first SYN,ACK packet that should come back from github to the node does make it back to here
 
 and so, observing the very same attempt but from faraday this time, we get this
 
-![](faraday-konn-agent.pcap.png)
+![](traces/faraday-konn-agent.pcap.png)
 
 so, what this means is, github receives the SYN and does answer with a SYN,ACK packet, which gets rewritten by NAT into the 10.244.x.x address for the pod, except that this SYN,ACK packet never makes it back to fit03 |
 
@@ -169,13 +169,13 @@ and here's what I see (the pcap files are added to this repo too)
 * beyond that, I do not speak BGP so I can't tell more about the effectiveness of all this
 
 ## bgp traffic observed on the FIT node
-![](fit23-bgp.png)
+![](traces/fit23-bgp.png)
 
 ## bgp traffic observed on faraday
-![](faraday-bgp.png)
+![](traces/faraday-bgp.png)
 
 ## bgp traffic observed (later on) on w2
-![](w2-bgp.png)
+![](traces/w2-bgp.png)
 
 
 
