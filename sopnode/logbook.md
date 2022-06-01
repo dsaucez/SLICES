@@ -4,7 +4,7 @@
 
 Edge-Core SONiC Enterprise installed sucessfully on Wedge100-32X. This image has very limited functionalities. Ok for basic scenarios but won’t be very useful on the long run.
 Edge-Core does not provide SONiC image or support for the Wedge1000-32QS though they provide a brief documentation on how to setup an open source SONiC for that platform.
-The issue is that compilation fails for the open source SONiC for the p4 platform (i.e., the one corresponding to the ASICs in the Wedge100 switches). The issue comes from dependencies that are incompatible. Almost 2 years since the p4 platform is not supported anymore by the open source project and unfortunately compile scripts did not “fix” the version so we have to rebuild the dependency tree with trials and errors. 
+The issue is that compilation fails for the open source SONiC for the p4 platform (i.e., the one corresponding to the ASICs in the Wedge100 switches). The issue comes from dependencies that are incompatible. Almost 2 years since the p4 platform is not supported anymore by the open source project and unfortunately compile scripts did not “fix” the version so we have to rebuild the dependency tree with trials and errors.
 
 ## compute
 
@@ -21,21 +21,21 @@ The issue is that compilation fails for the open source SONiC for the p4 platfor
 - [x] provide a `kubernetes` image on R2lab
   this has the following capabilities
   * firewalling is turned off
-  * all kube code is preinstalled and ready to run in `/root/kube-install`  
+  * all kube code is preinstalled and ready to run in `/root/kube-install`
     (a `git pull` won't harm, as you know the images are rather costly to produce...)
-- [x] based on a super lightweight bash tool named `kube-install.sh`  
+- [x] based on a super lightweight bash tool named `kube-install.sh`
   <https://github.com/parmentelat/kube-install>
   * **cluster creation**
-    `kube-install.sh create-cluster`  
+    `kube-install.sh create-cluster`
     this sets up a `konnectivity` service
   * **joining a cluster**
-    * worker side  
-      `kube-install.sh join-cluster r2lab@sopnode-l1.inria.fr`  
+    * worker side
+      `kube-install.sh join-cluster r2lab@sopnode-l1.inria.fr`
       note that here the `r2lab` user is only used to enter in the master node
       and get the token needed to join (by actually running the command below)
-    * leader side  
+    * leader side
       `kube-install.sh join-command`
-      will just display the command for a worker node to join  
+      will just display the command for a worker node to join
 
 
 ### connect *sopnode* and R2lab
@@ -51,15 +51,15 @@ The issue is that compilation fails for the open source SONiC for the p4 platfor
   for instance, to do it en masse
   ```
   [faraday]
-  nodes -a 
+  nodes -a
   n- 4 14 18 31 37
   rload -i kubernetes
   rwait
   map kube-install.sh join-cluster r2lab@sopnode-l1.inria.fr
   ```
   this turned out to work reliably on my first attempt to join these 32 nodes simultaneously with kube-install-v0.4
-- [x] study consequences on the R2lab workflow  
-  users will never leave properly !  
+- [x] study consequences on the R2lab workflow
+  users will never leave properly !
   so see how the k8s cluster reacts to a R2lab node being re-imaged
   - [x] apparently the k8s cluster realizes rather quick that the node is down
   - [x] from a sopnode, the following bash functions are available
@@ -75,11 +75,133 @@ The issue is that compilation fails for the open source SONiC for the p4 platfor
   fit-drain-nodes
   fit-delete-nodes
   ```
-- [x] labelling and selecting nodes  
+- [x] labelling and selecting nodes
   * use `fit-label-nodes` from a sopnode box once the nodes have joined the cluster; this sets `r2lab/node=true` on all R2lab nodes (actually all nodes returned by `fit-nodes`)
   * see https://github.com/parmentelat/kube-install/tree/devel/kiada for examples of how this can be used to select a particular node, or any node on the R2lab or the sopnode side
 
 # troubleshooting notes
+
+## data plane connectivity broken
+
+here's a status as of 2022 June 1; a word on the status:
+* sopnode-w2 runs as the cluster master on the so-called 'wired' side (with a public IP)
+* sopnode-w3 runs as a worker on the 'wired' side as well
+* fit01 is a NATed node behind faraday, on the so-called 'wireless' side
+
+the following figure summarizes what works or not
+
+![](traces/summary-annotated.png)
+
+in a nutshell, we have
+* no DNS from a wireless pod (i.e. a user pod running on the wireless side)
+* no ICMP connectivity between a wired pod and a wireless pod
+* erratic behaviour of the `kubectl exec` command in all 4 areas (from wired or wireless, about a wired or wireless pod)
+
+
+
+## investigation
+
+focusing on the network config on w2, during:
+* one successful ping from w3 (10.244.210.198) to w2 (10.244.112.198)
+* one failing ping from fit01 (10.245.208.68) to w2 (10.244.112.198)
+
+### routes
+
+```
+w2# ip route
+default via 138.96.245.250 dev eth0 proto dhcp metric 100
+blackhole 10.244.112.192/26 proto 80
+10.244.112.193 dev cali6cbe6c30032 scope link
+10.244.112.194 dev caliacebfda3d6a scope link
+10.244.112.195 dev cali4b51a650f43 scope link
+10.244.112.196 dev cali0ec2218769a scope link
+10.244.112.198 dev calie80ce743230 scope link                 <-- this is the interface for the w2 user pod
+10.244.210.192/26 via 10.244.210.192 dev vxlan.calico onlink
+10.245.208.64/26 via 10.245.208.64 dev vxlan.calico onlink
+138.96.245.0/24 dev eth0 proto kernel scope link src 138.96.245.52 metric 100
+```
+
+### successful ping
+
+During a PING between w3 and w2 (that is, a user pod running on w3 and a user pod running on w2):
+
+* spying on w2 physical interface: one can see both echo request and echo reply flowing when doing
+  ```bash
+  w2# tcpdump udp port vxlan and host sopnode-w3.inria.fr -nn
+  18:42:30.502186 IP 138.96.245.53.43983 > 138.96.245.52.4789: VXLAN, flags [I] (0x08), vni 4096
+  IP 10.244.210.198 > 10.244.112.198: ICMP echo request, id 32992, seq 1, length 64
+  18:42:30.502408 IP 138.96.245.52.60718 > 138.96.245.53.4789: VXLAN, flags [I] (0x08), vni 4096
+  IP 10.244.112.198 > 10.244.210.198: ICMP echo reply, id 32992, seq 1, length 64
+  ```
+
+  (NOTE that when spying on a VXLAN packet, tcpdump will print 2 lines, one with the outer IP, and on with the inner IP)
+
+* spying on w2 virtual interface to the user pod: same traffic mostly (except that the outer IP was removed)
+
+  ```bash
+  w2# tcpdump -i calie80ce743230
+  18:44:19.331229 IP 10.244.210.198 > 10.244.112.198: ICMP echo request, id 16557, seq 1, length 64
+  18:44:19.331253 IP 10.244.112.198 > 10.244.210.198: ICMP echo reply, id 16557, seq 1, length 64
+  ```
+
+### broken ping
+
+During a PING between fit01 and w2, what happens is
+* the echo request packet traverses faraday alright
+* and it does land on w2, we can see it with a similar capture on the physical interface
+
+  ```bash
+  w2# tcpdump -i eth0 udp port vxlan and host faraday.inria.fr -nn
+  18:49:09.166557 IP 138.96.16.97.50678 > 138.96.245.52.4789: VXLAN, flags [I] (0x08), vni 4096
+  IP 10.245.208.68 > 10.244.112.198: ICMP echo request, id 64994, seq 1, length 64
+  ```
+
+* BUT that same packet is **NOT** forwarded to the virtual interface attached to the pod
+  ```bash
+  w2# tcpdump -i calie80ce743230
+  <empty session>
+  ```
+
+and that's the end of that ICMP request...
+
+### what I tried
+
+* the puzzling thing is in both cases the packet has the **same destination address**  
+  and yet it gets dealt with in a very different manner
+* I tried to set rp_filter to 0 on all network interfaces - to no avail
+* I tried to use `dropwatch` (install with `dnf`) to get more information on the drop;  
+  the thing however is, there are a ton of dropped packets all the time,
+  so it's hard to narrow down
+* other techniques for trying to get more info on the drop,
+  [interesting summary here](https://www.cyberciti.biz/faq/linux-show-dropped-packets-per-interface-command/)
+  like:
+  * `watch ip -s link show calie80ce743230`: show 0 drops
+  * `watch ip -s link show eth0`: show 0 drops too ! but there are drops all the time !
+
+* could it be the firewall ? sounds like a long shot, because
+  using a single IpPool with 10.244.0.0/16 for all the cluster exhibits the exact same behaviour
+  but here again it's hard to tell, because the full listing is just huge
+
+### DNS
+
+I have investigated the the situation with the failing DNS requests, and the root cause
+is exactly similar; packets from the wireless pod make it to w2,
+but don't get passed to the codedns pod
+
+So hopefully fixing one issue should hit two birds with one stone
+
+***
+***
+***
+***
+
+# archived note 1: on BGP
+
+## WARNING: OBSOLETE
+
+**this section is for the record only**
+
+BGP is actually not needed with calico/VXLAN mode, so that was primarily a red herring
 
 I just realized something odd, which I believe is strongly connected to our issue
 
@@ -147,7 +269,7 @@ and the same was happening; i.e. the konnectivity-agent container seems unable t
 
 **EDIT**
 
-there's one big difference indeed  
+there's one big difference indeed
 * once NAT has rewritten the packet with a 192.168.3.3 dest address, this packet is routable by faraday
 * but when it is rewritten as 10.244.x.x, then this falls out of the current routes, and so I guess it gets expelled back on the outside somehow
 
@@ -159,7 +281,7 @@ in order to troubleshoot that, I have captured the bgp traffic as seen on both f
 (and also, but later on, from w2)
 
 ```
-tcpdump host 138.96.245.52 and port bgp -nn -c 20 
+tcpdump host 138.96.245.52 and port bgp -nn -c 20
 ```
 
 and here's what I see (the pcap files are added to this repo too)
@@ -197,21 +319,21 @@ Notations
 | W | pod in W |
 | WN | public IP address of the worker node | 138.96.x.x - same subnet as L |
 | F | pod in F |
-| FN | private IP address of the fit node | (192.168.0.3)| 
+| FN | private IP address of the fit node | (192.168.0.3)|
 | | |routable in the faraday island |
 | D | the k8s DNS service | 10.96.0.10 |
 | 8 | external dns | 8.8.8.8 |
 | GH | one github machine | 140.82.121.4 |
 | | with a web service alive on 443 |
 
-here's what we'd like to be have 
+here's what we'd like to be have
 
 | from | to | link | desired | observed |
 |-|-|-|-|-|
 | L | L | ping | yes | |
 | L | LN | ping | yes | |
 | L | W | ping | yes | |
-| L | F | ping | yes | | 
+| L | F | ping | yes | |
 | L | GH | nc on 443 | yes | |
 
 *to be completed..*
