@@ -101,13 +101,23 @@ in a nutshell, we have
 
 ## investigation
 
-focusing on the network config on w2, during:
-* one successful ping from w3 (10.244.210.198) to w2 (10.244.112.198)
-* one failing ping from fit01 (10.245.208.68) to w2 (10.244.112.198)
+we will focus on the network stack on `w2`, during:
+* first one successful ping from (the pod in) w3 to (the pod in) w2 
+* then one failing ping from (the pod in) fit01 to (the pod in) w2
+
+so that we can compare between the two and try to find what's going wrong
+
+### IP addresses
+
+for that session we have
+
+* the user pod in w2 at `10.244.112.198`
+* the user pod in w3 at `10.244.210.198`
+* the user pod in fit01 at `10.245.208.68`
 
 ### routes
 
-```
+```bash
 w2# ip route
 default via 138.96.245.250 dev eth0 proto dhcp metric 100
 blackhole 10.244.112.192/26 proto 80
@@ -123,7 +133,7 @@ blackhole 10.244.112.192/26 proto 80
 
 ### successful ping
 
-During a PING between w3 and w2 (that is, a user pod running on w3 and a user pod running on w2):
+During a PING between w3 and w2 (that is, again, a user pod running on w3 and a user pod running on w2):
 
 * spying on w2 physical interface: one can see both echo request and echo reply flowing when doing
   ```bash
@@ -134,9 +144,14 @@ During a PING between w3 and w2 (that is, a user pod running on w3 and a user po
   IP 10.244.112.198 > 10.244.210.198: ICMP echo reply, id 32992, seq 1, length 64
   ```
 
-  (NOTE that when spying on a VXLAN packet, tcpdump will print 2 lines, one with the outer IP, and on with the inner IP)
+  ***NOTE*** that when spying on a VXLAN packet, tcpdump will print 2 lines:
 
-* spying on w2 virtual interface to the user pod: same traffic mostly (except that the outer IP was removed)
+    * one with the outer IP, and 
+    * one with the inner IP
+    
+      so this above is actually 2 packets, one echo request and one echo reply
+
+* spying on w2 virtual interface to the user pod shows the same traffic (except that the outer IP was removed)
 
   ```bash
   w2# tcpdump -i calie80ce743230
