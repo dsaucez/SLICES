@@ -28,7 +28,7 @@
             activate-barefoot: |
               #!/bin/bash
               host=$(hostname -s)
-              status_code=$(curl -u onos:rocks --silent --output /dev/null --write-out '%{http_code}' -X POST http://${host}:8181/onos/v1/applications/org.onosproject.drivers.barefoot/active)
+              status_code=$(curl -u onos:rocks --silent --output /dev/null --write-out '%{http_code}' -X POST http://${host}:8181/onos/v1/applications/org.onosproject.gui2/active)
               if [ ${status_code} == "200" ]
               then
                       exit 0
@@ -151,8 +151,21 @@
       shell: kubectl get deployment onos-deployment --namespace onos-ns -o=jsonpath='{.status.readyReplicas}/{.status.replicas}'
       register: _onos_deployment
       until: _onos_deployment.stdout == "1/1"
-      retries: 30 # 30 * 10s = 300s = 5min
       delay: 10   # Every 10s
+      retries: 30 # 30 * 10s = 300s = 5min
+
+    - name: Activate applications (may take minutes)
+      uri:
+        url: http://{{ onos_cluster.result.spec.clusterIP }}:8181/onos/v1/applications/{{ item.name }}/active
+        user: onos
+        password: rocks
+        method: POST
+      register: _result
+      until: _result.status == 200
+      delay: 10   # Every 10s
+      retries: 5 # 5 * 10s = 50s
+      with_items: "{{ onos_applications }}"
+      when: onos_applications is defined 
 
     - name: Install pipeconfs
       shell: "make pipeconf-install ONOS_HOST={{ onos_cluster.result.spec.clusterIP }}"

@@ -18,6 +18,11 @@ subnet: DATA+OMITTED
 
 # Fabric
 fabric_profile: fabric-v1model fabric-tna
+
+onos_applications:
+  - name: org.onosproject.drivers.barefoot
+  - name: org.onosproject.drivers.bmv2
+
 netcfg:
   "device:sopnode-sw1":
     basic:
