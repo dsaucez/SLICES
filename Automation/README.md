@@ -4,8 +4,12 @@
 Steps to initiate an instant with BMV2 and stratum. 
 these instruction were tested on a GCP instance running Ubuntu 20.04 TLS
 
-general dependecies : `apt-get install libboost-dev libboost-system-dev libboost-thread-dev`
-
+general dependecies : ``
+```console
+sudo apt-update
+sudo apt-get install libboost-dev libboost-system-dev libboost-thread-dev
+sudo apt-get install libtool
+```
 ### bazel:
 ```console
 sudo apt install apt-transport-https curl gnupg
