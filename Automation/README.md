@@ -96,6 +96,7 @@ make netcfg ONOS_HOST=localhost  # push the netcfg
 
 
 bmv2 netcfg example :
+```json
 {
   "devices": {
     "device:switch-1": {
@@ -114,6 +115,6 @@ bmv2 netcfg example :
     }
   }
 }
-
+```
 
 
