@@ -1,0 +1,9 @@
+---
+- name: Install dependencies (system)
+  become: yes
+  ansible.builtin.apt:
+    name: "{{ item.name }}"
+    state: "{{ item.state }}"
+    autoclean: yes
+    update_cache: true
+  with_items: "{{ debian_dependencies }}"
