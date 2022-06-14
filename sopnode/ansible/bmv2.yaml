@@ -1,6 +1,6 @@
 ---
 - name: Install bmv2
-  hosts: 34.125.252.96
+  hosts: googleSwitch
   remote_user: vagrant
   roles:
     - role: bmv2-common
