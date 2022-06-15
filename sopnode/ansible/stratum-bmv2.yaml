@@ -1,0 +1,29 @@
+---
+- name: Install stratum node
+  hosts: 34.125.7.10
+  remote_user: vagrant
+  tasks:
+    - name: Retrieve stratum
+      ansible.builtin.git:
+        repo: https://github.com/stratum/stratum.git
+        dest: ./stratum/
+        version: e2640fc
+        force: yes
+    - name: change docker permissions
+      become: yes
+      shell: "chmod 666 /var/run/docker.sock"
+    - name: starting the stratum container
+      shell: "./stratum/setup_dev_env.sh -- -d --name stratum-container"
+    - name: Check if stratum already been built
+      stat:
+        path: ./stratum/stratum_bmv2_deb.deb
+      register: stat_result
+    - name: building stratum
+      become: yes
+      shell: "docker exec stratum-container bazel build //stratum/hal/bin/bmv2:stratum_bmv2_deb"
+      when:  not stat_result.stat.exists
+    - name: coppying stratum
+      become: yes
+      shell: "docker exec stratum-container cp -f /stratum/bazel-bin/stratum/hal/bin/bmv2/stratum_bmv2_deb.deb /stratum/"
+      when: not stat_result.stat.exists
+    
