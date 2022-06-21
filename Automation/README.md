@@ -74,7 +74,7 @@ sudo apt install make
 ```console
 docker run -t -d -p 8181:8181 -p 8101:8101 -p 5005:5005 -p 830:830 --name onos onosproject/onos:2.7.0
 ssh -p 8101 onos@localhost  # to go inside the onos container : credentials : onos/rocks
-app activate org.onosproject.drivers.bmv2 
+app activate org.onosproject.drivers.bmv2 # this command has to be run inside the onos container.
 ```
 ## Fabric-tna (tested on ubuntu 20,04) :
 general dependecies : 
