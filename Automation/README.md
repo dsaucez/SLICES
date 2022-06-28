@@ -55,7 +55,7 @@ cp -f /stratum/bazel-bin/stratum/hal/bin/bmv2/stratum_bmv2_deb.deb /stratum/
 ```
 After you build the stratum package, you can start stratum as follow
 ```console
-./setup_dev_env.sh # Do this command if you are not inside the container already
+./setup_dev_env.sh -- --privileged --network=host # Do this command if you are not inside the container already
 # -- inside the container
 sudo apt-get update 
 sudo apt-get install -y --reinstall ./stratum_bmv2_deb.deb
