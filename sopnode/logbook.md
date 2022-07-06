@@ -50,6 +50,12 @@ The issue is that compilation fails for the open source SONiC for the p4 platfor
 
 ### upgrading
 
-plan is to move to fedora-36 and kubernetes-1.24
+#### DONE
+* current version of `kube-install` (v0.14) has been tested with a combo fedora-36 + k8s-1.24
+* this is currently deployed on the w2+w3 cluster
+* the `kubernetes` image on faraday points at the latest `kubernetes-35` image
+* we now have a `kubernetes-f36` alias that points at the latest image with similar contents but based on fedora-36
 
-this is WIP
+#### TODO
+* upgrade the l1 and w1 servers accordingly
+* redirect the `kubernetes` alias to point at `kubernetes-36`
