@@ -177,6 +177,28 @@ Activate Barefoot drivers and segment routing, e.g., via the ONOS CLI with
 ```bash
 onos@root > app activate org.onosproject.drivers.barefoot
 ```
+Build UP4 app for ONOS
+```bash
+git clone https://github.com/omec-project/up4.git                                                          
+cd up4/ && make deps && make build
+```
+After successful build, onos app `up4-app-1.2.0-SNAPSHOT.oar` is created at `up4/app/app/target/`
+To install  UP4 app in ONOS :- <br/>
+Via GUI:-  (we can do with REST API or onos cli too)
+* Login to web interface http://localhost:8181/onos/ui/ with credentials `onos/rocks`
+* Upload application `up4-app-1.2.0-SNAPSHOT.oar` and activate
+
+Pull PFCP agent 
+`docker pull omecproject/upf-epc-pfcpiface` <br/>
+   OR  <br/> 
+Build PFCP agent
+```bash
+git clone https://github.com/omec-project/upf.git
+DOCKER_TARGETS=pfcpiface make docker-build
+```
+
+#ToDo: Configure and connect PFCP agent (p4 plugin) with Onos (up4 app)
+
 
 ## SD-Fabric
 

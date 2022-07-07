@@ -2,14 +2,14 @@
 
 | Node A                                | Node B             | Techno               | Status  | S/N A        | S/N B
 | :-------------------------------------|:-------------------|:---------------------|---------|--------------|--------------
-| 12 FO mono to EURECOM RG 097-036/1    | sopnode-sw2/01     | 100GB optical        | OK      | N/A          | FIB220516203
-| 12 FO mono to EURECOM RG 097-036/2    | sopnode-sw2/02     | 100GB optical        | OK      | N/A          | FIB220516201
-| 12 FO mono to EURECOM RG 097-036/3    | sopnode-sw2/03     | 100GB optical        | OK      | N/A          | FIB220516206
-| 12 FO mono to EURECOM RG 097-036/4    | sopnode-sw2/04     | 100GB optical        | OK      | N/A          | FIB220516205
-| 12 FO mono to EURECOM RG 097-036/5    | sopnode-sw2/05     | 100GB optical        | OK      | N/A          | FIB220516202
-| 12 FO mono to EURECOM RG 097-036/6    | sopnode-sw2/06     | 100GB optical        | OK      | N/A          | FIB220516204
+| 12 FO mono to EURECOM RG 097-036/1    | sopnode-sw2/01     | 100GB optical        | OK      | N/A          | FIB220516201
+| 12 FO mono to EURECOM RG 097-036/2    | sopnode-sw2/02     | 100GB optical        | OK      | N/A          | FIB220516202
+| 12 FO mono to EURECOM RG 097-036/3    | sopnode-sw2/03     | 100GB optical        | OK      | N/A          | FIB220516203
+| 12 FO mono to EURECOM RG 097-036/4    | sopnode-sw2/04     | 100GB optical        | Absent  | N/A          | XXXXXXXXXXXX
+| 12 FO mono to EURECOM RG 097-036/5    | sopnode-sw2/05     | 100GB optical        | OK      | N/A          | FIB220516205
+| 12 FO mono to EURECOM RG 097-036/6    | sopnode-sw2/06     | 100GB optical        | OK      | N/A          | FIB220516206
 |                                       |                    |                      |         |              |
-| 24 FO mono to Salle Anechoide BS12/13 | sopnode-sw2/13     | 100GB optical        | OK      | N/A          | C1904163659
+| 24 FO mono to Salle Anechoide BS12/13 | sopnode-sw2/13     | 100GB optical        | OK      | N/A          | C1904162937
 | 24 FO mono to Salle Anechoide BS12/14 | sopnode-sw2/14     | 100GB optical        | OK      | N/A          | C1904163659
 | 24 FO mono to Salle Anechoide BS12/15 | -                  |                      |         | N/A          | 
 | 24 FO mono to Salle Anechoide BS12/16 | -                  |                      |         | N/A          |
