@@ -22,20 +22,37 @@ fabric_profile: fabric-v1model fabric-tna
 onos_applications:
   - name: org.onosproject.drivers.barefoot
   - name: org.onosproject.drivers.bmv2
+  - name: org.onosproject.routeradvertisement
 
 netcfg:
-  "device:sopnode-sw1":
-    basic:
-      managementAddress: "grpc://138.96.245.11:9559?device_id=1"
-      driver: "stratum-tofino"
-      pipeconf: "org.stratumproject.fabric.montara_sde_9_7_0"
-  "device:sopnode-sw2":
-    basic:
-      managementAddress: "grpc://138.96.245.12:9559?device_id=1"
-      driver: "stratum-tofino"
-      pipeconf: "org.stratumproject.fabric.montara_sde_9_7_0"
-  "device:sopnode-sw3":
-    basic:
-      managementAddress: "grpc://138.96.245.13:9559?device_id=1"
-      driver: "stratum-tofino"
-      pipeconf: "org.stratumproject.fabric.montara_sde_9_7_0"
+  devices:
+    "device:sopnode-sw1":
+      basic:
+        managementAddress: "grpc://138.96.245.11:9559?device_id=1"
+        driver: "stratum-tofino"
+        pipeconf: "org.stratumproject.fabric.mavericks_sde_9_7_0"
+      routeradvertisement:
+        prefixes: [ "2001:db8:1::/48"]
+    "device:sopnode-sw2":
+      basic:
+        managementAddress: "grpc://138.96.245.12:9559?device_id=1"
+        driver: "stratum-tofino"
+        pipeconf: "org.stratumproject.fabric.montara_sde_9_7_0"
+      routeradvertisement:
+        prefixes: [ "2001:db8:2::/48"]
+    "device:sopnode-sw3":
+      basic:
+        managementAddress: "grpc://138.96.245.13:9559?device_id=1"
+        driver: "stratum-tofino"
+        pipeconf: "org.stratumproject.fabric.mavericks_sde_9_7_0"
+      routeradvertisement:
+        prefixes: [ "2001:db8:3::/48"]
+  ports:
+    "device:sopnode-sw1/29":
+      interfaces:
+        - name: "sw2-intf"
+          vlan-untagged: 0
+    "device:sopnode-sw2/29":
+      interfaces:
+        - name: "sw1-intf"
+          vlan-untagged: 0
