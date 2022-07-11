@@ -4,8 +4,6 @@ debian_dependencies:
     state: present
   - name: conntrack
     state: present
-  - name: python-pip
-    state: present
   - name: curl
     state: present
   - name: apt-transport-https

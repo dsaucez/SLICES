@@ -1,10 +1,11 @@
 ---
-- name: Remove unstable ONL APT repo
-  ansible.builtin.file:
-    path: /etc/apt/sources.list.d/multistrap-onl.list
-    state: absent
+#- name: Remove unstable ONL APT repo
+#  ansible.builtin.file:
+#    path: /etc/apt/sources.list.d/multistrap-onl.list
+#    state: absent
 
 - name: Install dependencies (system)
+  become: yes
   ansible.builtin.apt:
     name: "{{ item.name }}"
     state: "{{ item.state }}"
@@ -13,23 +14,24 @@
   with_items: "{{ debian_dependencies }}"
 
 - name: Install dependencies (Python)
+  become: yes
   ansible.builtin.pip:
     name: "{{ item.name }}=={{ item.version }}"
   with_items: "{{ python_packages }}"
 
-- name: Setting hugepages
-  ansible.posix.sysctl:
-    name: vm.nr_hugepages
-    value: "128"
-    state: present
-
-- name: Mount hugepage
-  ansible.posix.mount:
-    name: /mnt/huge
-    src: nodev
-    fstype: hugetlbfs
-    opts: "pagesize=1GB"
-    state: mounted
-
-- name: Disable swap
-  shell: swapoff -a 
+#- name: Setting hugepages
+#  ansible.posix.sysctl:
+#    name: vm.nr_hugepages
+#    value: "128"
+#    state: present
+#
+#- name: Mount hugepage
+#  ansible.posix.mount:
+#    name: /mnt/huge
+#    src: nodev
+#    fstype: hugetlbfs
+#    opts: "pagesize=1GB"
+#    state: mounted
+#
+#- name: Disable swap
+#  shell: swapoff -a 

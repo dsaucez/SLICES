@@ -1,5 +1,12 @@
 all:
+  hosts:
+    10.255.255.4:
+    10.255.255.3:
   children:
+    bmv2:
+      hosts:
+        10.255.255.4:
+        10.255.255.3:
     switches:
       hosts:
         sopnode-sw1-eth0.inria.fr:
