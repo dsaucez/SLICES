@@ -1,0 +1,18 @@
+all:
+  children:
+    switches:
+      hosts:
+        sopnode-sw1-eth0.inria.fr:
+        sopnode-sw2-eth0.inria.fr:
+        sopnode-sw3-eth0.inria.fr:
+    controllers:
+      hosts:
+        sopnode-sw2-eth0.inria.fr:
+    masters:
+      hosts:
+        sopnode-sw2-eth0.inria.fr:
+    fabric_switches:
+      hosts:
+        sopnode-sw1-eth0.inria.fr:
+        sopnode-sw2-eth0.inria.fr:
+        sopnode-sw3-eth0.inria.fr:
