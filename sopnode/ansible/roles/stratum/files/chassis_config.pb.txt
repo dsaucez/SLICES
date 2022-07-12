@@ -9,7 +9,7 @@ nodes {
 }
 singleton_ports {
   id: 1
-  name: "eth1"
+  name: "eth2"
   slot: 1
   port: 1
   channel: 1

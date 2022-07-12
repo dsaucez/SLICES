@@ -1,5 +1,6 @@
 ---
 - name: Retrieve stratum
+  become: yes
   ansible.builtin.git:
     repo: https://github.com/stratum/stratum.git
     dest: ~/stratum/
