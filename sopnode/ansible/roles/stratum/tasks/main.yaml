@@ -2,20 +2,9 @@
 - name: Retrieve stratum
   ansible.builtin.git:
     repo: https://github.com/stratum/stratum.git
-    dest: /root/stratum/
+    dest: ~/stratum/
     version: e2640fc
     force: yes
 
 - name: Instantiate Stratum
   import_tasks: '{{ stratum.mode }}_stratum.yaml'
-
-#- name: Patch to run in background
-#  ansible.posix.patch:
-#    src: start-stratum-container.sh.patch
-#    dest: /root/stratum/stratum/hal/bin/barefoot/docker/start-stratum-container.sh
-#    remote_src: no
-#    state: present
-#- name: Launch stratum
-#  environment:
-#    SDE_VERSION: 9.7.0
-#  shell: "stratum/stratum/hal/bin/barefoot/docker/start-stratum-container.sh -enable_onlp=false -bf_switchd_background=false -experimental_enable_p4runtime_translation -incompatible_enable_bfrt_legacy_bytestring_responses"
