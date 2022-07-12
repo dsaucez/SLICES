@@ -1,5 +1,5 @@
 ---
-- name: Instantiate ONOS in docker
+- name: Instantiate ONOS
   import_tasks: '{{ onos.mode }}_onos.yaml'
 
 - name: check if fabric-tna is built
