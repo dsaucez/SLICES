@@ -6,9 +6,9 @@
 - name: Install k8s
   ansible.builtin.apt:
     name:
-      - kubectl
-      - kubeadm
-      - kubelet
+      - kubectl=1.23.7-00
+      - kubeadm=1.23.7-00
+      - kubelet=1.23.7-00
     autoclean: yes
     state: present
 

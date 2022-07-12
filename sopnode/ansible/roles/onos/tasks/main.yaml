@@ -1,0 +1,77 @@
+---
+- name: Instantiate ONOS in docker
+  import_tasks: '{{ onos.mode }}_onos.yaml'
+
+- name: check if fabric-tna is built
+  stat:
+    path: ~/fabric-tna/target/fabric-tna-1.1.0.oar
+  register: fabric_oar
+
+- name: Retrieve fabric-tna
+  ansible.builtin.git:
+    repo: https://github.com/stratum/fabric-tna.git
+    dest: fabric-tna
+    version: tags/1.1.0
+    force: yes
+  when: fabric_oar.stat.exists == false
+
+- name: Make fabric
+  shell: make {{ fabric_profile | default('fabric') }}
+  args:
+    chdir: fabric-tna
+  #environment:
+  #  SDE_VERSION: 9.7.0
+  #  SDE_DOCKER_IMG: p4-studio
+  when: fabric_oar.stat.exists == false
+
+- name: Make pipeconf
+  shell: make pipeconf
+  args:
+    chdir: fabric-tna
+  #environment:
+  #  SDE_VERSION: 9.7.0
+  #  SDE_DOCKER_IMG: p4-studio
+  when: fabric_oar.stat.exists == false
+
+- name: Build profiles
+  shell: make build PROFILES="{{ fabric_profile | default('fabric') }}"
+  args:
+    chdir: fabric-tna
+  #environment:
+  #  SDE_VERSION: 9.7.0
+  #  SDE_DOCKER_IMG: p4-studio
+  when: fabric_oar.stat.exists == false
+  register: build_profiles
+
+
+- name: Activate applications (may take minutes)
+  uri:
+    url: http://{{ onos_cluster.result.spec.clusterIP | default('127.0.0.1') }}:8181/onos/v1/applications/{{ item.name }}/active
+    user: onos
+    password: rocks
+    method: POST
+  register: _result
+  until: _result.status == 200
+  delay: 10   # Every 10s
+  retries: 10 # 10 * 10s = 100s
+  with_items: "{{ onos.applications }}"
+  when: onos.applications is defined 
+
+- name: Install pipeconfs
+  shell: "make pipeconf-install ONOS_HOST={{ onos_cluster.result.spec.clusterIP | default('127.0.0.1') }}"
+  args:
+    chdir: fabric-tna
+  #environment:
+  #  SDE_VERSION: 9.7.0
+  #  SDE_DOCKER_IMG: p4-studio
+  when: fabric_oar.stat.exists == true or build_profiles.failed == false
+
+- name: make netcfg
+  ansible.builtin.template:
+    src: netcfg.j2
+    dest:  fabric-tna/tofino-netcfg.json
+
+- name: Push netcfg
+  shell: "make netcfg ONOS_HOST={{ onos_cluster.result.spec.clusterIP | default('127.0.0.1') }}"
+  args:
+    chdir: fabric-tna

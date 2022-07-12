@@ -40,6 +40,11 @@
     - name: installing stratum
       become: yes
       shell: "docker exec stratum-container sudo apt-get install -y --reinstall ./stratum_bmv2_deb.deb"
+    - name: copying chassis config
+      become: yes
+      shell: "docker cp ./stratum/hal/bin/bmv2/chassis_config.pb.txt stratum-container:/etc/stratum/chassis_config.pb.txt"
+      args:
+        chdir: stratum
     - name: strating stratum with the chassis
       become: yes
       shell: "docker exec -d stratum-container sudo stratum_bmv2 -chassis_config_file=/etc/stratum/chassis_config.pb.txt"

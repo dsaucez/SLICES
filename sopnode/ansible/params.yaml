@@ -17,4 +17,32 @@ master: DATA+OMITTED
 subnet: DATA+OMITTED
 
 # Fabric
-fabric_profile: fabric-v1model fabric-tna
+fabric_profile: fabric-v1model
+
+onos:
+  image: onosproject/onos:2.5.8
+  mode:  docker
+  applications:
+    - name: org.onosproject.drivers.barefoot
+    - name: org.onosproject.drivers.bmv2
+    - name: org.onosproject.lldpprovider
+    - name: org.onosproject.hostprovider
+    
+netcfg:
+  devices:
+    "device:sopnode-sw1":
+      basic:
+        managementAddress: "grpc://10.255.255.4:9559?device_id=1"
+        driver: "stratum-bmv2"
+        pipeconf: "org.stratumproject.fabric.bmv2"
+        locType: "grid"
+        gridX: 200
+        gridY: 600
+    "device:sopnode-sw2":
+      basic:
+        managementAddress: "grpc://10.255.255.3:9559?device_id=1"
+        driver: "stratum-bmv2"
+        pipeconf: "org.stratumproject.fabric.bmv2"
+        locType: "grid"
+        gridX: 400
+        gridY: 400

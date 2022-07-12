@@ -1,0 +1,10 @@
+---
+- name: ONOS docker
+  docker_container:
+    name: onos
+    image: '{{ onos.image }}'
+    ports:
+      - "830:830"
+      - "5005:5005"
+      - "8101:8101"
+      - "8181:8181"
