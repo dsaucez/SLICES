@@ -55,7 +55,7 @@ cp -f /stratum/bazel-bin/stratum/hal/bin/bmv2/stratum_bmv2_deb.deb /stratum/
 ```
 After you build the stratum package, you can start stratum as follow
 ```console
-./setup_dev_env.sh # Do this command if you are not inside the container already
+./setup_dev_env.sh -- --privileged --network=host # Do this command if you are not inside the container already
 # -- inside the container
 sudo apt-get update 
 sudo apt-get install -y --reinstall ./stratum_bmv2_deb.deb
@@ -73,8 +73,11 @@ sudo apt install make
 ### Start onos container: 
 ```console
 docker run -t -d -p 8181:8181 -p 8101:8101 -p 5005:5005 -p 830:830 --name onos onosproject/onos:2.7.0
+```
+activate the bmv2 drivers.
+```console
 ssh -p 8101 onos@localhost  # to go inside the onos container : credentials : onos/rocks
-app activate org.onosproject.drivers.bmv2 
+app activate org.onosproject.drivers.bmv2  # once you are inside the container, run this command to activate the bmv2 drivers
 ```
 ## Fabric-tna (tested on ubuntu 20,04) :
 general dependecies : 
