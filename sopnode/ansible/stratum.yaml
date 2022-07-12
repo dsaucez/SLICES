@@ -1,6 +1,5 @@
 ---
 - name: Install stratum node
   hosts: switches
-  remote_user: root
   roles:
     - role: stratum

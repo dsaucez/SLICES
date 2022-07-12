@@ -1,6 +1,5 @@
 ---
 - name: ONOS
   hosts: controllers
-  remote_user: root
   roles:
     - role: onos

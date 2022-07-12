@@ -1,4 +1,6 @@
 ---
+#ansible_user: root
+
 #registry config
 registry_name: DATA+OMITTED
 auth:
