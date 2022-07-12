@@ -39,5 +39,5 @@ ansible-playbook -i inventories/inria/ fabric-switch.yaml --extra-vars "@params.
 
 Deploy stratum on switches
 ```bash
-ansible-playbook -i inventories/inria/ --extra-vars "@params.yaml"
+ansible-playbook -i inventories/inria/ stratum.yaml --extra-vars "@params.yaml"
 ```

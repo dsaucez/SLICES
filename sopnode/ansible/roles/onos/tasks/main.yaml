@@ -19,30 +19,29 @@
   shell: make {{ fabric_profile | default('fabric') }}
   args:
     chdir: fabric-tna
-  #environment:
-  #  SDE_VERSION: 9.7.0
-  #  SDE_DOCKER_IMG: p4-studio
+  environment:
+    SDE_VERSION: 9.7.0
+    SDE_DOCKER_IMG: p4-studio
   when: fabric_oar.stat.exists == false
 
 - name: Make pipeconf
   shell: make pipeconf
   args:
     chdir: fabric-tna
-  #environment:
-  #  SDE_VERSION: 9.7.0
-  #  SDE_DOCKER_IMG: p4-studio
+  environment:
+    SDE_VERSION: 9.7.0
+    SDE_DOCKER_IMG: p4-studio
   when: fabric_oar.stat.exists == false
 
 - name: Build profiles
   shell: make build PROFILES="{{ fabric_profile | default('fabric') }}"
   args:
     chdir: fabric-tna
-  #environment:
-  #  SDE_VERSION: 9.7.0
-  #  SDE_DOCKER_IMG: p4-studio
+  environment:
+    SDE_VERSION: 9.7.0
+    SDE_DOCKER_IMG: p4-studio
   when: fabric_oar.stat.exists == false
   register: build_profiles
-
 
 - name: Activate applications (may take minutes)
   uri:
@@ -61,9 +60,9 @@
   shell: "make pipeconf-install ONOS_HOST={{ onos_cluster.result.spec.clusterIP | default('127.0.0.1') }}"
   args:
     chdir: fabric-tna
-  #environment:
-  #  SDE_VERSION: 9.7.0
-  #  SDE_DOCKER_IMG: p4-studio
+  environment:
+    SDE_VERSION: 9.7.0
+    SDE_DOCKER_IMG: p4-studio
   when: fabric_oar.stat.exists == true or build_profiles.failed == false
 
 - name: make netcfg
