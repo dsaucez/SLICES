@@ -1,14 +1,9 @@
 all:
-  hosts:
-    10.255.255.4:
-    10.255.255.3:
   children:
-    bmv2:
+    switches:
       hosts:
         10.255.255.4:
         10.255.255.3:
-    switches:
-      hosts:
         sopnode-sw1-eth0.inria.fr:
           ansible_ssh_private_key_file: /workspaces/SLICES/sopnode/ansible/id_rsa_silecs
           ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
@@ -20,6 +15,7 @@ all:
           ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
     controllers:
       hosts:
+        10.255.255.4:
 #        sopnode-sw1-eth0.inria.fr:
 #          ansible_ssh_private_key_file: /workspaces/SLICES/sopnode/ansible/id_rsa_silecs
 #          ansible_ssh_common_args: '-o StrictHostKeyChecking=no'

@@ -1,6 +1,6 @@
 ---
 - name: Install stratum node
-  hosts: bmv2
+  hosts: switches
   remote_user: vagrant
   #roles:
   #  - role: container
