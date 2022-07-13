@@ -13,7 +13,7 @@ git clone ...
 ### Virtualbox installation
 #### On Linux (such as Fedora)
 - Download .run file for linux-64bit from https://www.virtualbox.org/wiki/Testbuilds
-- sh <linux-64bit file>.sh
+- sh \<linux-64bit file\>.sh
 - To verify that virtualbox is installed correctly, use this command : 
 ```console
 vboxmanage --version
