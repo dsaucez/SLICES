@@ -1,7 +1,0 @@
----
-- name: Install bmv2
-  hosts: 34.125.252.96
-  remote_user: vagrant
-  become: yes
-  roles:
-    - role: container
