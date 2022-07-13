@@ -46,14 +46,14 @@ netcfg:
         locType: "grid"
         gridX: 200
         gridY: 600
-#    "device:sopnode-sw2":
-#      basic:
-#        managementAddress: "grpc://138.96.245.12:9559?device_id=1"
-#        driver: "stratum-tofino"
-#        pipeconf: "org.stratumproject.fabric.montara_sde_9_7_0"
-#        locType: "grid"
-#        gridX: 400
-#        gridY: 400
+    "device:sopnode-sw2":
+      basic:
+        managementAddress: "grpc://192.168.34.3:9559?device_id=1"
+        driver: "stratum-bmv2"
+        pipeconf: "org.stratumproject.fabric.bmv2"
+        locType: "grid"
+        gridX: 400
+        gridY: 400
 #    "device:sopnode-sw3":
 #      basic:
 #        managementAddress: "grpc://138.96.245.13:9559?device_id=1"

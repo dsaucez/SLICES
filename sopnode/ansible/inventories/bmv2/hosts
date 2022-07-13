@@ -3,7 +3,7 @@ all:
     switches:
       hosts:
         192.168.34.2:
-        #192.168.34.3:
+        192.168.34.3:
     controllers:
       hosts:
         192.168.34.2:
