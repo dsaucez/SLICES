@@ -1,0 +1,5 @@
+---
+- name: ONOS
+  hosts: controllers
+  roles:
+    - role: onos
