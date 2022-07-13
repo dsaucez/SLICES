@@ -9,6 +9,10 @@ ansible-galaxy collection install community.general
 ansible-galaxy collection install community.docker
 ```
 
+```
+sudo apt install sshpass
+```
+
 ## Run playbooks
 
 Create a k8s cluster:
