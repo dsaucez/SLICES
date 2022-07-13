@@ -1,0 +1,7 @@
+---
+- name: Build stratum
+  become: yes
+  shell: "docker exec stratum-container bazel build //stratum/hal/bin/bmv2:stratum_bmv2_deb"
+- name: Copy the built stratum package
+  become: yes
+  shell: "docker exec stratum-container cp -f ~/stratum/stratum/bazel-bin/stratum/hal/bin/bmv2/stratum_bmv2_deb.deb /stratum/"
