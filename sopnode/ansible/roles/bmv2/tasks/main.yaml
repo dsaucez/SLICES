@@ -1,0 +1,39 @@
+---
+- name: Retrieve bmv2
+  ansible.builtin.git:
+    repo: https://github.com/p4lang/behavioral-model.git
+    dest: bmv2
+    version: f16d0de
+    force: yes
+- name: installing deps
+  become: yes
+  shell: ./install_deps.sh
+  args:
+    chdir: bmv2
+- name: autogen
+  shell: ./autogen.sh
+  args:
+    chdir: bmv2
+- name: configuring
+  shell: ./configure
+  args:
+    chdir: bmv2
+- name: make
+  shell: make
+  args:
+    chdir: bmv2
+- name: installing bmv2
+  become: yes
+  shell: make install
+  args:
+    chdir: bmv2
+- name: refreshing shared library cache
+  become: yes
+  shell: ldconfig
+  args:
+    chdir: bmv2
+- name: clean temporary files
+  become: yes
+  shell: make clean
+  args:
+    chdir: bmv2
