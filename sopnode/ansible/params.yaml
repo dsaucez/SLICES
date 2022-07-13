@@ -23,7 +23,8 @@ stratum:
   mode: tofino # bmv2 tofino
 
 # Fabric
-fabric_profile: fabric # fabric-v1model fabric-tna fabric
+fabric:
+  profile: fabric # fabric-v1model fabric-tna fabric
 
 # ONOS
 onos:

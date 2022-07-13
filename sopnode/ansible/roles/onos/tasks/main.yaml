@@ -16,7 +16,7 @@
   when: fabric_oar.stat.exists == false
 
 - name: Make fabric
-  shell: make {{ fabric_profile | default('fabric') }}
+  shell: make {{ fabric.profile }}
   args:
     chdir: fabric-tna
   environment:
@@ -34,7 +34,7 @@
   when: fabric_oar.stat.exists == false
 
 - name: Build profiles
-  shell: make build PROFILES="{{ fabric_profile | default('fabric') }}"
+  shell: make build PROFILES="{{ fabric.profile }}"
   args:
     chdir: fabric-tna
   environment:

@@ -17,7 +17,8 @@ stratum:
   mode: tofino
 
 # Fabric
-fabric_profile: fabric
+fabric:
+  profile: fabric
 
 onos:
   image: onosproject/onos:2.5.8

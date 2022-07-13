@@ -4,7 +4,8 @@ stratum:
   mode: bmv2 
 
 # Fabric
-fabric_profile: fabric-v1model
+fabric:
+  profile: fabric-v1model
 
 # ONOS
 onos:
