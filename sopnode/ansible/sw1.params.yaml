@@ -1,0 +1,67 @@
+---
+#ansible_user: root
+
+#registry config
+registry_name: registry-service
+auth:
+  - login: john
+    password: doe
+  - login: jane
+    password: doe
+
+# k8s config
+subnet: 10.244.0.0/16
+
+# Stratum
+stratum:
+  mode: tofino
+
+# Fabric
+fabric_profile: fabric
+
+onos:
+  image: onosproject/onos:2.5.8
+  mode:  k8s
+  applications:
+    - name: org.onosproject.drivers.barefoot
+    - name: org.onosproject.drivers.bmv2
+    - name: org.onosproject.lldpprovider
+    - name: org.onosproject.hostprovider
+    - name: org.onosproject.proxyarp
+    - name: org.onosproject.fwd
+
+netcfg:
+  devices:
+    "device:sopnode-sw1":
+      basic:
+        managementAddress: "grpc://138.96.245.11:9559?device_id=1"
+        driver: "stratum-tofino"
+        pipeconf: "org.stratumproject.fabric.mavericks_sde_9_7_0"
+        locType: "grid"
+        gridX: 200
+        gridY: 600
+    "device:sopnode-sw2":
+      basic:
+        managementAddress: "grpc://138.96.245.12:9559?device_id=1"
+        driver: "stratum-tofino"
+        pipeconf: "org.stratumproject.fabric.montara_sde_9_7_0"
+        locType: "grid"
+        gridX: 400
+        gridY: 400
+    "device:sopnode-sw3":
+      basic:
+        managementAddress: "grpc://138.96.245.13:9559?device_id=1"
+        driver: "stratum-tofino"
+        pipeconf: "org.stratumproject.fabric.mavericks_sde_9_7_0"
+        locType: "grid"
+        gridX: 600
+        gridY: 600
+  ports:
+    "device:sopnode-sw1/200":
+      interfaces:
+        - name: 'sw1-w2'
+          vlan-untagged: 0
+    "device:sopnode-sw3/100":
+      interfaces:
+        - name: 'sw3-l1'
+          vlan-untagged: 0
