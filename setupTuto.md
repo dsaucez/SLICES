@@ -19,11 +19,9 @@ git clone ...
 vboxmanage --version
 ```
 
-#### On Windows
--
+#### On Windows and MacOS
+- Follow instructions on https://www.virtualbox.org/manual/ch02.html
 
-#### On MacOS
--
 
 ### Vagarant Installation
 
@@ -40,9 +38,9 @@ vagrant -v
 
 
 
-## Start the envirement
+## Start the environment
   
-Update enviornment variable VAGRANT_DEFAULT_PROVIDER with following command : 
+Update environment variable VAGRANT_DEFAULT_PROVIDER with following command in each terminal: 
   ``` console
   export VAGRANT_DEFAULT_PROVIDER=
   ```
@@ -50,25 +48,26 @@ Update enviornment variable VAGRANT_DEFAULT_PROVIDER with following command :
 in a seperate terminal type these commands to start the first switch :
 
 ```console
+export VAGRANT_DEFAULT_PROVIDER=
 cd switch1
 vagrant up
-vagrant ssh
 ```
 
 start a new  terminal and type these commands to start the second switch :
 
 ```console
+export VAGRANT_DEFAULT_PROVIDER=
 cd switch2
 vagrant up
-vagrant ssh
 ```
 
-these commands starts 2 vms with bmv2 software switch installed on both of them.
+Above commands start 2 vms with bmv2 software switch installed on both of them.
 
 Now we will use Ansible to start the stratum switches. its very simple you just have to go to the ansible controller vm.
   
 start a new  terminal and type these commands to start the ansible controller :
 ```console
+export VAGRANT_DEFAULT_PROVIDER=
 cd ansiblecontroller
 vagrant up
 vagrant ssh
