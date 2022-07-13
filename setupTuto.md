@@ -10,6 +10,21 @@ start by cloning the repo of this tutorial in your working envirement
 git clone ...
 ```
 
+### Virtualbox installation
+#### On Linux (such as Fedora)
+- Download .run file for linux-64bit from https://www.virtualbox.org/wiki/Testbuilds
+- sh <linux-64bit file>.sh
+- To verify that virtualbox is installed correctly, use this command : 
+```console
+vboxmanage --version
+```
+
+#### On Windows
+-
+
+#### On MacOS
+-
+
 ### Vagarant Installation
 
 From the website below, download and install the appropriate version of vagrant depending on your OS.
@@ -46,4 +61,10 @@ vagrant ssh
 these commands starts 2 vms with bmv2 software switch installed on both of them.
 
 Now we will use Ansible to start the stratum switches. its very simple you just have to go to the ansible controller vm.
-
+  
+start a new  terminal and type these commands to start the ansible controller :
+```console
+cd ansiblecontroller
+vagrant up
+vagrant ssh
+```
