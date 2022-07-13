@@ -1,4 +1,9 @@
 ---
+- name: Stop running onos instance
+  become: yes
+  community.docker.docker_container:
+    name: onos
+    state: absent
 - name: ONOS docker
   docker_container:
     name: onos
