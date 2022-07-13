@@ -41,6 +41,11 @@ vagrant -v
 
 
 ## Start the envirement
+  
+Update enviornment variable VAGRANT_DEFAULT_PROVIDER with following command : 
+  ``` console
+  export VAGRANT_DEFAULT_PROVIDER=
+  ```
 
 in a seperate terminal type these commands to start the first switch :
 
