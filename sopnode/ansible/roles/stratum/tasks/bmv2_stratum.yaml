@@ -1,0 +1,44 @@
+---
+- name: verifying
+  community.docker.docker_container:
+    name: stratum-container
+    state: absent
+- name: copying the chassis_config_file
+  copy: 
+    src: chassis_config.pb.txt
+    dest: ~/stratum/stratum/hal/bin/bmv2
+    force: yes
+- name: change docker permissions
+  become: yes
+  shell: "chmod 666 /var/run/docker.sock"
+- name: starting the stratum container
+  shell: "~/stratum/setup_dev_env.sh -- --privileged -d --network=host --name stratum-container"
+- name: Check if stratum already been built
+  stat:
+    path: ~/stratum/stratum_bmv2_deb.deb
+  register: stat_result
+- name: building stratum if its not already built
+  become: yes
+  shell: "docker exec stratum-container bazel build //stratum/hal/bin/bmv2:stratum_bmv2_deb"
+  when:  not stat_result.stat.exists
+- name: copying the built stratum package
+  become: yes
+  shell: "docker exec stratum-container cp -f ~/stratum/stratum/bazel-bin/stratum/hal/bin/bmv2/stratum_bmv2_deb.deb /stratum/"
+  when: not stat_result.stat.exists
+- name: apt-update
+  become: yes
+  shell: "docker exec stratum-container sudo apt-get update"
+- name: installing stratum
+  become: yes
+  shell: "docker exec stratum-container sudo apt-get install -y --reinstall ./stratum_bmv2_deb.deb"
+- name: copying chassis config
+  become: yes
+  shell: "docker cp ~/stratum/stratum/hal/bin/bmv2/chassis_config.pb.txt stratum-container:/chassis_config.pb.txt"
+- name: strating stratum with the chassis
+  become: yes
+  shell: "docker exec -d stratum-container sudo stratum_bmv2 -chassis_config_file=/chassis_config.pb.txt"
+
+
+
+
+    
