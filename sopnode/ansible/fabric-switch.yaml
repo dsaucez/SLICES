@@ -1,6 +1,5 @@
 ---
 - name:  Configure switches as special Kubernetes nodes
   hosts: fabric_switches
-  remote_user: root
   roles:
     - role: fabric-switch

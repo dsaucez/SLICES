@@ -1,7 +1,6 @@
 - name: Create a token on k8s master
   hosts: masters
   run_once: true
-  remote_user: root
   tasks:
 
   - name: Create temporary build directory
@@ -31,7 +30,6 @@
 
 - name: Install k8s nodes
   hosts: switches:!masters
-  remote_user: root
   vars:
     token: "{{ hostvars['ansible_dummy_host']['_token'] }}"
     kube_config_local_path: "{{ hostvars['ansible_dummy_host']['_kube_config'] }}"

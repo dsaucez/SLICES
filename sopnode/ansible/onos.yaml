@@ -1,7 +1,0 @@
----
-- name: ONOS
-  hosts: controllers
-  remote_user: vagrant
-  become: yes
-  roles:
-    - role: onos

@@ -1,7 +1,6 @@
 ---
 - name: Deploy docker registry
   hosts: masters
-  remote_user: root
   roles:
     - role: registry
       vars:
