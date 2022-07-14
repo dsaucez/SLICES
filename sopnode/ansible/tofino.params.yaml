@@ -29,7 +29,7 @@ onos:
     - name: org.onosproject.lldpprovider
     - name: org.onosproject.hostprovider
     - name: org.onosproject.proxyarp
-    - name: org.onosproject.fwd
+    #- name: org.onosproject.fwd
 
 netcfg:
   devices:
