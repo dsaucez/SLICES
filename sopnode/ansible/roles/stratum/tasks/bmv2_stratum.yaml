@@ -4,11 +4,6 @@
   community.docker.docker_container:
     name: stratum-container
     state: absent
-- name: copying the chassis_config_file
-  copy: 
-    src: chassis_config.pb.txt
-    dest: ~/stratum/stratum/hal/bin/bmv2
-    force: yes
 - name: change docker sock permissions
   become: yes
   ansible.builtin.file:
@@ -28,6 +23,6 @@
 - name: installing stratum
   shell: "docker exec stratum-container sudo apt-get install -y --reinstall /stratum/stratum_bmv2_deb.deb"
 - name: copying chassis config
-  shell: "docker cp ~/stratum/stratum/hal/bin/bmv2/chassis_config.pb.txt stratum-container:/chassis_config.pb.txt"
+  shell: "docker cp ~/stratum/stratum/chassis_config.pb.txt stratum-container:/chassis_config.pb.txt"
 - name: strating stratum with the chassis
   shell: "docker exec -d stratum-container sudo stratum_bmv2 -chassis_config_file=/chassis_config.pb.txt"

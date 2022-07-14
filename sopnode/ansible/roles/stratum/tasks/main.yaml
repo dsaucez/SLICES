@@ -6,5 +6,13 @@
     version: e2640fc
     force: yes
 
+- name: Copy chassis config
+  ansible.builtin.copy:
+    src: "{{ inventory_hostname }}/chassis_config.pb.txt"
+    dest: ~/stratum/stratum/chassis_config.pb.txt
+    force: yes
+  register: custom_stratum_chassis_config
+  ignore_errors: true
+
 - name: Instantiate Stratum
   import_tasks: '{{ stratum.mode }}_stratum.yaml'
