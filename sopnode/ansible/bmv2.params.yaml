@@ -7,6 +7,11 @@ stratum:
 fabric:
   profile: fabric-v1model
 
+
+# calico config
+calico:
+  IP_AUTODETECTION_METHOD: interface=eth1
+
 # ONOS
 onos:
   image: onosproject/onos:2.5.8

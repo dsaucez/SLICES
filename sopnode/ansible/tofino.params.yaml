@@ -13,6 +13,10 @@ auth:
 k8s:
   subnet: 10.244.0.0/16
 
+# calico config
+calico:
+  IP_AUTODETECTION_METHOD: interface=ma1
+
 # Stratum
 stratum:
   mode: tofino

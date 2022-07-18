@@ -1,1 +1,2 @@
-IP_AUTODETECTION_METHOD: interface=ma1
+calico:
+  IP_AUTODETECTION_METHOD: interface=ma1

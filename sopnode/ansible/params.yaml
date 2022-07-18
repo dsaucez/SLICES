@@ -19,6 +19,10 @@ master: DATA+OMITTED
 k8s:
   subnet: DATA+OMITTED
 
+# calico config
+calico:
+  IP_AUTODETECTION_METHOD: interface=eth1
+
 # Stratum
 stratum:
   mode: tofino # bmv2 tofino
