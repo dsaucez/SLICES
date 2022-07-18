@@ -13,6 +13,20 @@ debian_dependencies:
   - name: ca-certificates
     state: present
 
+ubuntu_dependencies:
+  - name: git
+    state: present
+  - name: conntrack
+    state: present
+  - name: python3-pip
+    state: present
+  - name: curl
+    state: present
+  - name: apt-transport-https
+    state: present
+  - name: ca-certificates
+    state: present
+
 python_packages:
     - name: docker
       version: 4.4.4

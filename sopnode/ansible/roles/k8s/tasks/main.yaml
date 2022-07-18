@@ -17,6 +17,7 @@
     src: /run/resolvconf/ 
     dest: /run/systemd/resolve
     state: link
+  when: ansible_distribution == 'Debian'
 - name: Create ~/.kube
   ansible.builtin.file:
     path: ~/.kube/

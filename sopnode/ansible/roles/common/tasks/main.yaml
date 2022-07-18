@@ -10,7 +10,7 @@
     state: "{{ item.state }}"
     autoclean: yes
     update_cache: true
-  with_items: "{{ debian_dependencies }}"
+  with_items: "{{ lookup('vars', (ansible_distribution | lower)+ '_dependencies')}}"
 
 - name: Install dependencies (Python)
   ansible.builtin.pip:
@@ -30,6 +30,7 @@
     fstype: hugetlbfs
     opts: "pagesize=1GB"
     state: mounted
+  when: ansible_distribution == 'Debian'
 
 - name: Disable swap
   shell: swapoff -a 

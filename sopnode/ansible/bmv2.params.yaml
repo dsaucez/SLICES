@@ -18,7 +18,7 @@ calico:
 # ONOS
 onos:
   image: onosproject/onos:2.5.8
-  mode:  docker
+  mode:  k8s
   applications:
     - name: org.onosproject.drivers.barefoot
     - name: org.onosproject.drivers.bmv2
