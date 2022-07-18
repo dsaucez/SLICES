@@ -10,7 +10,8 @@ auth:
     password: doe
 
 # k8s config
-subnet: 10.244.0.0/16
+k8s:
+  subnet: 10.244.0.0/16
 
 # Stratum
 stratum:

@@ -1,5 +1,5 @@
 - name: Initialize the master node
-  shell: 'kubeadm init --pod-network-cidr={{ subnet }} --upload-certs'
+  shell: 'kubeadm init --pod-network-cidr={{ k8s.subnet }} --upload-certs'
   register: kubeadm_init
 
 - name: Create a symbolic link /etc/kubernetes/admin.conf -> ~/.kube/config

@@ -16,7 +16,8 @@ path:
 # k8s config
 kube_config_local_path: DATA+OMITTED
 master: DATA+OMITTED
-subnet: DATA+OMITTED
+k8s:
+  subnet: DATA+OMITTED
 
 # Stratum
 stratum:
