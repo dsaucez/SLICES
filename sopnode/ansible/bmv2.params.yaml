@@ -9,7 +9,7 @@ fabric:
 
 k8s:
   subnet: 10.244.0.0/16
-  apiserver-advertise-address: 192.168.34.2
+  apiserver_advertise_address: 192.168.34.2
 
 # calico config
 calico:
