@@ -1,7 +1,13 @@
-- name: Initialize the master node
+- name: Initialize the master node  (automatic address)
   shell: 'kubeadm init --pod-network-cidr={{ k8s.subnet }} --upload-certs'
   register: kubeadm_init
+  when: "'apiserver-advertise-address' not in k8s"
 
+- name: Initialize the master node (force address)
+  shell: 'kubeadm init --pod-network-cidr={{ k8s.subnet }} --upload-certs --apiserver-advertise-address={{ k8s.apiserver-advertise-address }}'
+  register: kubeadm_init
+  when: "'apiserver-advertise-address' in k8s"
+  
 - name: Create a symbolic link /etc/kubernetes/admin.conf -> ~/.kube/config
   ansible.builtin.file:
     src: /etc/kubernetes/admin.conf

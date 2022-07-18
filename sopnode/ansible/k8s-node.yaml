@@ -33,7 +33,7 @@
   vars:
     token: "{{ hostvars['ansible_dummy_host']['_token'] }}"
     kube_config_local_path: "{{ hostvars['ansible_dummy_host']['_kube_config'] }}"
-    master: "{{ hostvars['ansible_dummy_host']['_master'] }}"
+    master: "{{ k8s['apiserver-advertise-address'] | default(hostvars['ansible_dummy_host']['_master']) }}"
 
   roles:
     - role: k8s-node

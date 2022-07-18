@@ -7,6 +7,9 @@ stratum:
 fabric:
   profile: fabric-v1model
 
+k8s:
+  subnet: 10.244.0.0/16
+  apiserver-advertise-address: 192.168.34.2
 
 # calico config
 calico:
