@@ -27,6 +27,7 @@ calico:
 # Stratum
 stratum:
   mode: tofino # bmv2 tofino
+  bmv2_user: vagrant
 
 # Fabric
 fabric:

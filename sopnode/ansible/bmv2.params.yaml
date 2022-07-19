@@ -1,7 +1,8 @@
 ---
 # Stratum
 stratum:
-  mode: bmv2 
+  mode: bmv2
+  bmv2_user: vagrant
 
 # Fabric
 fabric:
@@ -9,7 +10,7 @@ fabric:
 
 k8s:
   subnet: 10.244.0.0/16
-  apiserver_advertise_address: 192.168.34.2
+  apiserver_advertise_address: 192.168.34.3
 
 # calico config
 calico:
@@ -27,11 +28,27 @@ onos:
     
 netcfg:
   devices:
-    "device:sopnode-sw1":
+    "device:sw1":
       basic:
-        managementAddress: "grpc://192.168.34.2:9559?device_id=1"
+        managementAddress: "grpc://192.168.34.3:9559?device_id=1"
         driver: "stratum-bmv2"
         pipeconf: "org.stratumproject.fabric.bmv2"
         locType: "grid"
         gridX: 200
+        gridY: 600
+    "device:sw2":
+      basic:
+        managementAddress: "grpc://192.168.34.4:9559?device_id=1"
+        driver: "stratum-bmv2"
+        pipeconf: "org.stratumproject.fabric.bmv2"
+        locType: "grid"
+        gridX: 400
+        gridY: 400
+    "device:sw3":
+      basic:
+        managementAddress: "grpc://192.168.34.5:9559?device_id=1"
+        driver: "stratum-bmv2"
+        pipeconf: "org.stratumproject.fabric.bmv2"
+        locType: "grid"
+        gridX: 600
         gridY: 600
