@@ -20,7 +20,7 @@ Eurecom and Inria are two disjoined entities with their own administration and
 policies. In the following we call them _administrative domains_.
 
 The administrative domain of Eurecom is composed of _compute_ and
-_radio_ clusters and so is the Inria administrative domain. As set of **X** 
+_radio_ clusters and so is the Inria administrative domain. As set of 6 
 optical fibre links is shared between Eurecom and Inria and used to interconnect
 the two domains. Except these optical links all other assets fall under only
 one administrative domain, either Eurecom or Inria. However, pieces of equipment
