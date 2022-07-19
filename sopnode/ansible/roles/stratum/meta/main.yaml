@@ -1,2 +1,3 @@
 dependencies:
+  - role: common
   - { role: bmv2, when: stratum.mode == 'bmv2' }
