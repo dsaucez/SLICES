@@ -33,15 +33,15 @@ containers) can be deployed and orchestrated on the fly, for example with docker
 kubernetes [[k8s](https://kubernetes.io)] or OpenShift
 [[Open-Shift](https://www.redhat.com/en/technologies/cloud-computing/openshift)].
 
-The radio clusters are specialized clusters built according to the specific needs
-of the partner. For example, the radio cluster of Inria is integrated in the
-R2LAB testbed [[R2LAB](https://r2lab.inria.fr)] to leverage its anechoic
+The radio clusters are specialized clusters built according to the specific
+needs of the partner. For example, the radio cluster of Inria is integrated in
+the R2LAB testbed [[R2LAB](https://r2lab.inria.fr)] to leverage its anechoic
 chamber.
 
 The network interconnection is granted by high speed programmable switches. To
 ease reproducibility and allow replication of the infrastructure by other
 parties, all the programmable switches follow the Facebook's Wedge 100 open
-design with 32 100BgE QSFP28 ports [[Wedge100](https://engineering.fb.com/2016/10/18/data-center-engineering/wedge-100-more-open-and-versatile-than-ever/)]
+design with 32 100Gbps QSFP28 ports[[Wedge100](https://engineering.fb.com/2016/10/18/data-center-engineering/wedge-100-more-open-and-versatile-than-ever/)]
 The SophiaNode uses Edge-Core Wedge100BF-32QS
 [[Wedge100BF-32QS](https://www.edge-core.com/productsInfo.php?cls=1&cls2=5&cls3=181&id=770)]
 and Wedge100BF-32X [[Wege100BF-32X](https://www.edge-core.com/productsInfo.php?id=335)]
