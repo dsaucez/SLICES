@@ -1,5 +1,5 @@
 ---
-- name: Install stratum node
+- name: Install common tools and dependencies
   hosts: all
   roles:
     - role: common
