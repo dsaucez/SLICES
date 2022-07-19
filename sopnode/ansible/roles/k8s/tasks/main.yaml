@@ -37,3 +37,6 @@
     regexp: '(?!.*?--cgroup-driver=cgroupfs)^Environment="KUBELET_CONFIG_ARGS=(.*)"$'
     backrefs: yes
     line: 'Environment="KUBELET_CONFIG_ARGS=--cgroup-driver=cgroupfs \1"'
+
+- name: Reset k8s
+  shell: "kubeadm reset -f"
