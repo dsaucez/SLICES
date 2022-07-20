@@ -96,6 +96,25 @@
           targetPort: 8181
   register: onos_cluster
 
+- name: Deploy ONOS-service NodePort
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: onos-service-node-port
+        namespace: onos-ns
+      spec:
+        type: NodePort
+        selector:
+          app: onos 
+        ports:
+        - protocol: TCP
+          port: 8181
+          targetPort: 8181
+          nodePort: 30081
+
 - debug:
     msg:
       - "ONOS clusterIP is {{ onos_cluster.result.spec.clusterIP }}"
