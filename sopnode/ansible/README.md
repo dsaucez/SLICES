@@ -1,8 +1,10 @@
+This repository provides Ansible playbooks and roles to automate the deployment
+of a Fabric-TNA environment on SophiaNode
 
 ## Setup automation environment
 
 We use Ansible to deploy the different services on the SophiaNode
-infrastructure. The playbooks require Ansible 2.5 or higher (we tested then on
+infrastructure. The playbooks require Ansible 2.5 or higher (we tested them on
 `Ansible 2.9.6` and `Ansible 2.12.7`). The present section presents instructions
 on how to setup the environment on GNU/Linux Ubuntu 20.04.
 
