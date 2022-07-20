@@ -169,6 +169,16 @@ bmv2.
 selected. It specifies which user should be used to launch the stratum instance.
 This user cannot be `root`.
 
+Stratum relies on a chassis configuration that defines a mapping between the
+actual device and stratum. To define a chassis configuration, just put the
+chassis configuration in
+`files/chassis_config/<inventory_hostname>/chassis_config.pb.txt` where
+`<inventory_hostname>` is the hostname provided in the inventory. If you do not
+provide a chassis configuration then the default one from stratum will be used.
+
+See [https://docs.sd-fabric.org/sdfabric-1.1/configuration/chassis.html](https://docs.sd-fabric.org/sdfabric-1.1/configuration/chassis.html)
+for details.
+
 ### fabric
 
 _fabric_ is defined in _fabric.yaml_. It is in charge of building SD-Fabric,
@@ -180,7 +190,7 @@ ONOS can be deployed either as a docker instance or in the k8s cluster.
 
 
 Because of licensing issues, we cannot provide `p4-studio` that is required to
-build SD-Fabric for tofino switches. It is assumed here that a the `p4-studio`
+build SD-Fabric for tofino switches. It is assumed here that  the `p4-studio`
 docker image is available on the controller nodes and that this image contains
 `p4-studio` with the `SDE 9.7.0`.
 
