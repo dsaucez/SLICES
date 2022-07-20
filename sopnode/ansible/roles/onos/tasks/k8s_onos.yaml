@@ -117,8 +117,10 @@
 
 - debug:
     msg:
+      - "ONOS NodePort is 30081"
+      - " http://{{ inventory_hostname }}:30081/onos/ui/"
       - "ONOS clusterIP is {{ onos_cluster.result.spec.clusterIP }}"
-      - "ssh -A -i ~/.ssh/id_rsa_silecs -L 8181:{{ onos_cluster.result.spec.clusterIP }}:8181 root@sopnode-sw2-eth0.inria.fr"
+      - " ssh {{ '-i ' + ansible_ssh_private_key_file if ansible_ssh_private_key_file is defined else ''}} -A -L 8181:{{ onos_cluster.result.spec.clusterIP }}:8181 {{ ansible_user }}@{{ inventory_hostname }}"
 
 # NOTE:XXX: #1
 - name: Wait for ONOS deployment to be ready
