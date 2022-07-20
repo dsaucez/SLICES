@@ -11,3 +11,5 @@ all:
     masters:
       hosts:
         192.168.34.3:
+    fabric_switches:
+      hosts:
