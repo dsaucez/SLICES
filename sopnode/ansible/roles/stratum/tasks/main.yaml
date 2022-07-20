@@ -8,7 +8,7 @@
 
 - name: Copy chassis config
   ansible.builtin.copy:
-    src: "{{ inventory_hostname }}/chassis_config.pb.txt"
+    src: "chassis_config/{{ inventory_hostname }}/chassis_config.pb.txt"
     dest: /tmp/chassis_config.pb.txt
     force: yes
   register: custom_stratum_chassis_config
