@@ -1,5 +1,5 @@
 ---
-- name: ONOS
+- name: SD-Fabric
   hosts: controllers
   roles:
     - role: onos
