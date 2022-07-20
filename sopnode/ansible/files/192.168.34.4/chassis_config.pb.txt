@@ -13,19 +13,19 @@ singleton_ports {
   slot: 1
   port: 1
   channel: 1
-  speed_bps: 100000000000
+  speed_bps: 1000000000
   config_params {
     admin_state: ADMIN_STATE_ENABLED
   }
   node: 1
 }
 singleton_ports {
-  id: 1
+  id: 2
   name: "eth3"
   slot: 1
   port: 2
   channel: 1
-  speed_bps: 100000000000
+  speed_bps: 1000000000
   config_params {
     admin_state: ADMIN_STATE_ENABLED
   }

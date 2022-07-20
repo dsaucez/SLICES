@@ -13,7 +13,7 @@ singleton_ports {
   slot: 1
   port: 1
   channel: 1
-  speed_bps: 100000000000
+  speed_bps: 1000000000
   config_params {
     admin_state: ADMIN_STATE_ENABLED
   }
