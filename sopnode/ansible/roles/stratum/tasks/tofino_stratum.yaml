@@ -8,7 +8,7 @@
 - name: Launch stratum
   environment:
     SDE_VERSION: 9.7.0
-    CHASSIS_CONFIG: /root/stratum/stratum/chassis_config.pb.txt
+    CHASSIS_CONFIG: /tmp/chassis_config.pb.txt
   shell: "~/stratum/stratum/hal/bin/barefoot/docker/start-stratum-container.sh -enable_onlp=false -bf_switchd_background=false -experimental_enable_p4runtime_translation -incompatible_enable_bfrt_legacy_bytestring_responses"
   when:  not custom_stratum_chassis_config.failed
 - name: Launch stratum
