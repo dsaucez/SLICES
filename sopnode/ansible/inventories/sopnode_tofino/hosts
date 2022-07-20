@@ -13,6 +13,6 @@ all:
         sopnode-sw2-eth0.inria.fr:
     fabric_switches:
       hosts:
-        sopnode-sw1-eth0.inria.fr:
-        sopnode-sw2-eth0.inria.fr:
-        sopnode-sw3-eth0.inria.fr:
+#        sopnode-sw1-eth0.inria.fr:
+#        sopnode-sw2-eth0.inria.fr:
+#        sopnode-sw3-eth0.inria.fr:
