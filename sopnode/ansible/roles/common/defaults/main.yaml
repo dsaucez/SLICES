@@ -12,6 +12,8 @@ debian_dependencies:
     state: present
   - name: ca-certificates
     state: present
+  - name: lsb-release
+    state: present
 
 ubuntu_dependencies:
   - name: git
@@ -25,6 +27,8 @@ ubuntu_dependencies:
   - name: apt-transport-https
     state: present
   - name: ca-certificates
+    state: present
+  - name: lsb-release
     state: present
 
 python_packages:

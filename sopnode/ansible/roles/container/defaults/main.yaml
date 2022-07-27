@@ -1,0 +1,10 @@
+# inspired by https://stackoverflow.com/a/73096785 + https://wiki.debian.org/ArchitectureSpecificsMemo#Summary
+deb_architecture:
+  "arm": "arm"
+  "aarch64": "arm64"
+  "x86_64": "amd64"
+
+debian_docker:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
