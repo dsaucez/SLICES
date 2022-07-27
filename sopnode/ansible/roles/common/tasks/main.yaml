@@ -4,7 +4,10 @@
     ansible.builtin.file:
       path: /etc/apt/sources.list.d/multistrap-onl.list
       state: absent
-    tags: never
+
+  - name: Gather dependencies (system)
+    ansible.builtin.package_facts:
+      manager: auto
 
   - name: Install dependencies (system)
     ansible.builtin.apt:
@@ -13,13 +16,19 @@
       autoclean: yes
       update_cache: true
     with_items: "{{ lookup('vars', (ansible_distribution | lower)+ '_dependencies')}}"
-    tags: never
+    when:
+      - not (lookup('vars', (ansible_distribution | lower)+ '_dependencies') | items2dict(key_name='name', value_name='state')).keys() is subset(ansible_facts.packages.keys())
+
+  - name: Gather dependencies (Python)
+    community.general.pip_package_info:
+    register: pip_packages
 
   - name: Install dependencies (Python)
     ansible.builtin.pip:
       name: "{{ item.name }}=={{ item.version }}"
     with_items: "{{ python_packages }}"
-    tags: never
+    when:
+      - not (python_packages | items2dict(key_name='name', value_name='version') ).keys()  is subset(pip_packages.packages.pip.keys())
 
   - name: Setting hugepages
     ansible.posix.sysctl:
