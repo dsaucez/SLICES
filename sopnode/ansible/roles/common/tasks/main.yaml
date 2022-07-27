@@ -21,14 +21,14 @@
 
   - name: Gather dependencies (Python)
     community.general.pip_package_info:
-    register: pip_packages
+    register: installed_pip_packages
 
   - name: Install dependencies (Python)
     ansible.builtin.pip:
       name: "{{ item.name }}=={{ item.version }}"
     with_items: "{{ python_packages }}"
     when:
-      - not (python_packages | items2dict(key_name='name', value_name='version') ).keys()  is subset(pip_packages.packages.pip.keys())
+      - not (python_packages | items2dict(key_name='name', value_name='version') ).keys()  is subset(installed_pip_packages.packages.pip.keys())
 
   - name: Setting hugepages
     ansible.posix.sysctl:
