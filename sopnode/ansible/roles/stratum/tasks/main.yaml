@@ -3,7 +3,7 @@
   ansible.builtin.git:
     repo: https://github.com/stratum/stratum.git
     dest: ~/stratum/
-    version: e2640fc
+    version: 2022-06-30
     force: yes
 
 - name: Copy chassis config
