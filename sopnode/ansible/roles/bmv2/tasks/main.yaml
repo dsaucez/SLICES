@@ -1,9 +1,0 @@
----
-- name: check presence
-  shell: command -v simple_switch >/dev/null 2>&1
-  register: is_bmv2_installed
-  ignore_errors: yes
-
-- name: build and install bmv2
-  import_tasks: build.yaml
-  when: is_bmv2_installed.rc > 0

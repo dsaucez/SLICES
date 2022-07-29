@@ -1,5 +1,10 @@
 ---
-- name: building stratum if its not already built
-  shell: "docker exec stratum-container bazel build //stratum/hal/bin/bmv2:stratum_bmv2_deb"
-- name: copying the built stratum package
-  shell: "docker exec stratum-container cp -f /stratum/bazel-bin/stratum/hal/bin/bmv2/stratum_bmv2_deb.deb /stratum/stratum_bmv2_deb.deb"
+- name: Build stratum
+  community.docker.docker_container_exec:
+    container: stratum-container
+    command: "bazel build //stratum/hal/bin/bmv2:stratum_bmv2_deb"
+
+- name: Copy the built stratum package
+  community.docker.docker_container_exec:
+    container: stratum-container
+    command: "cp -f /stratum/bazel-bin/stratum/hal/bin/bmv2/stratum_bmv2_deb.deb /stratum/stratum_bmv2_deb.deb"

@@ -181,6 +181,16 @@ provide a chassis configuration then the default one from stratum will be used.
 See [https://docs.sd-fabric.org/sdfabric-1.1/configuration/chassis.html](https://docs.sd-fabric.org/sdfabric-1.1/configuration/chassis.html)
 for details.
 
+> When the `bmv2` mode is chosen, the chassis config is not loaded as described
+> above. Instead a default configuration with 9 ports is loaded.
+>
+> Each port is attached to a `veth` of the hosting machine. You can send and
+> receive packets for stratum port `i` using `veth[(i-1) * 2 + 1]` on the
+> hosting machine.
+>
+> The simplest way to feed this `veth` port is to bridge it to the physical port
+> you want to use to carry traffic.
+
 ### fabric
 
 _fabric_ is defined in _fabric.yaml_. It is in charge of building SD-Fabric,
