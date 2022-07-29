@@ -1,0 +1,11 @@
+- name: Create vxlan
+  hosts: 192.168.34.3
+  tasks:
+  - name: Add VxLan
+    community.general.nmcli:
+      type: vxlan
+      conn_name: vxlan_test1
+      vxlan_id: 42
+      vxlan_local: 10.12.12.2
+      vxlan_remote: 192.168.34.4
+      state: present

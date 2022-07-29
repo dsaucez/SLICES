@@ -52,3 +52,10 @@ netcfg:
         locType: "grid"
         gridX: 600
         gridY: 600
+
+vxlan:
+  sw1:
+    conn_name: vxlan_test1
+    vxlan_id: 16
+    vxlan_local: 10.12.12.2
+    vxlan_remote: 192.168.34.4 
