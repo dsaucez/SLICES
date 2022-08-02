@@ -1,0 +1,5 @@
+all:
+  children:
+    gcp:
+      hosts:
+        34.170.125.222

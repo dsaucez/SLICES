@@ -1,0 +1,3 @@
+---
+ansible_ssh_private_key_file: ~/ssh-key-ansible-sa
+ansible_user: sa_113287131792868811867
