@@ -1,5 +1,5 @@
 ---
-debian_dependencies:
+debian_9_dependencies:
   - name: git
     state: present
   - name: conntrack
@@ -15,7 +15,25 @@ debian_dependencies:
   - name: lsb-release
     state: present
 
-ubuntu_dependencies:
+debian_10_dependencies:
+  - name: git
+    state: present
+  - name: conntrack
+    state: present
+  - name: python-pip
+    state: present
+  - name: python3-pip
+    state: present
+  - name: curl
+    state: present
+  - name: apt-transport-https
+    state: present
+  - name: ca-certificates
+    state: present
+  - name: lsb-release
+    state: present
+
+ubuntu_20.04_dependencies:
   - name: git
     state: present
   - name: conntrack
