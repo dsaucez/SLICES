@@ -1,10 +1,26 @@
 ---
-- name: Build stratum
-  community.docker.docker_container_exec:
-    container: stratum-container
-    command: "bazel build //stratum/hal/bin/bmv2:stratum_bmv2_deb"
+- block:
+  - name: Set user rights
+    community.docker.docker_container_exec:
+      container: stratum-container
+      command: "sudo chown {{ ansible_user }} {{ ansible_env.HOME }}/.cache"
 
-- name: Copy the built stratum package
-  community.docker.docker_container_exec:
-    container: stratum-container
-    command: "cp -f /stratum/bazel-bin/stratum/hal/bin/bmv2/stratum_bmv2_deb.deb /stratum/stratum_bmv2_deb.deb"
+  - name: Patch to use newer libboost version
+    ansible.posix.patch:
+      src: build.patch
+      dest: ~/stratum/stratum/hal/bin/bmv2/BUILD
+      remote_src: no
+      state: present
+
+  - name: Build stratum
+    community.docker.docker_container_exec:
+      container: stratum-container
+      command: "bazel build //stratum/hal/bin/bmv2:stratum_bmv2_deb"
+
+  - name: Copy the built stratum package
+    community.docker.docker_container_exec:
+      container: stratum-container
+      command: "cp -f /stratum/bazel-bin/stratum/hal/bin/bmv2/stratum_bmv2_deb.deb /stratum/stratum_bmv2_deb.deb"
+
+  become: yes
+  become_user: '{{ stratum.bmv2_user }}'

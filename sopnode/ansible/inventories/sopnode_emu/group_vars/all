@@ -1,4 +1,4 @@
 ---
 ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
-ansible_user: root
+ansible_user: vagrant
 ansible_ssh_pass: vagrant

@@ -24,5 +24,6 @@
       path: /var/run/docker.sock
       mode: '0666'
 
+  become: yes
   when:
     - not lookup('vars', (ansible_os_family | lower)+ '_docker') is subset(ansible_facts.packages.keys())
