@@ -275,7 +275,14 @@ docker build  -t p4-studio -f Dockerfile .
 ### Dealing with slow network connection or machine
 In some situations, retrieving packages or compiling code may take some time, resulting in Ansible loosing its SSH channels.
 
-A good enough solution is to increase timeouts for `ControlPersist`, `connect_timeout`, and `command_timeout` in Ansible configuration. In our setup
-we directly changed them to 3600 (i.e., 1h) in `/etc/ansible/ansible.cfg` as our
-ansible runs in a sandbox. In other scenarios, using environment variables is
-probably better (see [https://docs.ansible.com/ansible/latest/network/user_guide/network_debug_troubleshooting.html](https://docs.ansible.com/ansible/latest/network/user_guide/network_debug_troubleshooting.html) for more information).
+A first solution is to force keep alive messages with the ssh client, for
+example by adding the following in `~/.ssh/config`
+```
+Host *
+        ServerAliveInterval 10
+        ServerAliveCountMax 2
+```
+
+If timeouts still occur, agood enough solution is to increase timeouts for `ControlPersist`, `connect_timeout`, and `command_timeout` in Ansible
+configuration. In our setup we directly changed them to 3600 (i.e., 1h) in
+`/etc/ansible/ansible.cfg` as our ansible runs in a sandbox. In other scenarios, using environment variables is probably better (see [https://docs.ansible.com/ansible/latest/network/user_guide/network_debug_troubleshooting.html](https://docs.ansible.com/ansible/latest/network/user_guide/network_debug_troubleshooting.html) for more information).
