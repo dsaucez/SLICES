@@ -1,0 +1,5 @@
+---
+- name: Install container
+  hosts: all
+  roles:
+    - role: container
