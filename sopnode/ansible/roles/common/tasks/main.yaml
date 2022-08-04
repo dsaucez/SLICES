@@ -15,9 +15,9 @@
       state: "{{ item.state }}"
       autoclean: yes
       update_cache: true
-    with_items: "{{ lookup('vars', (ansible_distribution | lower)+ '_'+ (ansible_distribution_version) +'_dependencies')}}"
+    with_items: "{{ lookup('vars', (ansible_distribution | lower)+ '_'+ (ansible_distribution_major_version) +'_dependencies')}}"
     when:
-      - not (lookup('vars', (ansible_distribution | lower)+ '_'+ (ansible_distribution_version) +'_dependencies') | items2dict(key_name='name', value_name='state')).keys() is subset(ansible_facts.packages.keys())
+      - not (lookup('vars', (ansible_distribution | lower)+ '_'+ (ansible_distribution_major_version) +'_dependencies') | items2dict(key_name='name', value_name='state')).keys() is subset(ansible_facts.packages.keys())
 
   - name: Gather dependencies (Python)
     community.general.pip_package_info:
