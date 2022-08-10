@@ -1,6 +1,7 @@
 - name: Create a token on k8s master
   hosts: masters
   run_once: true
+  become: yes
   tasks:
 
   - name: Create temporary build directory
@@ -9,6 +10,12 @@
       suffix: build
     delegate_to: localhost
     register: tempfile
+
+  - name: Set temporary directory permissions
+    ansible.builtin.file:
+      path: "{{ tempfile.path }}"
+      mode: 0777
+    delegate_to: localhost
 
   - name: Get configuration
     ansible.builtin.fetch:
@@ -30,6 +37,7 @@
 
 - name: Install k8s nodes
   hosts: switches:!masters
+  become: yes
   vars:
     token: "{{ hostvars['ansible_dummy_host']['_token'] }}"
     kube_config_local_path: "{{ hostvars['ansible_dummy_host']['_kube_config'] }}"
