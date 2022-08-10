@@ -2,7 +2,7 @@
 - name: Copy Kube config
   ansible.builtin.copy:
     src: '{{ kube_config_local_path }}'
-    dest: .kube/config
+    dest: ~/.kube/config
 
 - name: Join k8s cluster
   shell: |
