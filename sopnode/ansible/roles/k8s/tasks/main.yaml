@@ -40,3 +40,12 @@
 
 - name: Reset k8s
   shell: "kubeadm reset -f"
+
+- name: Install helm (1/2)
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+    dest: /tmp/get_helm.sh
+    mode: '0555'
+
+- name: Install helm (2/2)
+  shell: "/tmp/get_helm.sh"
