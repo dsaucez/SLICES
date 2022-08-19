@@ -2,35 +2,18 @@
 - name: Instantiate ONOS
   import_tasks: '{{ onos.mode }}_onos.yaml'
 
+### Fabric-tna
 - name: check if fabric-tna is built
   stat:
-    path: ~/fabric-tna/target/fabric-tna-1.1.0.oar
+    path: ~/fabric-tna/target/fabric-tna-1.2.0-SNAPSHOT.oar
   register: fabric_oar
 
 - name: Retrieve fabric-tna
   ansible.builtin.git:
     repo: https://github.com/stratum/fabric-tna.git
     dest: fabric-tna
-    version: tags/1.1.0
+    version: fd3c3f0989ae6c2bb2384bdd1b5b7755168ba886 # tags/1.1.0
     force: yes
-  when: fabric_oar.stat.exists == false
-
-- name: Make fabric
-  shell: make {{ fabric.profile }}
-  args:
-    chdir: fabric-tna
-  environment:
-    SDE_VERSION: 9.7.0
-    SDE_DOCKER_IMG: p4-studio
-  when: fabric_oar.stat.exists == false
-
-- name: Make pipeconf
-  shell: make pipeconf
-  args:
-    chdir: fabric-tna
-  environment:
-    SDE_VERSION: 9.7.0
-    SDE_DOCKER_IMG: p4-studio
   when: fabric_oar.stat.exists == false
 
 - name: Build profiles
@@ -65,6 +48,73 @@
     SDE_DOCKER_IMG: p4-studio
   when: fabric_oar.stat.exists == true or build_profiles.failed == false
 
+### Treillis
+- name: check if treillis-control is built
+  stat:
+    path: ~/trellis-control/app/target/segmentrouting-app-3.3.0-SNAPSHOT.oar
+  register: treillis_oar
+
+- name: Retrieve fabric-tna
+  ansible.builtin.git:
+    repo: https://github.com/opennetworkinglab/trellis-control.git
+    dest: ~/trellis-control
+    version: fe1274b0a7a2f6eaefd6266b0e2cf193875cc14c
+    force: yes
+  when: treillis_oar.stat.exists == false
+
+- name: Build treillis-control
+  shell: docker run -it --rm -v $HOME/.m2:/root/.m2 -v $PWD:/root/trellis-control -w /root/trellis-control maven:3.6.3-openjdk-11 mvn clean install
+  args:
+    chdir: ~/trellis-control
+  when: treillis_oar.stat.exists == false
+  register: build_treillis
+
+- name: Install treillis-control
+  shell: "curl --fail -sSL --user onos:rocks --noproxy localhost -X POST -H Content-Type:application/octet-stream http://{{ onos_cluster.result.spec.clusterIP | default('127.0.0.1') }}:8181/onos/v1/applications?activate=true --data-binary @./app/target/segmentrouting-app-3.3.0-SNAPSHOT.oar"
+  args:
+    chdir: ~/trellis-control
+  when: treillis_oar.stat.exists == true or  build_treillis.failed == false
+
+### UP4
+- name: check if up4 is built
+  stat:
+    path: ~/up4/app/app/target/up4-app-1.2.0-SNAPSHOT.oar
+  register: up4_oar
+
+- name: Retrieve fabric-tna
+  ansible.builtin.git:
+    repo: https://github.com/omec-project/up4.git
+    dest: ~/up4
+    version: a11e7c27f79beaab0a7a2e7cfbf7772283e74149
+    force: yes
+  when: up4_oar.stat.exists == false
+
+- name: Build up4 (1/3)
+  shell: make deps
+  args:
+    chdir: ~/up4
+  when: up4_oar.stat.exists == false
+
+- name: Build up4 (2/3)
+  shell: make build
+  args:
+    chdir: ~/up4
+  when: up4_oar.stat.exists == false
+
+- name: Build up4 (3/3)
+  shell: make app-build
+  args:
+    chdir: ~/up4
+  when: up4_oar.stat.exists == false
+  register: build_up4
+
+- name: Install up4
+  shell: "curl --fail -sSL --user onos:rocks --noproxy localhost -X POST -H Content-Type:application/octet-stream http://{{ onos_cluster.result.spec.clusterIP | default('127.0.0.1') }}:8181/onos/v1/applications?activate=true --data-binary @./app/app/target/up4-app-1.2.0-SNAPSHOT.oar"
+  args:
+    chdir: ~/up4
+  when: up4_oar.stat.exists == true or  up4_treillis.failed == false
+
+### Set configuration
 - name: make netcfg
   ansible.builtin.template:
     src: netcfg.j2
