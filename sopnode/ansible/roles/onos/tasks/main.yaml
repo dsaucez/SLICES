@@ -112,7 +112,7 @@
   shell: "curl --fail -sSL --user onos:rocks --noproxy localhost -X POST -H Content-Type:application/octet-stream http://{{ onos_cluster.result.spec.clusterIP | default('127.0.0.1') }}:8181/onos/v1/applications?activate=true --data-binary @./app/app/target/up4-app-1.2.0-SNAPSHOT.oar"
   args:
     chdir: ~/up4
-  when: up4_oar.stat.exists == true or  up4_treillis.failed == false
+  when: up4_oar.stat.exists == true or build_up4.failed == false
 
 ### Set configuration
 - name: make netcfg
