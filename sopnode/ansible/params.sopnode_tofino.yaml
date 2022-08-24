@@ -27,7 +27,7 @@ fabric:
 
 onos:
   image: onosproject/onos:2.5.8
-  mode:  docker #k8s
+  mode:  k8s # docker k8s
   applications:
     - name: org.onosproject.drivers.barefoot
     - name: org.onosproject.drivers.bmv2

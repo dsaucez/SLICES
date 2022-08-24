@@ -1,15 +1,17 @@
 all:
   children:
-    switches:
+    computes:
       hosts:
-        192.168.34.3:
-        192.168.34.4:
-        192.168.34.5:
+        172.16.36.132: # master
+        172.16.36.133: # compute1
     controllers:
       hosts:
-        192.168.34.3:
+        172.16.36.132: # master
     masters:
       hosts:
-        192.168.34.3:
-    fabric_switches:
+        172.16.36.132: # master
+    switches:
       hosts:
+        172.16.36.136: # sw1
+        172.16.36.137: # sw2
+        172.16.36.138: # sw3

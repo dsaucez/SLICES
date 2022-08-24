@@ -36,7 +36,7 @@
       _master: '{{ ansible_default_ipv4.address }}'
 
 - name: Install k8s nodes
-  hosts: switches:!masters
+  hosts: computes:switches:!masters
   become: yes
   vars:
     token: "{{ hostvars['ansible_dummy_host']['_token'] }}"

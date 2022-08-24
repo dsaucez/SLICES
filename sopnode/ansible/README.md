@@ -32,9 +32,9 @@ inventories are provided in the `inventories` directory.
 The inventories are composed of the following groups:
 
 * `controllers`: group all the hosts that will run the SDN controller.
-* `fabric_switches`: group all the switches managed by the k8s cluster.
+* `computes`: group all the compute nodes managed by the k8s cluster.
+* `switches`: group all the switches.
 * `masters`: group all the hosts that will play the role of k8s master.
-* `switches`: group all the hosts that will run stratum.
 
 These groups are defined in the `hosts` file of your inventory and extra
 connection parameters such as usernames or passwords are defined in the
@@ -117,7 +117,7 @@ for details.
 ### k8s-node
 
 _k8s-node_ is defined in `k8s-node.yaml`. Its role is to add the nodes of the
-`switches` group to the k8s cluster created above.
+`switches` and `computes` groups to the k8s cluster created above.
 To that aim, it installs kubernetes on the nodes, and adds them in the cluster
 thanks to a temporary token. It also installs the certificate authority on the
 nodes.
@@ -131,9 +131,8 @@ ansible-playbook  -i inventories/sopnode_emu/ k8s-node.yaml --extra-vars "@param
 ### fabric-switch
 
 _fabric-switch_ is defined in `fabric-switch.yaml` and presets the `fabric-tna`
-switches listed in the in the `fabric_switches` group such that they are not
-treated as usual compute resources in the k8s cluster. This group must be a
-subset of the `switches` group.
+switches listed in the in the `switches` group such that they are not
+treated as usual compute resources in the k8s cluster.
 
 Run the playbook with the following command.
 
