@@ -1,5 +1,6 @@
 ---
 - name: SD-Fabric
   hosts: controllers
+  become: yes
   roles:
     - role: onos
