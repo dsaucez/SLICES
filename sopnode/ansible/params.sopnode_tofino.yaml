@@ -34,6 +34,7 @@ onos:
     - name: org.onosproject.fpm 
     - name: org.onosproject.lldpprovider
     - name: org.onosproject.hostprovider
+    - name: org.onosproject.dhcp
 ###    - name: org.onosproject.proxyarp
 
 netcfg:
@@ -49,7 +50,7 @@ netcfg:
         gridY: 600
       segmentrouting:
         ipv4NodeSid: 101
-        ipv4Loopback: 10.200.1.1
+        ipv4Loopback: 192.168.100.100
         routerMac: 00:AA:00:00:00:01
         isEdgeRouter: true
         adjacencySids: []
@@ -64,7 +65,7 @@ netcfg:
         gridY: 600
       segmentrouting:
         ipv4NodeSid: 102
-        ipv4Loopback: 10.200.1.2
+        ipv4Loopback: 192.168.100.101
         routerMac: 00:AA:00:00:00:02
         isEdgeRouter: true
         adjacencySids: []
@@ -79,7 +80,7 @@ netcfg:
         gridY: 400
       segmentrouting:
         ipv4NodeSid: 201
-        ipv4Loopback: 10.200.2.1
+        ipv4Loopback: 192.168.100.102
         routerMac: 00:BB:00:00:00:01
         isEdgeRouter: true
         adjacencySids: []
@@ -88,95 +89,118 @@ netcfg:
       interfaces:
       - name: leaf1-100
         ips:
-        - 10.100.1.100/16
+        - 192.168.100.200/24
         vlan-untagged: 100
     device:leaf1/101:
       interfaces:
       - name: leaf1-101
         ips:
-        - 10.100.1.101/16
+        - 192.168.100.201/24
         vlan-untagged: 100
     device:leaf1/102:
       interfaces:
       - name: leaf1-102
         ips:
-        - 10.100.1.102/16
+        - 192.168.100.202/24
         vlan-untagged: 100
     device:leaf1/103:
       interfaces:
       - name: leaf1-103
         ips:
-        - 10.100.1.103/16
+        - 192.168.100.203/24
         vlan-untagged: 100
     device:leaf1/200:
       interfaces:
       - name: leaf1-200
         ips:
-        - 10.100.2.100/16
+        - 192.168.100.204/24
         vlan-untagged: 100
     device:leaf1/201:
       interfaces:
       - name: leaf1-201
         ips:
-        - 10.100.2.101/16
+        - 192.168.100.205/24
         vlan-untagged: 100
     device:leaf1/202:
       interfaces:
       - name: leaf1-202
         ips:
-        - 10.100.2.102/16
+        - 192.168.100.206/24
         vlan-untagged: 100
     device:leaf1/203:
       interfaces:
       - name: leaf1-203
         ips:
-        - 10.100.2.103/16
+        - 192.168.100.207/24
         vlan-untagged: 100
     device:leaf1/300:
       interfaces:
       - name: leaf1-300
         ips:
-        - 10.100.3.100/16
+        - 192.168.100.208/24
         vlan-untagged: 100
     device:leaf1/301:
       interfaces:
       - name: leaf1-301
         ips:
-        - 10.100.3.101/16
+        - 192.168.100.209/24
         vlan-untagged: 100
     device:leaf1/302:
       interfaces:
       - name: leaf1-302
         ips:
-        - 10.100.3.102/16
+        - 192.168.100.210/24
         vlan-untagged: 100
     device:leaf1/303:
       interfaces:
       - name: leaf1-303
         ips:
-        - 10.100.3.103/16
+        - 192.168.100.211/24
         vlan-untagged: 100
     device:leaf2/100:
       interfaces:
       - name: leaf2-100
         ips:
-        - 10.100.21.100/16
+        - 192.168.100.212/24
         vlan-untagged: 100
     device:leaf2/101:
       interfaces:
       - name: leaf2-101
         ips:
-        - 10.100.21.101/16
+        - 192.168.100.213/24
         vlan-untagged: 100
     device:leaf2/102:
       interfaces:
       - name: leaf2-102
         ips:
-        - 10.100.21.102/16
+        - 192.168.100.214/24
         vlan-untagged: 100
     device:leaf2/103:
       interfaces:
       - name: leaf2-103
         ips:
-        - 10.100.21.103/16
+        - 192.168.100.215/24
         vlan-untagged: 100
+    device:spine1/13:
+      interfaces:
+      - name: spine-r2lab
+        ips:
+        - 192.168.100.216/24
+        vlan-untagged: 100
+  apps:
+    org.onosproject.dhcp:
+      dhcp:
+        ip: 192.168.100.216
+        mac: de:ad:ca:fe:ca:ca
+        subnet: 255.255.255.0
+        broadcast: 192.168.100.255
+        router: 192.168.100.1
+        domain: 8.8.8.8
+        ttl: '63'
+        lease: '300'
+        renew: '150'
+        rebind: '200'
+        delay: '2'
+        timeout: '150'
+        startip: 192.168.100.60
+        endip: 192.168.100.99
