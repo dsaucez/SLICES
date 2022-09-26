@@ -35,7 +35,7 @@ onos:
     - name: org.onosproject.lldpprovider
     - name: org.onosproject.hostprovider
     - name: org.onosproject.dhcp
-###    - name: org.onosproject.proxyarp
+    - name: org.onosproject.proxyarp
 
 netcfg:
   devices:
@@ -82,7 +82,7 @@ netcfg:
         ipv4NodeSid: 201
         ipv4Loopback: 192.168.100.102
         routerMac: 00:BB:00:00:00:01
-        isEdgeRouter: true
+        isEdgeRouter: false
         adjacencySids: []
   ports:
     device:leaf1/100:
@@ -157,45 +157,57 @@ netcfg:
         ips:
         - 192.168.100.211/24
         vlan-untagged: 100
+    device:leaf1/14:
+      interfaces:
+      - name: leaf1-r2lab14
+        ips:
+        - 192.168.100.212/24
+        vlan-untagged: 100
     device:leaf2/100:
       interfaces:
       - name: leaf2-100
         ips:
-        - 192.168.100.212/24
+        - 192.168.100.213/24
         vlan-untagged: 100
     device:leaf2/101:
       interfaces:
       - name: leaf2-101
         ips:
-        - 192.168.100.213/24
+        - 192.168.100.214/24
         vlan-untagged: 100
     device:leaf2/102:
       interfaces:
       - name: leaf2-102
         ips:
-        - 192.168.100.214/24
+        - 192.168.100.215/24
         vlan-untagged: 100
     device:leaf2/103:
       interfaces:
       - name: leaf2-103
         ips:
-        - 192.168.100.215/24
-        vlan-untagged: 100
-    device:spine1/13:
-      interfaces:
-      - name: spine-r2lab
-        ips:
         - 192.168.100.216/24
         vlan-untagged: 100
+    device:leaf2/13:
+      interfaces:
+      - name: leaf2-r2lab13
+        ips:
+        - 192.168.100.217/24
+        vlan-untagged: 100
+#    device:spine1/13:
+#      interfaces:
+#      - name: spine-r2lab13
+#        ips:
+#        - 192.168.100.218/24
+#        vlan-untagged: 100
   apps:
     org.onosproject.dhcp:
       dhcp:
-        ip: 192.168.100.216
+        ip: 192.168.100.217
         mac: de:ad:ca:fe:ca:ca
         subnet: 255.255.255.0
         broadcast: 192.168.100.255
-        router: 192.168.100.1
-        domain: 8.8.8.8
+#        router: 192.168.100.1
+#        domain: 8.8.8.8
         ttl: '63'
         lease: '300'
         renew: '150'
