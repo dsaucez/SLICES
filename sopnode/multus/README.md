@@ -58,7 +58,24 @@ ip link set team0 master br-p4
 
 > In this example:
 > * the interface connected to the p4-network is called `team0`
-> * the interface to setup the VxLAN network is `eth0` and its IP address is `138.96.245.51`
+> * the interface to setup the VxLAN network is `eth0` and its IP address is
+> `138.96.245.51`
+
+> **NOTE**
+> 
+> If `NetworkManager` runs on the host, make sure it does not manage the
+> interfaces, for that update the
+> `/etc/NetworkManager/conf.d/99-unmanaged-devices.conf` file, e.g.,
+> 
+> ```ini
+> [keyfile]
+> unmanaged-devices=interface-name:team0,interface-name:br-p4,interface-name:vxlan-p4
+> ```
+> After modifying the file, reload it with
+> ```console
+> systemctl reload NetworkManager
+> ```
+> If you want to use NetworkManager, update the procedure accordingly.
 
 ### Hosts without p4-network connectivity
 
@@ -71,7 +88,8 @@ bridge fdb append to 00:00:00:00:00:00 dst 138.96.245.51 dev vxlan-p4
 ip link set up dev vxlan-p4
 ```
 
-The second line tells 
+The second line tells to send broadcast messages to the host connected to the
+p4-network.
 
 > `138.96.245.51` is the IP address used for the VxLAN endpoint of the host
 > bridging the VxLAN network and the p4-network.
@@ -86,4 +104,29 @@ As shown in the above figure, the `net0` interface is created in the pod and is
 attached to the p4-network, either by the intermediate of the VxLAN network or
 directly.
 
-First, Multus must be installed and running in the cluster.
+First, Multus must be installed and running in the cluster. The installation of
+Multus is out of the scope of this document but, at the time of writing, a
+possible option on a node properly configured to manage the cluster with
+`kubectl` is the following.
+
+```bash
+cat multus-cni/deployments/multus-daemonset.yml | kubectl apply -f - 
+```
+Once multus is installed the new `p4-network` Network Attachement Definition
+(NAD) can be added. It is defined in `p4-network.yaml` and added as follows.
+
+```console
+kubectl apply -f p4-network.yaml
+```
+
+This NAD can then be used in pods by means of annotations
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    k8s.v1.cni.cncf.io/networks: p4-network
+...
+```
+
+An example of this is provided in `busybox.yaml`.

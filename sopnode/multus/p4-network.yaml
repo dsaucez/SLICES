@@ -6,7 +6,7 @@ spec:
   config: '{
             "cniVersion": "0.3.0",
             "type": "macvlan",
-            "master": "team0",
+            "master": "vxlan-p4",
             "mode": "bridge",
             "ipam": {
                 "type": "host-local",
