@@ -20,7 +20,7 @@ The figure below depicts the network architecture in details. In this figure,
 solid-line links correspond to interface directly connected and dashed-line
 show connectivity that goes over some other network or interface.
 
-![Network principle](p4-network.svg)
+![Network principle](figures/p4-network.svg)
 
 Each host has the `vxlan-p4` interface that is a VxLAN endpoint with `VNI=100`.
 On hosts that have direct connectivity with the p4-network, a L2 bridge, called
@@ -130,4 +130,4 @@ metadata:
 ...
 ```
 
-A full example of this is provided in `busybox.yaml`.
+Refer to the `examples` directory for full examples using the p4-network.
