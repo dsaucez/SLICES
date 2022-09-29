@@ -79,7 +79,7 @@ ip link set team0 master br-p4
 
 ### Hosts without p4-network connectivity
 
-Assuming the host connect to the `mgmt` network via its interface `ma1` we just
+Assuming the host connects to the `mgmt` network via its interface `ma1` we just
 have to do the following:
 
 ```bash
@@ -94,7 +94,7 @@ p4-network.
 > `138.96.245.51` is the IP address used for the VxLAN endpoint of the host
 > bridging the VxLAN network and the p4-network.
 
-## Setup connectivity in k8s cluster
+## Setup connectivity in k8s clusters
 
 Users can decide wether or not they need access to the p4-network in their pods.
 To access the network, the best is to add a network interface directly in the
@@ -115,11 +115,12 @@ cat multus-cni/deployments/multus-daemonset.yml | kubectl apply -f -
 Once multus is installed the new `p4-network` Network Attachement Definition
 (NAD) can be added. It is defined in `p4-network.yaml` and added as follows.
 
-```console
+```bash
 kubectl apply -f p4-network.yaml
 ```
 
 This NAD can then be used in pods by means of annotations
+
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -129,4 +130,4 @@ metadata:
 ...
 ```
 
-An example of this is provided in `busybox.yaml`.
+A full example of this is provided in `busybox.yaml`.
