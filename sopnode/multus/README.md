@@ -39,13 +39,51 @@ nodes.
 
 ### Hosts with p4-network connectivity
 
+First, create the VxLAN endpoint as follows.
+
+```bash
+ip link add vxlan-p4 type vxlan id 100 dstport 4789 dev eth0
+ip link set up dev vxlan-p4
+```
+
+Then create a bridge and attach the vxlan interface and the interface facing
+the p4-network (here the interface `team0`) to it as follows.
+
+```bash
+ip link add br-p4 type bridge
+ip link set up dev br-p4
+ip link set vxlan-p4 master br-p4
+ip link set team0 master br-p4
+```
+
+> In this example:
+> * the interface connected to the p4-network is called `team0`
+> * the interface to setup the VxLAN network is `eth0` and its IP address is `138.96.245.51`
+
 ### Hosts without p4-network connectivity
 
-These hosts are the simplest, they only need to setup the `vxlan-p4` interface
-as follows.
+Assuming the host connect to the `mgmt` network via its interface `ma1` we just
+have to do the following:
 
 ```bash
 ip link add vxlan-p4 type vxlan id 100 dstport 4789 dev ma1
-bridge fdb append to 00:00:00:00:00:00 dst 138.96.245.51  dev vxlan-p4
+bridge fdb append to 00:00:00:00:00:00 dst 138.96.245.51 dev vxlan-p4
 ip link set up dev vxlan-p4
 ```
+
+The second line tells 
+
+> `138.96.245.51` is the IP address used for the VxLAN endpoint of the host
+> bridging the VxLAN network and the p4-network.
+
+## Setup connectivity in k8s cluster
+
+Users can decide wether or not they need access to the p4-network in their pods.
+To access the network, the best is to add a network interface directly in the
+pod via the [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni).
+
+As shown in the above figure, the `net0` interface is created in the pod and is
+attached to the p4-network, either by the intermediate of the VxLAN network or
+directly.
+
+First, Multus must be installed and running in the cluster.
