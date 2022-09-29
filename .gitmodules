@@ -1,0 +1,3 @@
+[submodule "sopnode/multus/multus-cni"]
+	path = sopnode/multus/multus-cni
+	url = https://github.com/k8snetworkplumbingwg/multus-cni.git
