@@ -50,18 +50,16 @@
 | sopnode-sw3/25                        | sopnode-sw2/25     | 100GB optical        | OK      | FIB220516207 | FIB220516208 |      |      |
 | sopnode-sw3/27                        | sopnode-sw2/27     | 100GB optical        | OK      | FIB220516209 | FIB220516210 |      |      |
 |                                       |                    |                      |         |              |              |      |      |
-| rru-jaguar/0                          | fs.com / 15        | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.49/24 | L2 |
-| rru-jaguar/1                          | fs.com / 16        | 10GB optical         | DOWN    |              |              |      |      |
+| rru-jaguar/eth1                       | fs.com/15          | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.49/24 | L2 
+| rru-jaguar/eth2                       | fs.com/16          | 10GB optical         | DOWN    |              |              |      |      |
 |                                       |                    |                      |         |              |              |      |      |  
-| rru-panther/eth2                      | fs.com / 5         | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.50/24 | L2 |
-| rru-panther/eth1                      | fs.com / 6         | 10GB optical         | DOWN      |              |            | DHCPfs:192.168.100.51/24 | L2 
-| rru-panther/1                         | fs.com / 6         | 10GB optical         | DOWN    |              |              |      |       |
+| rru-panther/eth2                      | fs.com/5           | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.50/24 | L2 
+| rru-panther/eth1                      | fs.com/6           | 10GB optical         | DOWN    |              |              | DHCPfs:192.168.100.51/24 | L2                                       |                                       |                    |                      |         |              |              |      |       |  
+| USRP-n300/sfp0                        | fs.com/25          | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.43/24 | L2 
+| USRP-n300/sfp1                        | fs.com/26          | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.44/24 | L2
 |                                       |                    |                      |         |              |              |      |       |  
-| USRP-n300/sfp0                        | fs.com / 25        | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.43/24 | L2 
-| USRP-n300/sfp1                        | fs.com / 26        | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.44/24 | L2 |
-|                                       |                    |                      |         |              |              |      |       |  
-| USRP-n320/sfp0                        | fs.com / 37        | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.45/24 | L2 |
-| USRP-n320/sfp1                        | fs.com / 38        | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.46/24 | L2 |
+| USRP-n320/sfp0                        | fs.com/37          | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.45/24 | L2
+| USRP-n320/sfp1                        | fs.com/38          | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.46/24 | L2
 
 
 The DHCP network allocates addresses in the pool `{startip: 192.168.100.60/24, endip: 192.168.100.160/24}` from server `192.168.100.217/24` hosted in the cluster.
