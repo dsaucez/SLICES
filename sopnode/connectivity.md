@@ -56,11 +56,11 @@
 | rru-panther/0                         | fs.com / 5         | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.50/24 | L2 |
 | rru-panther/1                         | fs.com / 6         | 10GB optical         | DOWN    |              |              |      |       |
 |                                       |                    |                      |         |              |              |      |       |  
-| USRP-n300/sfp0                        | fs.com / 25        | 10GB optical         | OK      |              |              |      |       |
-| USRP-n300/sfp1                        | fs.com / 26        | 10GB optical         | OK      |              |              | 192.168.100.44/24 | L2 |
+| USRP-n300/sfp0                        | fs.com / 25        | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.43/24 | L2 
+| USRP-n300/sfp1                        | fs.com / 26        | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.44/24 | L2 |
 |                                       |                    |                      |         |              |              |      |       |  
-| USRP-n320/sfp0                        | fs.com / 37        | 10GB optical         | OK      |              |              |      |       |
-| USRP-n320/sfp1                        | fs.com / 38        | 10GB optical         | OK      |              |              | 192.168.100.46/24 | L2 |
+| USRP-n320/sfp0                        | fs.com / 37        | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.45/24 | L2 |
+| USRP-n320/sfp1                        | fs.com / 38        | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.46/24 | L2 |
 
 
 The DHCP network allocates addresses in the pool `{startip: 192.168.100.60/24, endip: 192.168.100.160/24}` from server `192.168.100.217/24` hosted in the cluster.
