@@ -53,7 +53,8 @@
 | rru-jaguar/0                          | fs.com / 15        | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.49/24 | L2 |
 | rru-jaguar/1                          | fs.com / 16        | 10GB optical         | DOWN    |              |              |      |      |
 |                                       |                    |                      |         |              |              |      |      |  
-| rru-panther/0                         | fs.com / 5         | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.50/24 | L2 |
+| rru-panther/eth2                      | fs.com / 5         | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.50/24 | L2 |
+| rru-panther/eth1                      | fs.com / 6         | 10GB optical         | DOWN      |              |            | DHCPfs:192.168.100.51/24 | L2 
 | rru-panther/1                         | fs.com / 6         | 10GB optical         | DOWN    |              |              |      |       |
 |                                       |                    |                      |         |              |              |      |       |  
 | USRP-n300/sfp0                        | fs.com / 25        | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.43/24 | L2 
