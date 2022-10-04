@@ -65,3 +65,5 @@
 The DHCP network allocates addresses in the pool `{startip: 192.168.100.60/24, endip: 192.168.100.160/24}` from server `192.168.100.217/24` hosted in the cluster.
 
 The `DHCPfs` network statically assigns adresses from witin `{startip: 192.168.100.10/24, endip: 192.168.100.59/24}` from the server hosted on the FS.com switch.
+
+Multus networks assigns addresses from within `{startip: 192.168.100.162/24, endip: 192.168.100.192/24}`
