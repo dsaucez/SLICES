@@ -215,4 +215,4 @@ netcfg:
         delay: '2'
         timeout: '150'
         startip: 192.168.100.60
-        endip: 192.168.100.99
+        endip: 192.168.100.160
