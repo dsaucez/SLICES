@@ -15,7 +15,7 @@ k8s:
 
 # calico config
 calico:
-  IP_AUTODETECTION_METHOD: interface=ma1
+  IP_AUTODETECTION_METHOD: "cidr=138.96.245.0/24"
 
 # Stratum
 stratum:
