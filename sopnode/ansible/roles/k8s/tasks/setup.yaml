@@ -1,4 +1,6 @@
 ---
+- include_tasks: setup-sonic.yaml
+
 - name: Add k8s APT key
   ansible.builtin.apt_key:
     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
