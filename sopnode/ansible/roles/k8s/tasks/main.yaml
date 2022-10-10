@@ -15,7 +15,7 @@
     src: /run/resolvconf/ 
     dest: /run/systemd/resolve
     state: link
-  when: ansible_distribution == 'Debian'
+  when: ansible_distribution == 'Debian' and ansible_distribution_major_version == 9
 - name: Create ~/.kube
   ansible.builtin.file:
     path: ~/.kube/
@@ -29,15 +29,15 @@
     path: /etc/kubernetes/manifests
     state: directory
 
-- name: Prepare kubeadm
-  ansible.builtin.lineinfile:
-    path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-    regexp: '(?!.*?--cgroup-driver=cgroupfs)^Environment="KUBELET_CONFIG_ARGS=(.*)"$'
-    backrefs: yes
-    line: 'Environment="KUBELET_CONFIG_ARGS=--cgroup-driver=cgroupfs \1"'
+#- name: Prepare kubeadm
+#  ansible.builtin.lineinfile:
+#    path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+#    regexp: '(?!.*?--cgroup-driver=cgroupfs)^Environment="KUBELET_CONFIG_ARGS=(.*)"$'
+#    backrefs: yes
+#    line: 'Environment="KUBELET_CONFIG_ARGS=--cgroup-driver=cgroupfs \1"'
 
 - name: Reset k8s
-  shell: "kubeadm reset -f"
+  shell: "kubeadm reset -f {{ k8s.kubeadm_options | default('')}}"
 
 - name: Install helm (1/2)
   ansible.builtin.get_url:

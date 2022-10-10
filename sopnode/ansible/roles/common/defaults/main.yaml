@@ -15,6 +15,8 @@ debian_9_dependencies:
     state: present
   - name: wget
     state: present
+  - name: patch
+    state: present
 
 debian_10_dependencies:
   - name: git
@@ -35,6 +37,8 @@ debian_10_dependencies:
     state: present
   - name: wget
     state: present
+  - name: patch
+    state: present
 
 ubuntu_20_dependencies:
   - name: git
@@ -52,6 +56,8 @@ ubuntu_20_dependencies:
   - name: lsb-release
     state: present
   - name: wget
+    state: present
+  - name: patch
     state: present
 
 python_packages:

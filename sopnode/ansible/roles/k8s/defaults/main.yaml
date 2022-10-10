@@ -12,6 +12,11 @@ kernel:
       value: 1
 
 k8s_tools:
+  - kubectl=1.25.2-00
+  - kubeadm=1.25.2-00
+  - kubelet=1.25.2-00
+
+k8s_tools_OLD:
   - kubectl=1.23.7-00
   - kubeadm=1.23.7-00
   - kubelet=1.23.7-00

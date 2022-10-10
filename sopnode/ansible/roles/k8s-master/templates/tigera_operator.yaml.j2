@@ -1,0 +1,11 @@
+installation:
+  cni:
+    type: Calico
+  calicoNetwork:
+    bgp: Disabled
+    nodeAddressAutodetectionV4:
+      cidrs:
+        - "138.96.0.0/16"
+    ipPools:
+    - cidr: 10.244.0.0/16
+      encapsulation: VXLAN
