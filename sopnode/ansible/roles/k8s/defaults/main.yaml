@@ -3,7 +3,6 @@ kernel:
   modules:
     - 'overlay'
     - 'br_netfilter'
-    - 'zozo'
   attributes:
     - option: net.bridge.bridge-nf-call-ip6tables
       value: 1
@@ -11,3 +10,8 @@ kernel:
       value: 1
     - option: net.ipv4.ip_forward
       value: 1
+
+k8s_tools:
+  - kubectl=1.23.7-00
+  - kubeadm=1.23.7-00
+  - kubelet=1.23.7-00

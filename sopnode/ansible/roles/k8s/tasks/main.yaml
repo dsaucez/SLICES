@@ -3,14 +3,12 @@
 - include_tasks: setup.yaml
 
 # Install k8s
-- name: Install k8s
+- name: Install k8s tools
   ansible.builtin.apt:
-    name:
-      - kubectl=1.23.7-00
-      - kubeadm=1.23.7-00
-      - kubelet=1.23.7-00
+    name: '{{ item }}'
     autoclean: yes
     state: present
+  with_items: '{{ k8s_tools }}'
 
 - name: Create a symbolic link /run/systemd/resolve -> /run/resolvconf/
   ansible.builtin.file:
