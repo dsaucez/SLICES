@@ -6,32 +6,12 @@
 - name: Initialize the master node
   shell: 'kubeadm init --upload-certs --config kubeadm_config.yaml'
   register: kubeadm_init
-
-#- name: Initialize the master node  (automatic address)
-#  shell: 'kubeadm init --pod-network-cidr={{ k8s.subnet }} --upload-certs {{ k8s.kubeadm_options | default("")}}'
-#  register: kubeadm_init
-#  when: "'apiserver_advertise_address' not in k8s"
-
-#- name: Initialize the master node (force address)
-#  shell: 'kubeadm init --pod-network-cidr={{ k8s.subnet }} --upload-certs --apiserver-advertise-address={{ k8s.apiserver_advertise_address }} {{ k8s.kubeadm_options | default("")}}'
-#  register: kubeadm_init
-#  when: "'apiserver_advertise_address' in k8s"
   
 - name: Create a symbolic link /etc/kubernetes/admin.conf -> ~/.kube/config
   ansible.builtin.file:
     src: /etc/kubernetes/admin.conf
     dest: ~/.kube/config
     state: link
-
-#- name: Set Calico installation instructions
-#  ansible.builtin.template:
-#    src: calico.yaml.j2
-#    dest: calico.yaml
-#
-#- name: Install Calico
-#  shell: kubectl create -f calico.yaml
-#  environment:
-#    KUBECONFIG: /etc/kubernetes/admin.conf
 
 - name: Create tigera-operator namespace 
   kubernetes.core.k8s:

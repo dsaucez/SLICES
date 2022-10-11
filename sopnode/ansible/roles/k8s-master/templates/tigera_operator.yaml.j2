@@ -4,8 +4,7 @@ installation:
   calicoNetwork:
     bgp: Disabled
     nodeAddressAutodetectionV4:
-      cidrs:
-        - "138.96.0.0/16"
+      {{ k8s.calico.nodeAddressAutodetectionV4 | to_yaml}}
     ipPools:
-    - cidr: 10.244.0.0/16
-      encapsulation: VXLAN
+    - cidr: '{{ k8s.podSubnet | default('10.244.0.0/16') }}'
+      encapsulation: {{ k8s.calico.encapsulation | default('VXLAN') }}
