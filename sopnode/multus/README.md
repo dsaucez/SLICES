@@ -129,7 +129,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   annotations:
-    k8s.v1.cni.cncf.io/networks: p4-macvlan-$IFNAME
+    k8s.v1.cni.cncf.io/networks: p4-macvlan-${IFNAME}
 ...
 ```
 
