@@ -89,6 +89,22 @@ netcfg:
         isEdgeRouter: false
         adjacencySids: []
   ports:
+    device:leaf1/29:
+      interfaces:
+      - name: leaf1-spine1
+        vlan-untagged: 100
+    device:spine1/29:
+      interfaces:
+      - name: spine1-leaf1
+        vlan-untagged: 100
+    device:leaf2/25:
+      interfaces:
+      - name: leaf2-spine1
+        vlan-untagged: 100
+    device:spine1/25:
+      interfaces:
+      - name: spine1-leaf2
+        vlan-untagged: 100
     device:leaf1/100:
       interfaces:
       - name: leaf1-100
