@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+  annotations:
+    k8s.v1.cni.cncf.io/networks: p4-macvlan-${IFNAME}
+  labels:
+    app: busybox
+spec:
+  containers:
+  - image: busybox
+    command:
+      - "sleep"
+      - "604800"
+    imagePullPolicy: IfNotPresent
+    name: busybox
+    securityContext:
+      capabilities:
+        add: ["NET_ADMIN", "SYS_TIME", "NET_RAW"]
+  restartPolicy: Always

@@ -12,6 +12,10 @@ else
   echo "Namespace : $NS"
   envsubst < busybox-namespace.yaml | kubectl create -f -
   envsubst < ../p4-network.yaml | kubectl -n$NS create -f -
+  envsubst <  busybox-em.yaml| kubectl -n$NS create -f -
+  kubectl describe net-attach-def p4-macvlan-${IFNAME} -n${NS}
+  kubectl describe pods busybox -n${NS}
+  kubectl -n${NS} delete pods busybox
   kubectl -n${NS} delete net-attach-def p4-macvlan-${IFNAME}
   kubectl delete namespaces ${NS}
 fi
