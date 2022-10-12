@@ -116,7 +116,10 @@ Once multus is installed the new `p4-network` Network Attachement Definition
 (NAD) can be added. It is defined in `p4-network.yaml` and added as follows.
 
 ```bash
-kubectl apply -f p4-network.yaml
+export NODE_NETIF = <Host network interface name>
+export IFNAME = <new interface name prefix>
+export NS = <namespace>
+kubectl apply -n${NS} -f p4-network.yaml
 ```
 
 This NAD can then be used in pods by means of annotations
@@ -126,7 +129,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   annotations:
-    k8s.v1.cni.cncf.io/networks: p4-network
+    k8s.v1.cni.cncf.io/networks: p4-macvlan-$IFNAME
 ...
 ```
 
