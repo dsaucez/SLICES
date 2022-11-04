@@ -60,10 +60,12 @@
 |                                       |                    |                      |         |              |              |      |       |  
 | USRP-n320/sfp0                        | switch-radio/37    | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.45/24 | L2
 | USRP-n320/sfp1                        | switch-radio/38    | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.46/24 | L2
-
+| external-laptop                       | switch-radio/43    | 10GB copper          | OK      |              | G2220106023  | STATICfs:192.168.100.59/24 | L2
 
 The DHCP network allocates addresses in the pool `{startip: 192.168.100.60/24, endip: 192.168.100.160/24}` from server `192.168.100.217/24` hosted in the cluster.
 
-The `DHCPfs` network statically assigns adresses from witin `{startip: 192.168.100.10/24, endip: 192.168.100.59/24}` from the server hosted on the FS.com switch.
+The `DHCPfs` network statically assigns adresses from witin `{startip: 192.168.100.10/24, endip: 192.168.100.58/24}` from the server hosted on the FS.com switch. 
+
+The `STATICfs` network are addresses to manually assign on devices temporarilly connected to switch-radio.
 
 Multus networks assigns addresses from within `{startip: 192.168.100.162/24, endip: 192.168.100.192/24}`
