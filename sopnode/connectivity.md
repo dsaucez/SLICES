@@ -42,6 +42,11 @@
 | sopnode-l1/2/1                        | sopnode-sw3/01/3   | 4X25G breakout cable | OK      | ?            | FIB220517220 | DHCP | L2   |
 | sopnode-l1/2/2                        | sopnode-sw3/01/4   | 4X25G breakout cable | OK      | ?            | FIB220517220 | DHCP | L2   |
 |                                       |                    |                      |         |              |              |      |      |
+| sopnode-z1/3                          | sopnode-sw3/02/1   | 4X10G breakout cable | OK      | ?            |              | DHCP | L2   |
+| sopnode-z1/4                          | sopnode-sw3/02/2   | 4X10G breakout cable | OK      | ?            |              | DHCP | L2   |
+| sopnode-z1/6                          | sopnode-sw3/02/3   | 4X10G breakout cable | OK      | ?            |              | DHCP | L2   |
+| sopnode-z1/7                          | sopnode-sw3/02/4   | 4X10G breakout cable | OK      | ?            |              | DHCP | L2   |
+|                                       |                    |                      |         |              |              |      |      |
 | sopnode-sw1/21                        | sopnode-sw3/21     | 100GB optical        | OK      | FIB220516214 | FIB220516213 |      |      |
 | sopnode-sw1/23                        | sopnode-sw3/23     | 100GB optical        | OK      | FIB220516216 | FIB220516215 |      |      |
 | sopnode-sw1/29                        | sopnode-sw2/29     | 100GB optical        | OK      | FIB220516218 | FIB220516217 |      |      |
