@@ -85,6 +85,22 @@ netcfg:
         isEdgeRouter: false
         adjacencySids: []
   ports:
+    device:leaf1/29:
+      interfaces:
+      - name: leaf1-spine1
+        vlan-untagged: 100
+    device:spine1/29:
+      interfaces:
+      - name: spine1-leaf1
+        vlan-untagged: 100
+    device:leaf2/25:
+      interfaces:
+      - name: leaf2-spine1
+        vlan-untagged: 100
+    device:spine1/25:
+      interfaces:
+      - name: spine1-leaf2
+        vlan-untagged: 100
     device:leaf1/100:
       interfaces:
       - name: leaf1-100
@@ -187,18 +203,28 @@ netcfg:
         ips:
         - 192.168.100.216/24
         vlan-untagged: 100
+    device:leaf2/200:
+      interfaces:
+      - name: leaf2-200
+        vlan-untagged: 100
+    device:leaf2/201:
+      interfaces:
+      - name: leaf2-201
+        vlan-untagged: 100
+    device:leaf2/202:
+      interfaces:
+      - name: leaf2-202
+        vlan-untagged: 100
+    device:leaf2/203:
+      interfaces:
+      - name: leaf2-203
+        vlan-untagged: 100
     device:leaf2/13:
       interfaces:
       - name: leaf2-r2lab13
         ips:
         - 192.168.100.217/24
         vlan-untagged: 100
-#    device:spine1/13:
-#      interfaces:
-#      - name: spine-r2lab13
-#        ips:
-#        - 192.168.100.218/24
-#        vlan-untagged: 100
   apps:
     org.onosproject.dhcp:
       dhcp:
@@ -206,8 +232,6 @@ netcfg:
         mac: de:ad:ca:fe:ca:ca
         subnet: 255.255.255.0
         broadcast: 192.168.100.255
-#        router: 192.168.100.1
-#        domain: 8.8.8.8
         ttl: '63'
         lease: '300'
         renew: '150'
