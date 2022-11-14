@@ -42,6 +42,11 @@
 | sopnode-l1/2/1                        | sopnode-sw3/01/3   | 4X25G breakout cable | OK      | ?            | FIB220517220 | DHCP | L2   |
 | sopnode-l1/2/2                        | sopnode-sw3/01/4   | 4X25G breakout cable | OK      | ?            | FIB220517220 | DHCP | L2   |
 |                                       |                    |                      |         |              |              |      |      |
+| sopnode-z1/3                          | sopnode-sw3/02/1   | 4X10G breakout cable | OK      | ?            |              | DHCP | L2   |
+| sopnode-z1/4                          | sopnode-sw3/02/2   | 4X10G breakout cable | OK      | ?            |              | DHCP | L2   |
+| sopnode-z1/6                          | sopnode-sw3/02/3   | 4X10G breakout cable | OK      | ?            |              | DHCP | L2   |
+| sopnode-z1/7                          | sopnode-sw3/02/4   | 4X10G breakout cable | OK      | ?            |              | DHCP | L2   |
+|                                       |                    |                      |         |              |              |      |      |
 | sopnode-sw1/21                        | sopnode-sw3/21     | 100GB optical        | OK      | FIB220516214 | FIB220516213 |      |      |
 | sopnode-sw1/23                        | sopnode-sw3/23     | 100GB optical        | OK      | FIB220516216 | FIB220516215 |      |      |
 | sopnode-sw1/29                        | sopnode-sw2/29     | 100GB optical        | OK      | FIB220516218 | FIB220516217 |      |      |
@@ -60,10 +65,12 @@
 |                                       |                    |                      |         |              |              |      |       |  
 | USRP-n320/sfp0                        | switch-radio/37    | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.45/24 | L2
 | USRP-n320/sfp1                        | switch-radio/38    | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.46/24 | L2
-
+| external-laptop                       | switch-radio/43    | 10GB copper          | OK      |              | G2220106023  | STATICfs:192.168.100.59/24 | L2
 
 The DHCP network allocates addresses in the pool `{startip: 192.168.100.60/24, endip: 192.168.100.160/24}` from server `192.168.100.217/24` hosted in the cluster.
 
-The `DHCPfs` network statically assigns adresses from witin `{startip: 192.168.100.10/24, endip: 192.168.100.59/24}` from the server hosted on the FS.com switch.
+The `DHCPfs` network statically assigns adresses from witin `{startip: 192.168.100.10/24, endip: 192.168.100.58/24}` from the server hosted on the FS.com switch. 
+
+The `STATICfs` network are addresses to manually assign on devices temporarilly connected to switch-radio.
 
 Multus networks assigns addresses from within `{startip: 192.168.100.162/24, endip: 192.168.100.192/24}`
