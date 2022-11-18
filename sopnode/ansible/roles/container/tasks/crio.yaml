@@ -1,0 +1,80 @@
+---
+## Debian
+- block:
+  - name: Add backport apt source
+    ansible.builtin.shell:
+      cmd: echo 'deb http://deb.debian.org/debian buster-backports main' > /etc/apt/sources.list.d/backports.list
+
+  - name: Install backport
+    ansible.builtin.shell:
+      cmd: apt install -y -t buster-backports libseccomp2 || apt update -y -t buster-backports libseccomp2
+
+  - name: Create repo signing keys directory
+    ansible.builtin.file:
+      path: /usr/share/keyrings
+      state: directory
+
+  - name: Add libcontainer repository into sources list
+    ansible.builtin.shell:
+      cmd: echo 'deb [signed-by=/usr/share/keyrings/libcontainers-archive-keyring.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/{{ ansible_distribution + "_"+ ansible_distribution_major_version }}/ /' > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+
+  - name: Add libcontainer repository signing key
+    ansible.builtin.shell:
+      cmd: curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/{{ ansible_distribution + '_' + ansible_distribution_major_version }}/Release.key | gpg --dearmor -o /usr/share/keyrings/libcontainers-archive-keyring.gpg
+
+  - name: Add cri-o repository into sources list
+    ansible.builtin.shell:
+      cmd: echo "deb [signed-by=/usr/share/keyrings/libcontainers-crio-archive-keyring.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.25/{{ ansible_distribution + '_' + ansible_distribution_major_version }}/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:1.25.list
+
+  - name: Add cri-o repository signing key
+    ansible.builtin.shell:
+      cmd: curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.25/{{ ansible_distribution + '_' + ansible_distribution_major_version }}/Release.key | gpg --dearmor -o /usr/share/keyrings/libcontainers-crio-archive-keyring.gpg
+
+  - name: Update repository
+    ansible.builtin.shell:
+      cmd: apt-get update
+
+  - name: Install cri-o
+    ansible.builtin.shell:
+      cmd: apt-get install -y cri-o cri-o-runc
+
+  become: yes
+  when:
+    - ansible_distribution == 'Debian'
+
+## Fedora
+- block:
+  - name: Install plugins core
+    ansible.builtin.shell:
+      cmd: dnf -y install dnf-plugins-core
+
+  - name: Install dependencies
+    ansible.builtin.shell:
+      cmd: dnf -y install -y iproute-tc git wget
+
+  - name: Add dnf cri-o module
+    ansible.builtin.shell:
+      cmd: dnf module list cri-o
+
+  - name: Set cri-o version to use
+    ansible.builtin.shell:
+      cmd: dnf module -y enable cri-o:$VERSION
+    environment:
+      VERSION: 1.24
+
+  - name: Install cri-o
+    ansible.builtin.shell:
+      cmd: dnf install -y cri-o
+
+  become: yes
+  when:
+    - ansible_distribution == 'Fedora'
+
+## ALL OS
+- block:
+  - name: Enable and start cri-o service
+    ansible.builtin.systemd:
+      name: crio
+      state: started
+      enabled: yes
+  become: yes

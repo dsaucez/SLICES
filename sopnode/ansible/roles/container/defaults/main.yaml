@@ -8,3 +8,15 @@ debian_docker:
   - docker-ce
   - docker-ce-cli
   - containerd.io
+
+kernel:
+  modules:
+    - 'overlay'
+    - 'br_netfilter'
+  attributes:
+    - option: net.bridge.bridge-nf-call-ip6tables
+      value: 1
+    - option: net.bridge.bridge-nf-call-iptables
+      value: 1
+    - option: net.ipv4.ip_forward
+      value: 1

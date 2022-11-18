@@ -1,0 +1,10 @@
+installation:
+  cni:
+    type: Calico
+  calicoNetwork:
+    bgp: Disabled
+    nodeAddressAutodetectionV4:
+      {{ k8s.calico.nodeAddressAutodetectionV4 | to_yaml}}
+    ipPools:
+    - cidr: '{{ k8s.podSubnet | default('10.244.0.0/16') }}'
+      encapsulation: {{ k8s.calico.encapsulation | default('VXLAN') }}

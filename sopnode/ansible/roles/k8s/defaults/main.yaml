@@ -1,0 +1,5 @@
+---
+k8s_tools:
+  - kubectl=1.25.2-00
+  - kubeadm=1.25.2-00
+  - kubelet=1.25.2-00

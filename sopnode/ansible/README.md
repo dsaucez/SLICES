@@ -92,14 +92,23 @@ The following parameters can be used:
 
 ```yaml
 k8s:
-  subnet: <ip prefix>
   apiserver_advertise_address: <ip address>
-calico:
-  IP_AUTODETECTION_METHOD: <method>
+  serviceSubnet: <ip prefix>
+  podSubnet: <ip prefix>
+  dnsDomain: <dns name>
+  calico:
+    nodeAddressAutodetectionV4: <KubernetesAutodetectionMethod>
+    encapsulation: <EncapsulationType>
 ```
 
-* `k8s.subnet` is mandatory and is the subnet that will be used to interconnect
-the pods in the cluster.
+* `k8s.podSubnet` is the subnet that will be used to interconnect the pods in
+the cluster. Defaults to `10.244.0.0/16` if not provided.
+
+* `k8s.serviceSubnet` is the subnet that will be used to advertise services in
+the cluster. Defaults to `10.96.0.0/16` if not provided.
+
+* `k8s.dnsDomain` is the domain suffix that will be used for pods and services
+in the cluster. Defaults to `cluster.local` if not provided.
 
 * `k8s.apiserver_advertise_address` is optional. If set, the master will be
 reachable via the IP address that is set. Otherwise, an IP address is set
@@ -107,12 +116,15 @@ automatically. See
 [https://kubernetes.io/docs/reference/setup-tools/kubeadm/](https://kubernetes.io/docs/reference/setup-tools/kubeadm/)
 for more information.
 
-* `calico.IP_AUTODETECTION_METHOD` is optional. If set, calico will follow the
-instruction to decided which IP address to use. Otherwise, is automatically
-chose an IP address. See
-[https://projectcalico.docs.tigera.io/reference/node/configuration](https://projectcalico.docs.tigera.io/reference/node/configuration)
-for details.
+* `k8s.calico.nodeAddressAutodetectionV4` is mandatory and is the calico's node
+address auto-detection method to use. See
+[https://projectcalico.docs.tigera.io/reference/installation/api](https://projectcalico.docs.tigera.io/reference/installation/api)
+for more information.
 
+* `k8s.calico.encapsulation` is the calico's encapsulation
+method to use. Defaults to `VXLAN` if not provided. See
+[https://projectcalico.docs.tigera.io/reference/installation/api](https://projectcalico.docs.tigera.io/reference/installation/api)
+for more information.
 
 ### k8s-node
 

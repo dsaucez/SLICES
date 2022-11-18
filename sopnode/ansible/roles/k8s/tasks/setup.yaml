@@ -1,14 +1,3 @@
 ---
-- name: Specific version setup
-  include_tasks: "{{ (ansible_distribution | lower)+ '_'+ ansible_distribution_major_version +'_setup.yaml' }}"
-
-- name: Add k8s APT key
-  ansible.builtin.apt_key:
-    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-    state: present
-
-- name: Add k8s repository into sources list
-  ansible.builtin.apt_repository:
-    repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
-    state: present
-    update_cache: true
+- include_tasks: "{{ (ansible_distribution | lower)+ '_' + (ansible_distribution_major_version) +'_setup.yaml' }}"
+#- include_tasks: setup-sonic.yaml

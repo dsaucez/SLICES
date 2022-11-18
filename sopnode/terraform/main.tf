@@ -40,8 +40,8 @@ resource "google_compute_instance" "compute" {
 
   boot_disk {
     initialize_params {
-      #image = "debian-cloud/debian-10"
-      image = "fedora-cloud/fedora-cloud-36"
+      image = "debian-cloud/debian-10"
+      #image = "fedora-cloud/fedora-cloud-36"
     }
   }
 

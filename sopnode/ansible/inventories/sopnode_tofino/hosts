@@ -5,10 +5,14 @@ all:
 #         sopnode-w1.inria.fr:
     controllers:
       hosts:
+#        sopnode-sw1-eth0.inria.fr:
         sopnode-sw2-eth0.inria.fr:
+#        sopnode-sw3-eth0.inria.fr:
     masters:
       hosts:
+#        sopnode-sw1-eth0.inria.fr:
         sopnode-sw2-eth0.inria.fr:
+#        sopnode-sw3-eth0.inria.fr:
     switches:
       hosts:
         sopnode-sw1-eth0.inria.fr:
