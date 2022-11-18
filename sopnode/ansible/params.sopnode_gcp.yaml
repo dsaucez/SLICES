@@ -1,0 +1,242 @@
+---
+#ansible_user: root
+
+#registry config
+registry_name: registry-service
+auth:
+  - login: john
+    password: doe
+  - login: jane
+    password: doe
+
+# k8s config
+k8s:
+  subnet: 10.244.0.0/16
+
+# calico config
+calico:
+  IP_AUTODETECTION_METHOD: "cidr=10.0.1.0/24"
+
+# Stratum
+stratum:
+  mode: tofino
+
+# Fabric
+fabric:
+  profile: fabric fabric-upf fabric-int fabric-upf-int # fabric
+
+onos:
+  image: onosproject/onos:2.5.8
+  mode:  k8s # docker k8s
+  applications:
+    - name: org.onosproject.drivers.barefoot
+    - name: org.onosproject.drivers.bmv2
+    - name: org.onosproject.fpm 
+    - name: org.onosproject.lldpprovider
+    - name: org.onosproject.hostprovider
+    - name: org.onosproject.dhcp
+    - name: org.onosproject.proxyarp
+
+netcfg:
+  devices:
+    device:leaf1:
+      basic:
+        name: leaf1
+        managementAddress: grpc://138.96.245.11:9559?device_id=1
+        driver: stratum-tofino
+        pipeconf: org.stratumproject.fabric-upf.mavericks_sde_9_7_0
+        locType: grid
+        gridX: 200
+        gridY: 600
+      segmentrouting:
+        ipv4NodeSid: 101
+        ipv4Loopback: 192.168.100.100
+        routerMac: 00:AA:00:00:00:01
+        isEdgeRouter: true
+        adjacencySids: []
+    device:leaf2:
+      basic:
+        name: leaf2
+        managementAddress: grpc://138.96.245.13:9559?device_id=1
+        driver: stratum-tofino
+        pipeconf: org.stratumproject.fabric-upf.mavericks_sde_9_7_0
+        locType: grid
+        gridX: 600
+        gridY: 600
+      segmentrouting:
+        ipv4NodeSid: 102
+        ipv4Loopback: 192.168.100.101
+        routerMac: 00:AA:00:00:00:02
+        isEdgeRouter: true
+        adjacencySids: []
+    device:spine1:
+      basic:
+        name: spine1
+        managementAddress: grpc://138.96.245.12:9559?device_id=1
+        driver: stratum-tofino
+        pipeconf: org.stratumproject.fabric-upf.montara_sde_9_7_0
+        locType: grid
+        gridX: 400
+        gridY: 400
+      segmentrouting:
+        ipv4NodeSid: 201
+        ipv4Loopback: 192.168.100.102
+        routerMac: 00:BB:00:00:00:01
+        isEdgeRouter: false
+        adjacencySids: []
+  ports:
+    device:leaf1/29:
+      interfaces:
+      - name: leaf1-spine1
+        vlan-untagged: 100
+    device:spine1/29:
+      interfaces:
+      - name: spine1-leaf1
+        vlan-untagged: 100
+    device:leaf2/25:
+      interfaces:
+      - name: leaf2-spine1
+        vlan-untagged: 100
+    device:spine1/25:
+      interfaces:
+      - name: spine1-leaf2
+        vlan-untagged: 100
+    device:leaf1/100:
+      interfaces:
+      - name: leaf1-100
+        ips:
+        - 192.168.100.200/24
+        vlan-untagged: 100
+    device:leaf1/101:
+      interfaces:
+      - name: leaf1-101
+        ips:
+        - 192.168.100.201/24
+        vlan-untagged: 100
+    device:leaf1/102:
+      interfaces:
+      - name: leaf1-102
+        ips:
+        - 192.168.100.202/24
+        vlan-untagged: 100
+    device:leaf1/103:
+      interfaces:
+      - name: leaf1-103
+        ips:
+        - 192.168.100.203/24
+        vlan-untagged: 100
+    device:leaf1/200:
+      interfaces:
+      - name: leaf1-200
+        ips:
+        - 192.168.100.204/24
+        vlan-untagged: 100
+    device:leaf1/201:
+      interfaces:
+      - name: leaf1-201
+        ips:
+        - 192.168.100.205/24
+        vlan-untagged: 100
+    device:leaf1/202:
+      interfaces:
+      - name: leaf1-202
+        ips:
+        - 192.168.100.206/24
+        vlan-untagged: 100
+    device:leaf1/203:
+      interfaces:
+      - name: leaf1-203
+        ips:
+        - 192.168.100.207/24
+        vlan-untagged: 100
+    device:leaf1/300:
+      interfaces:
+      - name: leaf1-300
+        ips:
+        - 192.168.100.208/24
+        vlan-untagged: 100
+    device:leaf1/301:
+      interfaces:
+      - name: leaf1-301
+        ips:
+        - 192.168.100.209/24
+        vlan-untagged: 100
+    device:leaf1/302:
+      interfaces:
+      - name: leaf1-302
+        ips:
+        - 192.168.100.210/24
+        vlan-untagged: 100
+    device:leaf1/303:
+      interfaces:
+      - name: leaf1-303
+        ips:
+        - 192.168.100.211/24
+        vlan-untagged: 100
+    device:leaf1/14:
+      interfaces:
+      - name: leaf1-r2lab14
+        ips:
+        - 192.168.100.212/24
+        vlan-untagged: 100
+    device:leaf2/100:
+      interfaces:
+      - name: leaf2-100
+        ips:
+        - 192.168.100.213/24
+        vlan-untagged: 100
+    device:leaf2/101:
+      interfaces:
+      - name: leaf2-101
+        ips:
+        - 192.168.100.214/24
+        vlan-untagged: 100
+    device:leaf2/102:
+      interfaces:
+      - name: leaf2-102
+        ips:
+        - 192.168.100.215/24
+        vlan-untagged: 100
+    device:leaf2/103:
+      interfaces:
+      - name: leaf2-103
+        ips:
+        - 192.168.100.216/24
+        vlan-untagged: 100
+    device:leaf2/200:
+      interfaces:
+      - name: leaf2-200
+        vlan-untagged: 100
+    device:leaf2/201:
+      interfaces:
+      - name: leaf2-201
+        vlan-untagged: 100
+    device:leaf2/202:
+      interfaces:
+      - name: leaf2-202
+        vlan-untagged: 100
+    device:leaf2/203:
+      interfaces:
+      - name: leaf2-203
+        vlan-untagged: 100
+    device:leaf2/13:
+      interfaces:
+      - name: leaf2-r2lab13
+        ips:
+        - 192.168.100.217/24
+        vlan-untagged: 100
+  apps:
+    org.onosproject.dhcp:
+      dhcp:
+        ip: 192.168.100.217
+        mac: de:ad:ca:fe:ca:ca
+        subnet: 255.255.255.0
+        broadcast: 192.168.100.255
+        ttl: '63'
+        lease: '300'
+        renew: '150'
+        rebind: '200'
+        delay: '2'
+        timeout: '150'
+        startip: 192.168.100.60
+        endip: 192.168.100.160

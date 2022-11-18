@@ -1,0 +1,13 @@
+all:
+  children:
+    computes:
+      hosts:
+        34.163.109.248:
+    controllers:
+      hosts:
+        34.163.109.248:
+    masters:
+      hosts:
+        34.163.109.248:
+    switches:
+      hosts:
