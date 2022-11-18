@@ -2,12 +2,18 @@ all:
   children:
     computes:
       hosts:
-        34.163.168.131:
+        34.163.53.156:
+          xx-name: compute-1
+        34.155.84.212:
+          xx-name: compute-2
+        34.163.109.248:
+          xx-name: compute-3
     controllers:
       hosts:
-        34.163.168.131:
+        34.163.53.156:
     masters:
       hosts:
-        34.163.168.131:
+        34.163.53.156:
+          xx-name: compute-1
     switches:
       hosts:
