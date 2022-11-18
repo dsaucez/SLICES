@@ -1,0 +1,18 @@
+all:
+  children:
+    computes:
+      hosts:
+%{ for index, group in ansible_group_compute ~}
+        ${ access_ip_compute[index] }:
+%{ endfor ~}
+    controllers:
+      hosts:
+        ${ access_ip_compute[0] }:
+    masters:
+      hosts:
+        ${ access_ip_compute[0] }:
+    switches:
+      hosts:
+%{ for index, group in ansible_group_switch ~}
+        ${ access_ip_switch[index] }:
+%{ endfor ~}
