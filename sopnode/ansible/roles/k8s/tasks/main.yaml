@@ -16,6 +16,7 @@
 - name: Install k8s tools
   ansible.builtin.apt:
     name: '{{ item }}'
+    allow_downgrade: yes
     autoclean: yes
     state: present
   with_items: '{{ k8s_tools }}'
