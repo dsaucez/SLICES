@@ -7,10 +7,12 @@
   ansible.builtin.file:
     src: /etc/kubernetes/pki/ca.crt
     dest: /usr/local/share/ca-certificates/kubernetes/ca.crt
+#    dest: /etc/pki/ca-trust/source/anchors/k8s.crt
     state: link
 
 - name: Add k8s CA certificate (3/3)
   shell: update-ca-certificates
+#  shell: update-ca-trust
 
 - name: Load k8s CA certificate in docker
   shell: systemctl restart docker

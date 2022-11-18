@@ -12,12 +12,12 @@
     autoclean: yes
     state: present
 
-- name: Create a symbolic link /run/systemd/resolve -> /run/resolvconf/
-  ansible.builtin.file:
-    src: /run/resolvconf/ 
-    dest: /run/systemd/resolve
-    state: link
-  when: ansible_distribution == 'Debian'
+#- name: Create a symbolic link /run/systemd/resolve -> /run/resolvconf/
+  #ansible.builtin.file:
+  #  src: /run/resolvconf/ 
+  #  dest: /run/systemd/resolve
+  #  state: link
+  #when: ansible_distribution == 'Debian'
 - name: Create ~/.kube
   ansible.builtin.file:
     path: ~/.kube/

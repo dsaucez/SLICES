@@ -1,4 +1,7 @@
 ---
+- name: Specific version setup
+  include_tasks: "{{ (ansible_distribution | lower)+ '_'+ ansible_distribution_major_version +'_setup.yaml' }}"
+
 - name: Add k8s APT key
   ansible.builtin.apt_key:
     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg

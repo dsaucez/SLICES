@@ -1,0 +1,6 @@
+---
+- name: Create a symbolic link /run/systemd/resolve -> /run/resolvconf/
+  ansible.builtin.file:
+    src: /run/resolvconf/ 
+    dest: /run/systemd/resolve
+    state: link
