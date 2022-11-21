@@ -1,0 +1,2 @@
+- name: Load k8s CA certificate in docker
+  shell: systemctl restart docker

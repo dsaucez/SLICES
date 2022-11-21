@@ -1,0 +1,7 @@
+runtime:
+  docker:
+    cri:
+      socket: unix:///var/run/cri-dockerd.sock
+  cri-o:
+    cri:
+      socket: unix:///var/run/crio/crio.sock

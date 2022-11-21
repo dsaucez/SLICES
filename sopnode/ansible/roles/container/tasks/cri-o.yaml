@@ -20,7 +20,7 @@
 
   - name: Add libcontainer repository signing key
     ansible.builtin.shell:
-      cmd: curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/{{ ansible_distribution + '_' + ansible_distribution_major_version }}/Release.key | gpg --dearmor -o /usr/share/keyrings/libcontainers-archive-keyring.gpg
+      cmd: curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/{{ ansible_distribution + '_' + ansible_distribution_major_version }}/Release.key | gpg --yes --dearmor -o /usr/share/keyrings/libcontainers-archive-keyring.gpg
 
   - name: Add cri-o repository into sources list
     ansible.builtin.shell:
@@ -28,7 +28,7 @@
 
   - name: Add cri-o repository signing key
     ansible.builtin.shell:
-      cmd: curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.25/{{ ansible_distribution + '_' + ansible_distribution_major_version }}/Release.key | gpg --dearmor -o /usr/share/keyrings/libcontainers-crio-archive-keyring.gpg
+      cmd: curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.25/{{ ansible_distribution + '_' + ansible_distribution_major_version }}/Release.key | gpg --yes --dearmor -o /usr/share/keyrings/libcontainers-crio-archive-keyring.gpg
 
   - name: Update repository
     ansible.builtin.shell:

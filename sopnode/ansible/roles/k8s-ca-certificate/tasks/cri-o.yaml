@@ -1,0 +1,2 @@
+- name: Load k8s CA certificate in cri-o
+  shell: systemctl restart crio

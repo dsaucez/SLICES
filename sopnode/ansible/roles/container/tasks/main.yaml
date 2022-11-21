@@ -45,5 +45,4 @@
     reload: yes
   with_items: "{{ kernel.attributes }}"
 
-#- include_tasks: crio.yaml
-- include_tasks: docker.yaml
+- include_tasks: "{{ k8s.runtime + '.yaml' }}"

@@ -11,6 +11,7 @@ auth:
 
 # k8s config
 k8s:
+  runtime: docker
   podSubnet: 10.244.0.0/16
   serviceSubnet: 10.96.0.0/16
   dnsDomain: cluster.local

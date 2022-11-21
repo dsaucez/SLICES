@@ -99,6 +99,7 @@ k8s:
   calico:
     nodeAddressAutodetectionV4: <KubernetesAutodetectionMethod>
     encapsulation: <EncapsulationType>
+  runtime: <string>  
 ```
 
 * `k8s.podSubnet` is the subnet that will be used to interconnect the pods in
@@ -125,6 +126,8 @@ for more information.
 method to use. Defaults to `VXLAN` if not provided. See
 [https://projectcalico.docs.tigera.io/reference/installation/api](https://projectcalico.docs.tigera.io/reference/installation/api)
 for more information.
+
+* `k8s.runtime` is the container runtime to be used by k8s, e.g., docker, cri-o.
 
 ### k8s-node
 
