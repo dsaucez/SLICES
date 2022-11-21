@@ -29,7 +29,6 @@
     - ansible_distribution == 'NONE'
 #    - not lookup('vars', (ansible_os_family | lower)+ '_docker') is subset(ansible_facts.packages.keys())
 
-
 - name: Load kernel modules
   community.general.modprobe:
     name: '{{ item }}'

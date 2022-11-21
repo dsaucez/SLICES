@@ -1,0 +1,40 @@
+---
+- name: Prepare SE linux (1/2)
+  ansible.builtin.shell: setenforce 0
+
+- name: Prepare SE linux (2/2)
+  ansible.builtin.shell: sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+
+- name: Cleanup dependencies 
+  ansible.builtin.shell: 'dnf remove -y docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-selinux docker-engine-selinux docker-engine'
+
+- name: Configure docker-ce reposetory
+  ansible.builtin.shell: 'dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo'
+
+- name: Install docker
+  ansible.builtin.shell: 'dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin'
+
+- name: Start docker service
+  ansible.builtin.systemd:
+    name: docker
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+
+- name: Start containerd
+  ansible.builtin.systemd:
+    name: containerd
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+
+- name: Create docker group
+  ansible.builtin.group:
+    name: docker
+    state: present
+
+- name: Add user to docker group
+  ansible.builtin.user:
+    user: '{{ ansible_user }}'
+    groups: docker
+    append: yes

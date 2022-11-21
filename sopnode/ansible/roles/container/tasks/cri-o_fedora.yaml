@@ -1,0 +1,14 @@
+---
+- name: Add dnf cri-o module
+  ansible.builtin.shell:
+    cmd: dnf module list cri-o
+
+- name: Set cri-o version to use
+  ansible.builtin.shell:
+    cmd: dnf module -y enable cri-o:$VERSION
+  environment:
+    VERSION: 1.24
+
+- name: Install cri-o
+  ansible.builtin.shell:
+    cmd: dnf install -y cri-o

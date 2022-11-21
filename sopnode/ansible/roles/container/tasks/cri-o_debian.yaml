@@ -1,0 +1,37 @@
+---
+- name: Add backport apt source
+  ansible.builtin.shell:
+    cmd: echo 'deb http://deb.debian.org/debian buster-backports main' > /etc/apt/sources.list.d/backports.list
+
+- name: Install backport
+  ansible.builtin.shell:
+    cmd: apt install -y -t buster-backports libseccomp2 || apt update -y -t buster-backports libseccomp2
+
+- name: Create repo signing keys directory
+  ansible.builtin.file:
+    path: /usr/share/keyrings
+    state: directory
+
+- name: Add libcontainer repository into sources list
+  ansible.builtin.shell:
+    cmd: echo 'deb [signed-by=/usr/share/keyrings/libcontainers-archive-keyring.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/{{ ansible_distribution + "_"+ ansible_distribution_major_version }}/ /' > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+
+- name: Add libcontainer repository signing key
+  ansible.builtin.shell:
+    cmd: curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/{{ ansible_distribution + '_' + ansible_distribution_major_version }}/Release.key | gpg --yes --dearmor -o /usr/share/keyrings/libcontainers-archive-keyring.gpg
+
+- name: Add cri-o repository into sources list
+  ansible.builtin.shell:
+    cmd: echo "deb [signed-by=/usr/share/keyrings/libcontainers-crio-archive-keyring.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.25/{{ ansible_distribution + '_' + ansible_distribution_major_version }}/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:1.25.list
+
+- name: Add cri-o repository signing key
+  ansible.builtin.shell:
+    cmd: curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.25/{{ ansible_distribution + '_' + ansible_distribution_major_version }}/Release.key | gpg --yes --dearmor -o /usr/share/keyrings/libcontainers-crio-archive-keyring.gpg
+
+- name: Update repository
+  ansible.builtin.shell:
+    cmd: apt-get update
+
+- name: Install cri-o
+  ansible.builtin.shell:
+    cmd: apt-get install -y cri-o cri-o-runc

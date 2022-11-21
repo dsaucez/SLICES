@@ -1,34 +1,6 @@
 ---
-- block:
-  - name: Add signing key
-    ansible.builtin.apt_key:
-      url: "https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }}/gpg"
-      state: present
+- include_tasks: "{{ 'docker_' + (ansible_distribution | lower) + '.yaml' }}"
 
-  - name: Add repository into sources list
-    ansible.builtin.apt_repository:
-      repo: "deb [arch={{ [ansible_architecture] | map('extract', deb_architecture) | first }}] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
-      state: present
-      filename: docker
-
-  - name: Install Docker
-    ansible.builtin.apt:
-      name: '{{item}}'
-      update_cache: true
-      autoclean: yes
-    with_items: "{{ lookup('vars', (ansible_os_family | lower)+ '_docker')}}"
-
-  - name: Allow all to use docker
-    become: yes
-    ansible.builtin.file:
-      path: /var/run/docker.sock
-      mode: '0666'
-
-  become: yes
-  when:
-    - not lookup('vars', (ansible_os_family | lower)+ '_docker') is subset(ansible_facts.packages.keys())
-
-  
 - name: Download and install CNI (1/2)
   ansible.builtin.file:
     path: /opt/cni/bin
@@ -90,14 +62,34 @@
     chdir: ./cri-dockerd
 
 - name: Install cri-dockerd (3/4)
-  ansible.builtin.shell: 'cp -a packaging/systemd/* /etc/systemd/system'
+  ansible.builtin.shell: "sed -i -e 's,/usr/bin/cri-dockerd,/usr/local/bin/cri-dockerd,' packaging/systemd/cri-docker.service"
   args:
     chdir: ./cri-dockerd
 
 - name: Install cri-dockerd (4/4)
-  ansible.builtin.shell: "sed -i -e 's,/usr/bin/cri-dockerd,/usr/local/bin/cri-dockerd,' /etc/systemd/system/cri-docker.service"
+  ansible.builtin.shell: 'cp -a packaging/systemd/* /usr/lib/systemd/system/'
   args:
     chdir: ./cri-dockerd
+
+- name: Symbolic link /etc/systemd/system/cri-docker.service -> /lib/systemd/system/cri-docker.service
+  ansible.builtin.file:
+    dest: /etc/systemd/system/cri-docker.service
+    src: /lib/systemd/system/cri-docker.service
+    state: link
+
+- name: Symbolic link /etc/systemd/system/cri-docker.socket -> /lib/systemd/system/cri-docker.socket
+  ansible.builtin.file:
+    dest: /etc/systemd/system/cri-docker.socket
+    src: /lib/systemd/system/cri-docker.socket
+    state: link
+
+- name: Install cri-dockerd (4/4)
+  ansible.builtin.shell: 'cp -a packaging/systemd/* /etc/systemd/system'
+  args:
+   chdir: ./cri-dockerd
+
+#- name: Reload systemd
+#  ansible.builtin.shell: systemctl daemon-reload
 
 - name: Enable and start cri-docker service
   ansible.builtin.systemd:

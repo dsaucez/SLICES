@@ -1,49 +1,25 @@
 ---
 - block:
-  - name: Remove unstable ONL APT repo
-    ansible.builtin.file:
-      path: /etc/apt/sources.list.d/multistrap-onl.list
-      state: absent
+  - include_tasks: "{{ (ansible_distribution | lower) + '.yaml' }}"
 
-  - name: Gather dependencies (system)
-    ansible.builtin.package_facts:
-      manager: auto
+  - name: Install dependencies
+    include_role:
+      name: dependencies
 
-  - name: Install dependencies (system)
-    ansible.builtin.apt:
-      name: "{{ item.name }}"
-      state: "{{ item.state }}"
-      autoclean: yes
-      update_cache: true
-    with_items: "{{ lookup('vars', (ansible_distribution | lower)+ '_'+ (ansible_distribution_major_version) +'_dependencies')}}"
-    when:
-      - not (lookup('vars', (ansible_distribution | lower)+ '_'+ (ansible_distribution_major_version) +'_dependencies') | items2dict(key_name='name', value_name='state')).keys() is subset(ansible_facts.packages.keys())
+  # - name: Setting hugepages
+  #   ansible.posix.sysctl:
+  #     name: vm.nr_hugepages
+  #     value: "128"
+  #     state: present
 
-  - name: Gather dependencies (Python)
-    community.general.pip_package_info:
-    register: installed_pip_packages
-
-  - name: Install dependencies (Python)
-    ansible.builtin.pip:
-      name: "{{ item.name }}=={{ item.version }}"
-    with_items: "{{ python_packages }}"
-    when:
-      - not (python_packages | items2dict(key_name='name', value_name='version') ).keys()  is subset(installed_pip_packages.packages.pip.keys())
-
-  - name: Setting hugepages
-    ansible.posix.sysctl:
-      name: vm.nr_hugepages
-      value: "128"
-      state: present
-
-  - name: Mount hugepage
-    ansible.posix.mount:
-      name: /mnt/huge
-      src: nodev
-      fstype: hugetlbfs
-      opts: "pagesize=1GB"
-      state: mounted
-    when: ansible_distribution == 'Debian'
+  # - name: Mount hugepage
+  #   ansible.posix.mount:
+  #     name: /mnt/huge
+  #     src: nodev
+  #     fstype: hugetlbfs
+  #     opts: "pagesize=1GB"
+  #     state: mounted
+  #   when: ansible_distribution == 'Debian'
 
   - name: Disable swap
     shell: swapoff -a

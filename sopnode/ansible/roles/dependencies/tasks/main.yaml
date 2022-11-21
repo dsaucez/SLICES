@@ -1,0 +1,19 @@
+---
+- name: Gather dependencies (system)
+  ansible.builtin.package_facts:
+    manager: auto
+
+- name: Install dependencies (system)
+  ansible.builtin.package:
+    name: "{{ item.name }}"
+    state: "{{ item.state }}"
+  with_items: "{{ dependencies.system }}"
+  
+- name: Gather dependencies (Python)
+  community.general.pip_package_info:
+  register: installed_pip_packages
+
+- name: Install dependencies (Python)
+  ansible.builtin.pip:
+    name: "{{ item.name }}=={{ item.version }}"
+  with_items: "{{ dependencies.python }}"

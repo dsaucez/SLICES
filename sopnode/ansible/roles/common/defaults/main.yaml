@@ -69,8 +69,16 @@ fedora_36_dependencies:
     state: present
   - name: curl
     state: present
-  - name: lsb-release
+  - name: redhat-lsb
     state: present
+  - name: iproute-tc
+    state: present
+  - name: wget
+    state: present
+  - name: dnf-plugins-core
+    state: present
+  - name:  zram-generator-defaults
+    state: absent
 
 python_packages:
     - name: docker

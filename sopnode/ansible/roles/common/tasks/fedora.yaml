@@ -1,0 +1,6 @@
+---
+- name: Set dependencies
+  set_fact:
+    dependencies:
+      system: "{{ lookup('vars', (ansible_distribution | lower)+ '_'+ (ansible_distribution_major_version) +'_dependencies')}}"
+      python: "{{ python_packages }}"
