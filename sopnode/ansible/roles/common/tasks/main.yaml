@@ -5,23 +5,4 @@
   - name: Install dependencies
     include_role:
       name: dependencies
-
-  # - name: Setting hugepages
-  #   ansible.posix.sysctl:
-  #     name: vm.nr_hugepages
-  #     value: "128"
-  #     state: present
-
-  # - name: Mount hugepage
-  #   ansible.posix.mount:
-  #     name: /mnt/huge
-  #     src: nodev
-  #     fstype: hugetlbfs
-  #     opts: "pagesize=1GB"
-  #     state: mounted
-  #   when: ansible_distribution == 'Debian'
-
-  - name: Disable swap
-    shell: swapoff -a
-
   become: yes

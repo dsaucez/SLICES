@@ -1,40 +1,24 @@
 ---
-# Dependencies for k8s
+# Basic setup for k8s
 - include_tasks: setup.yaml
 
-- name: Add k8s APT key
-  ansible.builtin.apt_key:
-    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-    state: present
+# Install k8s
+- include_tasks: "{{ 'main_' + (ansible_distribution | lower) +'.yaml' }}"
 
-- name: Add k8s repository into sources list
-  ansible.builtin.apt_repository:
-    repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
-    state: present
-    update_cache: true
-
-- name: Install k8s tools
-  ansible.builtin.apt:
-    name: '{{ item }}'
-    allow_downgrade: yes
-    autoclean: yes
-    state: present
-  with_items: '{{ k8s_tools }}'
+# Prepare k8s
 - name: Create ~/.kube
   ansible.builtin.file:
     path: ~/.kube/
     state: directory
-- name: Create /var/lib/kubelet/ directory
-  ansible.builtin.file:
-    path: /var/lib/kubelet/
-    state: directory
-- name: Create /etc/kubernetes/manifests directory
-  ansible.builtin.file:
-    path: /etc/kubernetes/manifests
-    state: directory
+
+- name: Enable and start kubelet service
+  ansible.builtin.systemd:
+    name: kubelet
+    state: started
+    enabled: yes
 
 - name: Reset k8s
-  shell: "kubeadm reset -f --cri-socket unix:///var/run/cri-dockerd.sock"
+  shell: "kubeadm reset -f --cri-socket {{ runtime[k8s.runtime].cri.socket }}"
 
 - name: Install helm (1/2)
   ansible.builtin.get_url:

@@ -17,6 +17,8 @@ debian_9_dependencies:
     state: present
   - name: wget
     state: present
+  - name: openssl
+    state: present
 
 debian_10_dependencies:
   - name: git
@@ -39,6 +41,8 @@ debian_10_dependencies:
     state: present
   - name: wget
     state: present
+  - name: openssl
+    state: present
 
 ubuntu_20_dependencies:
   - name: git
@@ -59,6 +63,8 @@ ubuntu_20_dependencies:
     state: present
   - name: wget
     state: present
+  - name: openssl
+    state: present
 
 fedora_36_dependencies:
   - name: git
@@ -74,6 +80,8 @@ fedora_36_dependencies:
   - name: iproute-tc
     state: present
   - name: wget
+    state: present
+  - name: openssl
     state: present
   - name: dnf-plugins-core
     state: present

@@ -1,0 +1,34 @@
+---
+- name: Setting hugepages
+  ansible.posix.sysctl:
+    name: vm.nr_hugepages
+    value: "128"
+    state: present
+
+- name: Mount hugepage
+  ansible.posix.mount:
+    name: /mnt/huge
+    src: nodev
+    fstype: hugetlbfs
+    opts: "pagesize=1GB"
+    state: mounted
+
+- name: Create a symbolic link /run/systemd/resolve -> /run/resolvconf/
+  ansible.builtin.file:
+    src: /run/resolvconf/ 
+    dest: /run/systemd/resolve
+    state: link
+  when: ansible_distribution_major_version == "9"
+
+- block:
+  - name: Create /run/systemd/resolve/ directory
+    ansible.builtin.file:
+      path: /run/systemd/resolve/
+      state: directory
+
+  - name: Create a symbolic link /run/systemd/resolve/resolv.conf -> /usr/lib/systemd/resolv.conf
+    ansible.builtin.file:
+      src: /usr/lib/systemd/resolv.conf
+      dest: /run/systemd/resolve/resolv.conf
+      state: link
+  when: ansible_distribution_major_version == "10"

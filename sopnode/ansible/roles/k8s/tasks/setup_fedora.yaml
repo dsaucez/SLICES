@@ -1,0 +1,3 @@
+---
+- name: Remove zram
+  shell: dnf remove -y zram-generator-defaults

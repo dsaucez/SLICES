@@ -1,17 +1,29 @@
-- name: Add k8s CA certificate (1/3)
-  ansible.builtin.file: 
-    path: /usr/local/share/ca-certificates/kubernetes
-    state: directory
+- block:
+  - name: Add k8s CA certificate (1/3)
+    ansible.builtin.file: 
+      path: /usr/local/share/ca-certificates/kubernetes
+      state: directory
 
-- name: Add k8s CA certificate (2/3)
-  ansible.builtin.file:
-    src: /etc/kubernetes/pki/ca.crt
-    dest: /usr/local/share/ca-certificates/kubernetes/ca.crt
-#    dest: /etc/pki/ca-trust/source/anchors/k8s.crt
-    state: link
+  - name: Add k8s CA certificate (2/3)
+    ansible.builtin.file:
+      src: /etc/kubernetes/pki/ca.crt
+      dest: /usr/local/share/ca-certificates/kubernetes/ca.crt
+      state: link
+  - name: Add k8s CA certificate (3/3)
+    shell: update-ca-certificates
 
-- name: Add k8s CA certificate (3/3)
-  shell: update-ca-certificates
-#  shell: update-ca-trust
+  when: ansible_distribution == "Debian"
+
+- block:
+  - name: Add k8s CA certificate (1/2)
+    ansible.builtin.file:
+      src: /etc/kubernetes/pki/ca.crt
+      dest: /etc/pki/ca-trust/source/anchors/k8s.crt
+      state: link
+
+  - name: Add k8s CA certificate (2/2)
+    shell: update-ca-trust
+
+  when: ansible_distribution == "Fedora"
 
 - include_tasks: "{{ k8s.runtime + '.yaml' }}"
