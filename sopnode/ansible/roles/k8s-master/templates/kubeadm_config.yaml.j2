@@ -1,7 +1,7 @@
 apiVersion: kubeadm.k8s.io/v1beta3
 kind: InitConfiguration
 nodeRegistration:
-  name: "{{ hostvars[inventory_hostname_short]['xx-name'] }}"
+  name: "{{ hostvars[inventory_hostname]['xx-name'] }}"
   criSocket: "{{ runtime[k8s.runtime].cri.socket }}"
   kubeletExtraArgs:
     enable-controller-attach-detach: "false"
