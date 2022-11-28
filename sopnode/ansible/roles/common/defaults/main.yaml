@@ -88,6 +88,28 @@ fedora_36_dependencies:
   - name:  zram-generator-defaults
     state: absent
 
+fedora_37_dependencies:
+  - name: git
+    state: present
+  - name: conntrack
+    state: present
+  - name: python3-pip
+    state: present
+  - name: curl
+    state: present
+  - name: redhat-lsb
+    state: present
+  - name: iproute-tc
+    state: present
+  - name: wget
+    state: present
+  - name: openssl
+    state: present
+  - name: dnf-plugins-core
+    state: present
+  - name:  zram-generator-defaults
+    state: absent
+
 python_packages:
     - name: docker
       version: 4.4.4
