@@ -51,28 +51,22 @@
   environment:
     GOPATH: /root/.go
 
-- name: Install cri-dockerd (1/5)
+- name: Install cri-dockerd (1/4)
   ansible.builtin.file:
     path: /usr/local/bin
     state: directory
 
-- name: Install cri-dockerd (2/5)
+- name: Install cri-dockerd (2/4)
   ansible.builtin.shell: 'install -o root -g root -m 0755 bin/cri-dockerd /usr/local/bin/cri-dockerd'
   args:
     chdir: ./cri-dockerd
 
-- name: Install cri-dockerd (3/5)
+- name: Install cri-dockerd (3/4)
   ansible.builtin.shell: "sed -i -e 's,/usr/bin/cri-dockerd,/usr/local/bin/cri-dockerd,' packaging/systemd/cri-docker.service"
   args:
     chdir: ./cri-dockerd
 
-- name: Install cri-dockerd (4/5)
-  ansible.builtin.shell: 'cp -a packaging/systemd/* /lib/systemd/system/'
-  args:
-   chdir: ./cri-dockerd
-
-
-- name: Install cri-dockerd (5/5)
+- name: Install cri-dockerd (4/4)
   ansible.builtin.shell: 'cp -a packaging/systemd/* /etc/systemd/system/'
   args:
    chdir: ./cri-dockerd
