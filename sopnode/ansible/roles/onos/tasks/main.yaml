@@ -5,7 +5,7 @@
 ### Fabric-tna
 - name: check if fabric-tna is built
   stat:
-    path: ~/fabric-tna/target/fabric-tna-1.2.0-SNAPSHOT.oar
+    path: fabric-tna/target/fabric-tna-1.2.0-SNAPSHOT.oar
   register: fabric_oar
 
 - name: Retrieve fabric-tna
@@ -51,13 +51,13 @@
 ### Treillis
 - name: check if treillis-control is built
   stat:
-    path: ~/trellis-control/app/target/segmentrouting-app-3.3.0-SNAPSHOT.oar
+    path: trellis-control/app/target/segmentrouting-app-3.3.0-SNAPSHOT.oar
   register: treillis_oar
 
 - name: Retrieve fabric-tna
   ansible.builtin.git:
     repo: https://github.com/opennetworkinglab/trellis-control.git
-    dest: ~/trellis-control
+    dest: trellis-control
     version: fe1274b0a7a2f6eaefd6266b0e2cf193875cc14c
     force: yes
   when: treillis_oar.stat.exists == false
@@ -65,26 +65,26 @@
 - name: Build treillis-control
   shell: docker run -it --rm -v $HOME/.m2:/root/.m2 -v $PWD:/root/trellis-control -w /root/trellis-control maven:3.6.3-openjdk-11 mvn clean install
   args:
-    chdir: ~/trellis-control
+    chdir: trellis-control
   when: treillis_oar.stat.exists == false
   register: build_treillis
 
 - name: Install treillis-control
   shell: "curl --fail -sSL --user onos:rocks --noproxy localhost -X POST -H Content-Type:application/octet-stream http://{{ onos_cluster.result.spec.clusterIP | default('127.0.0.1') }}:8181/onos/v1/applications?activate=true --data-binary @./app/target/segmentrouting-app-3.3.0-SNAPSHOT.oar"
   args:
-    chdir: ~/trellis-control
+    chdir: trellis-control
   when: treillis_oar.stat.exists == true or  build_treillis.failed == false
 
 ### UP4
 - name: check if up4 is built
   stat:
-    path: ~/up4/app/app/target/up4-app-1.2.0-SNAPSHOT.oar
+    path: up4/app/app/target/up4-app-1.2.0-SNAPSHOT.oar
   register: up4_oar
 
 - name: Retrieve fabric-tna
   ansible.builtin.git:
     repo: https://github.com/omec-project/up4.git
-    dest: ~/up4
+    dest: up4
     version: a11e7c27f79beaab0a7a2e7cfbf7772283e74149
     force: yes
   when: up4_oar.stat.exists == false
@@ -92,26 +92,26 @@
 - name: Build up4 (1/3)
   shell: make deps
   args:
-    chdir: ~/up4
+    chdir: up4
   when: up4_oar.stat.exists == false
 
 - name: Build up4 (2/3)
   shell: make build
   args:
-    chdir: ~/up4
+    chdir: up4
   when: up4_oar.stat.exists == false
 
 - name: Build up4 (3/3)
   shell: make app-build
   args:
-    chdir: ~/up4
+    chdir: up4
   when: up4_oar.stat.exists == false
   register: build_up4
 
 - name: Install up4
   shell: "curl --fail -sSL --user onos:rocks --noproxy localhost -X POST -H Content-Type:application/octet-stream http://{{ onos_cluster.result.spec.clusterIP | default('127.0.0.1') }}:8181/onos/v1/applications?activate=true --data-binary @./app/app/target/up4-app-1.2.0-SNAPSHOT.oar"
   args:
-    chdir: ~/up4
+    chdir: up4
   when: up4_oar.stat.exists == true or build_up4.failed == false
 
 ### Set configuration
