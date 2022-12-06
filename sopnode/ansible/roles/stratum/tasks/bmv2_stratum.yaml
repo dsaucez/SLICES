@@ -17,26 +17,11 @@
     import_tasks: 'bmv2_stratum_build.yaml'
     when: not stat_result.stat.exists
 
-  - name: apt-update
-    community.docker.docker_container_exec:
-      container: stratum-container
-      command: 'sudo apt-get update'
-
   - name: Install stratum
-    community.docker.docker_container_exec:
-      container: stratum-container
-      command: 'sudo apt-get install -y --reinstall /stratum/stratum_bmv2_deb.deb'
-
-  - name: Setup network
-    community.docker.docker_container_exec:
-      container: stratum-container
-      command: 'sudo veth_setup.sh'
+    ansible.builtin.shell: 'sudo apt-get install -y --reinstall /home/dsaucez/stratum/stratum_bmv2_deb.deb'
 
   - name: Start stratum
-    community.docker.docker_container_exec:
-      container: stratum-container
-      detach: true
-      command: sudo stratum_bmv2 -chassis_config_file=/etc/stratum/chassis_config.pb.txt
+    ansible.builtin.shell: sudo nohup stratum_bmv2 -chassis_config_file=/etc/stratum/chassis_config.pb.txt 2>1&  sleep 2
 
   become: yes
   become_user: '{{ stratum.bmv2_user }}'

@@ -1,10 +1,10 @@
 ---
-- block:
-  - name: Set user rights
-    community.docker.docker_container_exec:
-      container: stratum-container
-      command: "sudo chown {{ ansible_user }} {{ ansible_env.HOME }}/.cache"
+- name: Set user rights
+  ansible.builtin.shell: "chown {{ ansible_user }} {{ ansible_env.HOME }}/.cache"
+  become: yes
+  become_user: 'root'
 
+- block:
   - name: Patch to use newer libboost version
     ansible.posix.patch:
       src: build.patch

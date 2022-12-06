@@ -23,7 +23,8 @@ k8s:
 
 # Stratum
 stratum:
-  mode: tofino
+  mode: bmv2 #tofino
+  bmv2_user: dsaucez
 
 # Fabric
 fabric:
@@ -46,9 +47,9 @@ netcfg:
     device:leaf1:
       basic:
         name: leaf1
-        managementAddress: grpc://138.96.245.11:9559?device_id=1
-        driver: stratum-tofino
-        pipeconf: org.stratumproject.fabric-upf.mavericks_sde_9_7_0
+        managementAddress: grpc://10.0.1.4:9559?device_id=1
+        driver: "stratum-bmv2"
+        pipeconf: "org.stratumproject.fabric.bmv2"
         locType: grid
         gridX: 200
         gridY: 600
@@ -61,9 +62,9 @@ netcfg:
     device:leaf2:
       basic:
         name: leaf2
-        managementAddress: grpc://138.96.245.13:9559?device_id=1
-        driver: stratum-tofino
-        pipeconf: org.stratumproject.fabric-upf.mavericks_sde_9_7_0
+        managementAddress: grpc://10.0.1.2:9559?device_id=1
+        driver: "stratum-bmv2"
+        pipeconf: "org.stratumproject.fabric.bmv2"
         locType: grid
         gridX: 600
         gridY: 600
@@ -73,161 +74,20 @@ netcfg:
         routerMac: 00:AA:00:00:00:02
         isEdgeRouter: true
         adjacencySids: []
-    device:spine1:
-      basic:
-        name: spine1
-        managementAddress: grpc://138.96.245.12:9559?device_id=1
-        driver: stratum-tofino
-        pipeconf: org.stratumproject.fabric-upf.montara_sde_9_7_0
-        locType: grid
-        gridX: 400
-        gridY: 400
-      segmentrouting:
-        ipv4NodeSid: 201
-        ipv4Loopback: 192.168.100.102
-        routerMac: 00:BB:00:00:00:01
-        isEdgeRouter: false
-        adjacencySids: []
   ports:
-    device:leaf1/29:
+    device:leaf1/2:
       interfaces:
-      - name: leaf1-spine1
-        vlan-untagged: 100
-    device:spine1/29:
-      interfaces:
-      - name: spine1-leaf1
-        vlan-untagged: 100
-    device:leaf2/25:
-      interfaces:
-      - name: leaf2-spine1
-        vlan-untagged: 100
-    device:spine1/25:
-      interfaces:
-      - name: spine1-leaf2
-        vlan-untagged: 100
-    device:leaf1/100:
-      interfaces:
-      - name: leaf1-100
-        ips:
-        - 192.168.100.200/24
-        vlan-untagged: 100
-    device:leaf1/101:
-      interfaces:
-      - name: leaf1-101
-        ips:
-        - 192.168.100.201/24
-        vlan-untagged: 100
-    device:leaf1/102:
-      interfaces:
-      - name: leaf1-102
+      - name: leaf1-compute-1
         ips:
         - 192.168.100.202/24
         vlan-untagged: 100
-    device:leaf1/103:
+    device:leaf1/1:
       interfaces:
-      - name: leaf1-103
-        ips:
-        - 192.168.100.203/24
-        vlan-untagged: 100
-    device:leaf1/200:
+      - name: leaf1-leaf2
+        vlan-untagged: 100 
+    device:leaf2/1:
       interfaces:
-      - name: leaf1-200
-        ips:
-        - 192.168.100.204/24
-        vlan-untagged: 100
-    device:leaf1/201:
-      interfaces:
-      - name: leaf1-201
-        ips:
-        - 192.168.100.205/24
-        vlan-untagged: 100
-    device:leaf1/202:
-      interfaces:
-      - name: leaf1-202
-        ips:
-        - 192.168.100.206/24
-        vlan-untagged: 100
-    device:leaf1/203:
-      interfaces:
-      - name: leaf1-203
-        ips:
-        - 192.168.100.207/24
-        vlan-untagged: 100
-    device:leaf1/300:
-      interfaces:
-      - name: leaf1-300
-        ips:
-        - 192.168.100.208/24
-        vlan-untagged: 100
-    device:leaf1/301:
-      interfaces:
-      - name: leaf1-301
-        ips:
-        - 192.168.100.209/24
-        vlan-untagged: 100
-    device:leaf1/302:
-      interfaces:
-      - name: leaf1-302
-        ips:
-        - 192.168.100.210/24
-        vlan-untagged: 100
-    device:leaf1/303:
-      interfaces:
-      - name: leaf1-303
-        ips:
-        - 192.168.100.211/24
-        vlan-untagged: 100
-    device:leaf1/14:
-      interfaces:
-      - name: leaf1-r2lab14
-        ips:
-        - 192.168.100.212/24
-        vlan-untagged: 100
-    device:leaf2/100:
-      interfaces:
-      - name: leaf2-100
-        ips:
-        - 192.168.100.213/24
-        vlan-untagged: 100
-    device:leaf2/101:
-      interfaces:
-      - name: leaf2-101
-        ips:
-        - 192.168.100.214/24
-        vlan-untagged: 100
-    device:leaf2/102:
-      interfaces:
-      - name: leaf2-102
-        ips:
-        - 192.168.100.215/24
-        vlan-untagged: 100
-    device:leaf2/103:
-      interfaces:
-      - name: leaf2-103
-        ips:
-        - 192.168.100.216/24
-        vlan-untagged: 100
-    device:leaf2/200:
-      interfaces:
-      - name: leaf2-200
-        vlan-untagged: 100
-    device:leaf2/201:
-      interfaces:
-      - name: leaf2-201
-        vlan-untagged: 100
-    device:leaf2/202:
-      interfaces:
-      - name: leaf2-202
-        vlan-untagged: 100
-    device:leaf2/203:
-      interfaces:
-      - name: leaf2-203
-        vlan-untagged: 100
-    device:leaf2/13:
-      interfaces:
-      - name: leaf2-r2lab13
-        ips:
-        - 192.168.100.217/24
+      - name: leaf2-leaf1
         vlan-untagged: 100
   apps:
     org.onosproject.dhcp:

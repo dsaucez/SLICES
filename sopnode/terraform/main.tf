@@ -73,6 +73,7 @@ resource "google_compute_instance" "switch" {
 
   boot_disk {
     initialize_params {
+      size = 50
       image = "debian-cloud/debian-10"
 #      image = "fedora-cloud/fedora-cloud-36"
 #      image = "fedora-cloud/fedora-cloud-37"
