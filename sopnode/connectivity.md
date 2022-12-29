@@ -55,22 +55,23 @@
 | sopnode-sw3/25                        | sopnode-sw2/25     | 100GB optical        | OK      | FIB220516207 | FIB220516208 |      |      |
 | sopnode-sw3/27                        | sopnode-sw2/27     | 100GB optical        | OK      | FIB220516209 | FIB220516210 |      |      |
 |                                       |                    |                      |         |              |              |      |      |
-| rru-panther/eth1                      | switch-radio/5     | 10GB optical         | DOWN    |              |              | DHCPfs:192.168.100.50/24 | L2 
-| rru-panther/eth2                      | switch-radio/6     | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.51/24 | L2                                       |                                       |                    |                      |         |              |              |      |       |  
-| rru-jaguar/eth1                       | switch-radio/15    | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.48/24 | L2 
+| rru-panther/eth1                      | switch-radio/5     | 10GB optical         | DOWN    |              |              | STATICfs:192.168.100.50/24 | L2 
+| rru-panther/eth2                      | switch-radio/6     | 10GB optical         | OK      |              |              | STATICfs:192.168.100.51/24 | L2                                       |                                       |                    |                      |         |              |              |      |       |  
+| rru-jaguar/eth1                       | switch-radio/15    | 10GB optical         | OK      |              |              | STATICfs:192.168.100.48/24 | L2 
 | rru-jaguar/eth2                       | switch-radio/16    | 10GB optical         | DOWN    |              |              |      |      |
 |                                       |                    |                      |         |              |              |      |      |  
-| USRP-n300/sfp0                        | switch-radio/25    | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.43/24 | L2 
-| USRP-n300/sfp1                        | switch-radio/26    | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.44/24 | L2
+| USRP-n300/sfp0                        | switch-radio/25    | 10GB optical         | OK      |              |              | STATICfs:192.168.10.129/26 | L2 
+| USRP-n300/sfp1                        | switch-radio/26    | 10GB optical         | OK      |              |              | STATICfs:192.168.20.129/26 | L2
 |                                       |                    |                      |         |              |              |      |       |  
-| USRP-n320/sfp0                        | switch-radio/37    | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.45/24 | L2
-| USRP-n320/sfp1                        | switch-radio/38    | 10GB optical         | OK      |              |              | DHCPfs:192.168.100.46/24 | L2
-| external-laptop                       | switch-radio/43    | 10GB copper          | OK      |              | G2220106023  | STATICfs:192.168.100.59/24 | L2
+| USRP-n320/sfp0                        | switch-radio/37    | 10GB optical         | OK      |              |              | STATICfs:192.168.10.130/26 | L2
+| USRP-n320/sfp1                        | switch-radio/38    | 10GB optical         | KO      |              |              |  | 
+|                                       |                    |                      |         |              |              |      |       |  
+| external-laptop                       | switch-radio/43    | 10GB copper          | OK      |              | G2220106023  | DHCPfs | L2
 
 The DHCP network allocates addresses in the pool `{startip: 192.168.100.60/24, endip: 192.168.100.160/24}` from server `192.168.100.217/24` hosted in the cluster.
 
-The `DHCPfs` network statically assigns adresses from witin `{startip: 192.168.100.10/24, endip: 192.168.100.58/24}` from the server hosted on the FS.com switch. 
+The `DHCPfs` network assigns addresses from witin `{startip: 192.168.100.10/24, endip: 192.168.100.58/24}` from the server hosted on the FS.com switch. 
 
-The `STATICfs` network are addresses to manually assign on devices temporarilly connected to switch-radio.
+The `STATICfs` network assigns addresses on a per MAC basis.
 
 Multus networks assigns addresses from within `{startip: 192.168.100.162/24, endip: 192.168.100.192/24}`
