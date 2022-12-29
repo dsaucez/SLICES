@@ -64,9 +64,13 @@
 | USRP-n300/sfp1                        | switch-radio/26    | 10GB optical         | OK      |              |              | STATICfs:192.168.20.129/26 | L2
 |                                       |                    |                      |         |              |              |      |       |  
 | USRP-n320/sfp0                        | switch-radio/37    | 10GB optical         | OK      |              |              | STATICfs:192.168.10.130/26 | L2
-| USRP-n320/sfp1                        | switch-radio/38    | 10GB optical         | KO      |              |              |  | 
+| USRP-n320/sfp1                        | switch-radio/38    | 10GB optical         | OK      |              |              | STATICfs:192.168.20.130/26 | L2
 |                                       |                    |                      |         |              |              |      |       |  
 | external-laptop                       | switch-radio/43    | 10GB copper          | OK      |              | G2220106023  | DHCPfs | L2
+|                                       |                    |                      |         |              |              |      |       |  
+| switch-radio/vlan/100                 | N/A                | N/A                  | OK      | N/A          | N/A          | STATIC:192.168.100.150/24 | N/A
+| switch-radio/vlan/100/secondary0      | N/A                | N/A                  | OK      | N/A          | N/A          | STATIC:192.168.10.190/26 | N/A
+| switch-radio/vlan/100/secondary1      | N/A                | N/A                  | OK      | N/A          | N/A          | STATIC:192.168.20.190/26 | N/A
 
 The DHCP network allocates addresses in the pool `{startip: 192.168.100.60/24, endip: 192.168.100.160/24}` from server `192.168.100.217/24` hosted in the cluster.
 
