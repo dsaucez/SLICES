@@ -9,7 +9,7 @@
 | 12 FO mono to EURECOM RG 097-036/5    | sopnode-sw1/05     | 100GB optical        | OK      | N/A          | FIB220516205 |      |      |
 | 12 FO mono to EURECOM RG 097-036/6    | sopnode-sw2/06     | 100GB optical        | OK      | N/A          | FIB220516206 |      |      |
 |                                       |                    |                      |         |              |              |      |      |
-| 24 FO mono to Salle Anechoide BS12/13 | sopnode-sw3/13     | 100GB optical        | DOWN    | N/A          | C1904162937  |      |      |
+| 24 FO mono to Salle Anechoide BS12/13 | sopnode-switch-management/56     | 100GB optical        | OK    | N/A          | C1904162937  |      |      |
 | 24 FO mono to Salle Anechoide BS12/14 | sopnode-sw1/14     | 100GB optical        | OK      | N/A          | C1904163659  |  N/A | DHCP |
 | 24 FO mono to Salle Anechoide BS12/15 | -                  |                      |         | N/A          |              |      |      |
 | 24 FO mono to Salle Anechoide BS12/16 | -                  |                      |         | N/A          |              |      |      |
