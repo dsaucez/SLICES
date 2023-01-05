@@ -31,15 +31,16 @@ fabric:
 
 onos:
   image: onosproject/onos:2.5.8
-  mode:  k8s # docker k8s
+  mode:  docker # docker k8s
   applications:
     - name: org.onosproject.drivers.barefoot
     - name: org.onosproject.drivers.bmv2
     - name: org.onosproject.fpm 
     - name: org.onosproject.lldpprovider
     - name: org.onosproject.hostprovider
-    - name: org.onosproject.dhcp
+#    - name: org.onosproject.dhcp
     - name: org.onosproject.proxyarp
+    - name: org.onosproject.dhcprelay
 
 netcfg:
   devices:
@@ -214,6 +215,8 @@ netcfg:
     device:leaf2/201:
       interfaces:
       - name: leaf2-201
+        ips:
+        - 192.168.100.218/24
         vlan-untagged: 100
     device:leaf2/202:
       interfaces:
@@ -230,17 +233,22 @@ netcfg:
         - 192.168.100.217/24
         vlan-untagged: 100
   apps:
-    org.onosproject.dhcp:
-      dhcp:
-        ip: 192.168.100.217
-        mac: de:ad:ca:fe:ca:ca
-        subnet: 255.255.255.0
-        broadcast: 192.168.100.255
-        ttl: '63'
-        lease: '300'
-        renew: '150'
-        rebind: '200'
-        delay: '2'
-        timeout: '150'
-        startip: 192.168.100.60
-        endip: 192.168.100.160
+  #  org.onosproject.dhcp:
+  #     dhcp:
+  #       ip: 192.168.100.217
+  #       mac: de:ad:ca:fe:ca:ca
+  #       subnet: 255.255.255.0
+  #       broadcast: 192.168.100.255
+  #       ttl: '63'
+  #       lease: '300'
+  #       renew: '150'
+  #       rebind: '200'
+  #       delay: '2'
+  #       timeout: '150'
+  #       startip: 192.168.100.60
+  #       endip: 192.168.100.160
+    org.onosproject.dhcprelay:
+      default:
+          dhcpServerConnectPoint: device:leaf2/201
+          serverIps:
+            - 192.168.100.95
