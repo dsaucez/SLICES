@@ -1,0 +1,13 @@
+- name: Testing netbox
+  hosts: localhost
+  connection: local
+  tasks:
+    # query a list of devices
+    - name: Obtain list of devices from NetBox
+      debug:
+        msg: >
+          "Interface {{ item.value.name }} on device {{ item.value.device.name }}"
+      loop: "{{ query('netbox.netbox.nb_lookup', 'interfaces',
+                      api_filter='device=jaguar',
+                      api_endpoint='http://localhost:8000',
+                      token='daf6223d2e35ff028b4201bb11e8431c2037d2f9') }}"
