@@ -1,0 +1,12 @@
+---
+plugin: netbox.netbox.nb_inventory
+api_endpoint: http://localhost:8000
+token: daf6223d2e35ff028b4201bb11e8431c2037d2f9
+validate_certs: False
+config_context: False
+
+group_by:
+  - device_roles
+#  - sites
+query_filters:
+  - role: programmable-switch
