@@ -108,35 +108,27 @@ netcfg:
         vlan-tagged: [100, 10, 20]
     device:leaf1/100:
       interfaces:
-      - name: leaf1-100
-        ips:
-        - 192.168.100.200/24
-        vlan-tagged: [100]
+      - name: leaf1-w1.eth2
+        vlan-tagged: 10
     device:leaf1/101:
       interfaces:
-      - name: leaf1-101
-        ips:
-        - 192.168.100.201/24
-        vlan-untagged: 100
+      - name: leaf1-w1.eth3
+        vlan-untagged: 20
     device:leaf1/102:
       interfaces:
-      - name: leaf1-102
-        ips:
-        - 192.168.100.202/24
+      - name: leaf1-w1.eth5
         vlan-untagged: 100
     device:leaf1/103:
       interfaces:
-      - name: leaf1-103
-        ips:
-        - 192.168.100.203/24
+      - name: leaf1-w1.eth4
         vlan-untagged: 100
     device:leaf1/200:
       interfaces:
-      - name: leaf1-200
+      - name: leaf1-w2.eth2
         vlan-untagged: 10
     device:leaf1/201:
       interfaces:
-      - name: leaf1-201
+      - name: leaf1-w2.eth3
         vlan-untagged: 20
     device:leaf1/202:
       interfaces:
@@ -146,9 +138,7 @@ netcfg:
         vlan-untagged: 100
     device:leaf1/203:
       interfaces:
-      - name: leaf1-203
-        ips:
-        - 192.168.100.207/24
+      - name: leaf1-w2.eth4
         vlan-untagged: 100
     device:leaf1/300:
       interfaces:
@@ -164,16 +154,12 @@ netcfg:
         vlan-untagged: 100
     device:leaf1/302:
       interfaces:
-      - name: leaf1-302
-        ips:
-        - 192.168.100.210/24
-        vlan-untagged: 100
+      - name: leaf1-w3.eth3
+        vlan-untagged: 20
     device:leaf1/303:
       interfaces:
-      - name: leaf1-303
-        ips:
-        - 192.168.100.211/24
-        vlan-untagged: 100
+      - name: leaf1-w3.eth2
+        vlan-untagged: 10
     device:leaf1/14:
       interfaces:
       - name: leaf1-r2lab14
@@ -184,27 +170,19 @@ netcfg:
         vlan-tagged: [100, 10, 20]
     device:leaf2/100:
       interfaces:
-      - name: leaf2-100
-        ips:
-        - 192.168.100.213/24
-        vlan-untagged: 100
+      - name: leaf2-l1.eth2
+        vlan-untagged: 10
     device:leaf2/101:
       interfaces:
-      - name: leaf2-101
-        ips:
-        - 192.168.100.214/24
-        vlan-untagged: 100
+      - name: leaf2-l1.eth3
+        vlan-untagged: 20
     device:leaf2/102:
       interfaces:
-      - name: leaf2-102
-        ips:
-        - 192.168.100.215/24
+      - name: leaf2-l1.eth5
         vlan-untagged: 100
     device:leaf2/103:
       interfaces:
-      - name: leaf2-103
-        ips:
-        - 192.168.100.216/24
+      - name: leaf2-l1.eth4
         vlan-untagged: 100
     device:leaf2/200:
       interfaces:
@@ -212,7 +190,7 @@ netcfg:
         vlan-untagged: 100
     device:leaf2/201:
       interfaces:
-      - name: leaf2-201
+      - name: leaf2-z1.eth5
         ips:
         - 192.168.100.218/24
         vlan-tagged: [10, 20, 100]
