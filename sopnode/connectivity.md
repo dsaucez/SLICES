@@ -1,4 +1,4 @@
-> :warning: **THIS FILE IS DEPRECATED. PLEASE REFER TO NETBOX FOR ANY INVENTORY **
+> :warning: **THIS FILE IS DEPRECATED. PLEASE REFER TO NETBOX FOR ANY INVENTORY**
 
 # Connectivity between nodes at Sopnode
 
