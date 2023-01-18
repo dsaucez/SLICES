@@ -1,0 +1,17 @@
+---
+- name: Create interface aliases
+  hosts: computes
+  become: yes
+  vars:
+    ints: 
+      - {name: 'sopnode-z1', interface: {ifname: 'greatalias', mac: '00:0e:1e:79:d7:92'}}
+      - {name: 'sopnode-w3', interface: {ifname: 'anothergreat', mac: '0c:42:a1:ae:7a:5f'}}
+
+  tasks:
+  - name: Create interface aliases
+    ansible.builtin.shell: 'ip link property add dev {{ item.1 }} altname {{ item.0.interface.ifname }}'
+    when: inventory_hostname_short == item.0.name and ansible_facts[item.1]['macaddress']|default(None) == item.0.interface.mac
+    ignore_errors: true
+    with_nested:
+    - '{{ ints }}'
+    - '{{ ansible_interfaces }}'
