@@ -1,3 +1,5 @@
+> :warning: **THIS FILE IS DEPRECATED. PLEASE REFER TO NETBOX FOR ANY INVENTORY**
+
 # Connectivity between nodes at Sopnode
 
 | Node A                                | Node B             | Techno               | Status  | S/N A        | S/N B        | IP A | IP B |
