@@ -1,0 +1,5 @@
+---
+- name: Setup network on nodes
+  hosts: computes
+  roles:
+    - role: network

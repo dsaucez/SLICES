@@ -1,0 +1,3 @@
+---
+netbox_port: 12345
+netbox_server: localhost
