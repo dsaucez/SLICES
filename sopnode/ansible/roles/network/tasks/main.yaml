@@ -3,19 +3,13 @@
   ansible.builtin.include_vars:
     file: secrets.yaml
 
-- name: Obtain list of prefixes from Netbox
-  set_fact:
-    dhcpd_prefixes: "{{ query('netbox.netbox.nb_lookup', 'prefixes',
-                  api_endpoint='http://{}:{}/'.format(netbox_server, netbox_port),
-                  token=netbox_token) }}"
+- name: Load network database from Netbox
+  local_action: ansible.builtin.shell python3 roles/network/files/netbox_db.py --port {{ netbox_port}} --server {{ netbox_server}} --token {{ netbox_token }}
+  register: db
 
-- name: Determine network interface aliases from Netbox
-  local_action: ansible.builtin.shell python3 roles/network/files/interfaces.py --port {{ netbox_port}} --server {{ netbox_server}} --token {{ netbox_token }}
-  register: interfaces
-
-- name: Store network interface aliases
+- name: Store netbox database
   ansible.builtin.set_fact:
-    interfaces: "{{ interfaces.stdout | from_yaml | list }}"
+    db: "{{ db.stdout | from_yaml }}"
 
 - name: Configure and launch ISC DHCPD
   block:
@@ -24,7 +18,7 @@
         src: dhcpd.j2
         dest: /root/dhcpd/dhcpd.conf
 
-    - name: Strat ISC DHCPD
+    - name: Start ISC DHCPD
       community.docker.docker_container:
         name: dhcpd
         image: networkboot/dhcpd
@@ -44,5 +38,5 @@
   when: inventory_hostname_short == item.0.name and ansible_facts[item.1]['macaddress']|default(None) == item.0.interface.mac and item.1 != item.0.interface.ifname
   ignore_errors: true
   with_nested:
-  - '{{ interfaces | selectattr ("name", "equalto", inventory_hostname_short)  }}'
+  - '{{ db.interfaces | selectattr ("name", "equalto", inventory_hostname_short)  }}'
   - '{{ ansible_interfaces }}'
