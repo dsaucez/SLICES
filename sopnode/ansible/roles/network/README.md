@@ -36,3 +36,10 @@ from the root directory:
 ```bash
 ansible-playbook  -i inventories/sopnode_tofino/ network.yaml --extra-vars "@params.sopnode_tofino.yaml" --ask-vault-pass
 ```
+
+# ISC DHCP
+Hosts in the inventory group `dhcpd` will be configured as ISC DHCPD server. The
+server is launched as a docker container. 
+
+Even if you don't have any DHCP server to configure, make sure the `dhcpd` group
+exists (empty) in your Ansible inventory.

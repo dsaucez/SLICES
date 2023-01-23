@@ -3,20 +3,46 @@
   ansible.builtin.include_vars:
     file: secrets.yaml
 
-- name: Determine network interface aliases
-  local_action: ansible.builtin.shell python3 roles/network/files/create_aliases.py --port {{ netbox_port}} --server {{ netbox_server}} --token {{ netbox_token }}
-  register: iface_aliases
+- name: Obtain list of prefixes from Netbox
+  set_fact:
+    dhcpd_prefixes: "{{ query('netbox.netbox.nb_lookup', 'prefixes',
+                  api_endpoint='http://{}:{}/'.format(netbox_server, netbox_port),
+                  token=netbox_token) }}"
 
-- name: Set variables
+- name: Determine network interface aliases from Netbox
+  local_action: ansible.builtin.shell python3 roles/network/files/interfaces.py --port {{ netbox_port}} --server {{ netbox_server}} --token {{ netbox_token }}
+  register: interfaces
+
+- name: Store network interface aliases
   ansible.builtin.set_fact:
-    iface_aliases: "{{ iface_aliases.stdout | from_yaml | list }}"
+    interfaces: "{{ interfaces.stdout | from_yaml | list }}"
+
+- name: Configure and launch ISC DHCPD
+  block:
+    - name: Create DHCPD.conf
+      ansible.builtin.template:
+        src: dhcpd.j2
+        dest: /root/dhcpd/dhcpd.conf
+
+    - name: Strat ISC DHCPD
+      community.docker.docker_container:
+        name: dhcpd
+        image: networkboot/dhcpd
+        volumes:
+          - /root/dhcpd/:/data
+        networks:
+          - name: host
+        restart_policy: unless-stopped
+        restart: true
+
+  when: inventory_hostname in groups.dhcpd
 
 - name: Create interface aliases
   ansible.builtin.shell: 'ip link property add dev {{ item.1 }} altname {{ item.0.interface.ifname }}'
   # ansible.builtin.debug:
-  #   msg: '{{ item.0.name }}: ip link property add dev {{ item.1 }} altname {{ item.0.interface.ifname }}'
+  #   msg: '{{ item.0.name }}: ip link property add dev {{ item.1 }} altname {{ item.0.interface.ifname }} {{item.0.interface.addresses}}'
   when: inventory_hostname_short == item.0.name and ansible_facts[item.1]['macaddress']|default(None) == item.0.interface.mac and item.1 != item.0.interface.ifname
   ignore_errors: true
   with_nested:
-  - '{{ iface_aliases }}'
+  - '{{ interfaces | selectattr ("name", "equalto", inventory_hostname_short)  }}'
   - '{{ ansible_interfaces }}'

@@ -29,7 +29,17 @@ def getData(server, port, api, headers={}, payload={}):
 
 devices = getData(server=server, port=port, api='/api/dcim/devices/', headers=headers)
 interfaces = getData(server=server, port=port, api='/api/dcim/interfaces/', headers=headers)
-#ips = getData(server=server, port=port, api='/api/ipam/ip-addresses/', headers=headers)
+ips = getData(server=server, port=port, api='/api/ipam/ip-addresses/', headers=headers)
+
+for key, ip in ips.items():
+    try:
+      ifid = ip['assigned_object_id']
+      interface = interfaces[ifid]
+      addresses = interfaces[ifid].get('x-addresses', [])
+      addresses.append(ip['address'])
+      interfaces[ifid]['x-addresses'] = addresses
+    except:
+      pass
 
 aliases = []
 for id, interface in interfaces.items():
@@ -37,8 +47,9 @@ for id, interface in interfaces.items():
     mac = interface['mac_address']
     deviceid = interface['device']['id']
     name = devices[deviceid]['name']
+    addresses = interface.get('x-addresses', [])
 
     if mac is not None:
-        aliases.append({'name': name, 'interface': {'ifname': ifname, 'mac': mac.lower() }})
+        aliases.append({'name': name, 'interface': {'ifname': ifname, 'mac': mac.lower(), 'addresses': addresses }})
 
 print (yaml.dump(aliases))

@@ -8,20 +8,26 @@ infrastructure. The playbooks require Ansible 2.13 or higher (we tested them on
 `Ansible 2.13.2`). The present section presents instructions on how to setup the
 environment on GNU/Linux Ubuntu 20.04.
 
-To interact with the infrastructure rely on `ansible.posix`,
+To interact with the infrastructure we rely on `ansible.posix`,
 `community.kubernetes`, `cloud.common`, `kubernetes.core`, `community.crypto`,
-`community.general`, and  `community.docker` collection that can be installed
-with `ansible-galaxy`:
+`community.general`, `community.docker`, and `netbox.netbox` collections that
+can be installed with `ansible-galaxy`:
 
 ```bash
-ansible-galaxy collection install ansible.posix community.kubernetes cloud.common kubernetes.core community.crypto community.general community.docker
+ansible-galaxy collection install ansible.posix community.kubernetes cloud.common kubernetes.core community.crypto community.general community.docker netbox.netbox
 ```
-
 To allow non-interactive ssh password authentication we rely on `sshpass` that
 can be installed as follows.
 
 ```
 sudo apt install sshpass
+```
+
+To interact with Netbox inventory, `pynetbox`, `PyYAML`, and `requests` are
+required. They can be installed with pip as follow:
+
+```
+pip3 install -r requirements.txt
 ```
 
 ## Deploy the services on SophiaNode

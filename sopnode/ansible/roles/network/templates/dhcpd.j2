@@ -1,0 +1,18 @@
+default-lease-time              180;
+max-lease-time                  300;
+
+{% for prefix in dhcpd_prefixes %}
+{% if prefix.value.is_pool %}
+subnet {{ prefix.value.prefix | ansible.utils.ipaddr('network') }} netmask {{ prefix.value.prefix | ansible.utils.ipaddr('netmask') }} {}
+{% endif %}
+{% endfor %}
+
+{% for item in iface_aliases %}
+
+{%if item.interface.addresses | length == 1 %}
+host {{ item.name }}-{{ item.interface.ifname }} {
+  hardware ethernet {{ item.interface.mac }};
+  fixed-address {{ item.interface.addresses | first | regex_replace('\/\d+', '') }};
+}
+{% endif %}
+{% endfor %}
