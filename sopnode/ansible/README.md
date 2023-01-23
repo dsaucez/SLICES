@@ -23,8 +23,8 @@ can be installed as follows.
 sudo apt install sshpass
 ```
 
-To interact with Netbox inventory, `pynetbox`, `PyYAML`, and `requests` are
-required. They can be installed with pip as follow:
+To interact with Netbox inventory, `netaddr`, `pynetbox`, `PyYAML`, and
+`requests` are required. They can be installed with pip as follow:
 
 ```
 pip3 install -r requirements.txt

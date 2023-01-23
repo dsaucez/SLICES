@@ -7,7 +7,7 @@ subnet {{ prefix.value.prefix | ansible.utils.ipaddr('network') }} netmask {{ pr
 {% endif %}
 {% endfor %}
 
-{% for item in iface_aliases %}
+{% for item in interfaces %}
 
 {%if item.interface.addresses | length == 1 %}
 host {{ item.name }}-{{ item.interface.ifname }} {
