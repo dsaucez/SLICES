@@ -11,12 +11,14 @@ subnet {{ prefix.prefix | ansible.utils.ipaddr('network') }} netmask {{ prefix.p
 {% endif %}
 {% endfor %}
 
-{% for item in db.interfaces %}
 
-{%if item.interface.addresses | length == 1 %}
-host {{ item.name }}-{{ item.interface.ifname }} {
-  hardware ethernet {{ item.interface.mac }};
-  fixed-address {{ item.interface.addresses | first | regex_replace('\/\d+', '') }};
+{% for device in db.devices.values() %}
+{% for interface in device.interfaces %}
+{%if interface.ip_addresses | length == 1 %}
+host {{ device.name }}-{{ interface.ifname | regex_replace('\s+', '_')}} {
+  hardware ethernet {{ interface.mac }};
+  fixed-address {{ interface.ip_addresses | first | regex_replace('\/\d+', '') }};
 }
 {% endif %}
+{% endfor %}
 {% endfor %}

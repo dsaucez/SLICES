@@ -1,9 +1,8 @@
 import argparse
-import requests
 import yaml
 from ipaddress import ip_network
-from ipaddress import ip_address
 import re
+import pynetbox
 
 # parse user parameters
 parser = argparse.ArgumentParser()
@@ -16,77 +15,58 @@ server = args.server
 port = args.port
 token = args.token
 
-# Interact with Netbox API 
-payload={}
-headers = {
-  'Accept': 'application/json',
-  'Authorization': 'Token {}'.format(token),
-}
+nb = pynetbox.api('http://{}:{}'.format(server, port), token=token)
 
-def getData(server, port, api, headers={}, payload={}):
-    url = 'http://{}:{}/{}'.format(server, port, api)
-
-    response = requests.request("GET", url, headers=headers, data=payload)
-    data = response.json()
-    values = {value["id"]: value for value in data['results']}
-
-    return values
-
-# Load information on devices
-devices = getData(server=server, port=port, api='/api/dcim/devices/', headers=headers)
-# Load information on interfaces
-interfaces = getData(server=server, port=port, api='/api/dcim/interfaces/', headers=headers)
-# Load information on IP addresses
-ips = getData(server=server, port=port, api='/api/ipam/ip-addresses/', headers=headers)
+# Get all interfaces
+interfaces = {}
+for interface in nb.dcim.interfaces.all():
+  mac = interface.mac_address
+  interfaces.setdefault(interface.id, {'id': interface.id, 'ifname': interface.name, 'mac': mac.lower() if mac is not None else mac, 'ip_addresses': []})
 
 # Link IP addresses to interfaces
-for key, ip in ips.items():
-    try:
-      ifid = ip['assigned_object_id']
-      interface = interfaces[ifid]
-      addresses = interfaces[ifid].get('x-addresses', [])
-      addresses.append(ip['address'])
-      interfaces[ifid]['x-addresses'] = addresses
-    except:
-      pass
+for ip in nb.ipam.ip_addresses.all():
+  ifid = ip.assigned_object_id
+  if ifid is not None:
+    interface = nb.dcim.interfaces.get(ifid)
+    iface = interfaces[interface.id]
+    iface['ip_addresses'].append(ip.address)
 
-# Give the interfaces, their MAC address, and their addresses to each device
-aliases = []
-for id, interface in interfaces.items():
-    ifname = interface['name']
-    mac = interface['mac_address']
-    deviceid = interface['device']['id']
-    name = devices[deviceid]['name']
-    addresses = interface.get('x-addresses', [])
+# Link interfaces to devices
+devices = {}
+for interface in nb.dcim.interfaces.all():
+  deviceid = interface.device.id
+  device = nb.dcim.devices.get(deviceid)
+  device_db = devices.setdefault(deviceid, {'id': deviceid, 'name': device.name, 'interfaces': []})
+  interface_db = interfaces[interface.id]
+  interface_db['device_name'] = interface.device.name
 
-    if mac is not None:
-        aliases.append({'name': name, 'interface': {'ifname': ifname, 'mac': mac.lower(), 'addresses': addresses }})
-
-# Load information on IP ranges
-ip_ranges = getData(server=server, port=port, api='/api/ipam/ip-ranges/', headers=headers)
-# Load information on IP prefixes
-prefixes = getData(server=server, port=port, api='/api/ipam/prefixes/', headers=headers)
+  device_db['interfaces'].append(interface_db)
 
 # Determine all the IP prefixes and their IP range
 dhcp_prefixes = []
-for prefix in prefixes.values():
-  net = ip_network(prefix['prefix'])
-  for ip_range in ip_ranges.values():
-    start = ip_network(ip_range['start_address'], strict=False)
-    end =   ip_network(ip_range['end_address'], strict=False)
+
+for prefix in nb.ipam.prefixes.all():
+  prefix_db = {
+                'prefix': prefix.prefix,
+                'is_pool': prefix.is_pool,
+                'ranges': []
+              }
+  net = ip_network(prefix.prefix)
+
+  for ip_range in nb.ipam.ip_ranges.all():
+    start = ip_network(ip_range.start_address, strict=False)
+    end =   ip_network(ip_range.end_address, strict=False)
 
     if start == end == net:
-      s = re.sub('\/\d+', '', ip_range['start_address'])
-      e = re.sub('\/\d+', '', ip_range['end_address'])
+      s = re.sub('\/\d+', '', ip_range.start_address)
+      e = re.sub('\/\d+', '', ip_range.end_address)
+      prefix_db['ranges'].append({'start_address': s, 'end_address':e})
 
-      ranges = prefix.get('ranges', [])
-      ranges.append({'start_address': s, 'end_address':e})
-      prefix['ranges'] = ranges
-  dhcp_prefixes.append(prefix)
+  dhcp_prefixes.append(prefix_db)
 
 db = {
-  'interfaces': aliases,
-  'prefixes': dhcp_prefixes
+  'prefixes': dhcp_prefixes,
+  'devices': { device['name']: device for device in devices.values()}
   }
 
 # Dump the database in YAML
