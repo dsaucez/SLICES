@@ -14,8 +14,9 @@ To interact with the infrastructure we rely on `ansible.posix`,
 can be installed with `ansible-galaxy`:
 
 ```bash
-ansible-galaxy collection install ansible.posix community.kubernetes cloud.common kubernetes.core community.crypto community.general community.docker netbox.netbox
+ansible-galaxy install -r collections/requirements.yml
 ```
+
 To allow non-interactive ssh password authentication we rely on `sshpass` that
 can be installed as follows.
 

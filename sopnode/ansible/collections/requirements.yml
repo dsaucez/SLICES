@@ -1,0 +1,9 @@
+collections:
+  - name: ansible.posix
+  - name: community.kubernetes
+  - name: cloud.common
+  - name: kubernetes.core
+  - name: community.crypto
+  - name: community.general
+  - name: community.docker
+  - name: netbox.netbox
