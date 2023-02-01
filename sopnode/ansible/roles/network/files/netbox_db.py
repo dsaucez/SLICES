@@ -86,7 +86,7 @@ def build_dhcp_prefixes(nb):
 
     dhcp_prefixes.append(prefix_db)
 
-    return dhcp_prefixes
+  return dhcp_prefixes
 
 def get_devices(nb, interfaces):
   """
