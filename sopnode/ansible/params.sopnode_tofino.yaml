@@ -109,7 +109,7 @@ netcfg:
     device:leaf1/100:
       interfaces:
       - name: leaf1-w1.eth2
-        vlan-tagged: 10
+        vlan-untagged: 10
     device:leaf1/101:
       interfaces:
       - name: leaf1-w1.eth3
@@ -133,8 +133,8 @@ netcfg:
     device:leaf1/202:
       interfaces:
       - name: leaf1-202
-        ips:
-        - 192.168.100.206/24
+        # ips:
+        # - 192.168.100.206/24
         vlan-untagged: 100
     device:leaf1/203:
       interfaces:
@@ -143,14 +143,14 @@ netcfg:
     device:leaf1/300:
       interfaces:
       - name: leaf1-300
-        ips:
-        - 192.168.100.208/24
+        # ips:
+        # - 192.168.100.208/24
         vlan-untagged: 100
     device:leaf1/301:
       interfaces:
       - name: leaf1-301
-        ips:
-        - 192.168.100.209/24
+        # ips:
+        # - 192.168.100.209/24
         vlan-untagged: 100
     device:leaf1/302:
       interfaces:
@@ -163,10 +163,10 @@ netcfg:
     device:leaf1/14:
       interfaces:
       - name: leaf1-r2lab14
-        ips:
-        - 192.168.100.212/24
-        - 192.168.10.182/26
-        - 192.168.20.182/26
+        # ips:
+        # - 192.168.100.212/24
+        # - 192.168.10.182/26
+        # - 192.168.20.182/26
         vlan-tagged: [100, 10, 20]
     device:leaf2/100:
       interfaces:
@@ -191,8 +191,8 @@ netcfg:
     device:leaf2/201:
       interfaces:
       - name: leaf2-z1.eth5
-        ips:
-        - 192.168.100.218/24
+        # ips:
+        # - 192.168.100.218/24
         vlan-tagged: [10, 20, 100]
     device:leaf2/202:
       interfaces:
@@ -205,8 +205,8 @@ netcfg:
     device:leaf2/13:
       interfaces:
       - name: leaf2-r2lab13
-        ips:
-        - 192.168.100.217/24
+        # ips:
+        # - 192.168.100.217/24
         vlan-untagged: 100
   apps:
   #  org.onosproject.dhcp:
@@ -223,8 +223,8 @@ netcfg:
   #       timeout: '150'
   #       startip: 192.168.100.60
   #       endip: 192.168.100.160
-    org.onosproject.dhcprelay:
-      default:
-          dhcpServerConnectPoint: device:leaf2/201
-          serverIps:
-            - 192.168.100.95
+    # org.onosproject.dhcprelay:
+    #   default:
+    #       dhcpServerConnectPoint: device:leaf2/201
+    #       serverIps:
+    #         - 192.168.100.95
