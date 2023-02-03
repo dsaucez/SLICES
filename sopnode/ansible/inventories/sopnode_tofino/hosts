@@ -10,6 +10,8 @@ all:
           xx-name: sopnode-w2.inria.fr
         sopnode-w3.inria.fr:
           xx-name: sopnode-w3.inria.fr
+        sopnode-z1.inria.fr:
+          xx-name: sopnode-z1.inria.fr
     controllers:
       hosts:
         sopnode-z1.inria.fr:
