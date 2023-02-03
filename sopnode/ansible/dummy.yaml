@@ -7,3 +7,4 @@
     ansible.builtin.debug:
       msg:
       - "This works fine"
+      - '{{ k8s }}'
