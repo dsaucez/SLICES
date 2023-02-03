@@ -4,32 +4,32 @@ all:
       hosts:
         sopnode-w1.inria.fr:
           xx-name: sopnode-w1.inria.fr
-        sopnode-l1.inria.fr:
+        sopnode-11.inria.fr:
           xx-name: sopnode-l1.inria.fr
-       sopnode-w1.inria.fr:
-          xx-name: sopnode-w1.inria.fr
-       sopnode-w2.inria.fr:
-          xx-name: sopnode-w2.inria.fr
-       sopnode-w3.inria.fr:
-          xx-name: sopnode-w3.inria.fr
+#        sopnode-w1.inria.fr:
+#          xx-name: sopnode-w1.inria.fr
+#        sopnode-w2.inria.fr:
+#          xx-name: sopnode-w2.inria.fr
+#        sopnode-w3.inria.fr:
+#          xx-name: sopnode-w3.inria.fr
     controllers:
       hosts:
         sopnode-z1.inria.fr:
           xx-name: sopnode-z1.inria.fr
-       sopnode-sw1-eth0.inria.fr:
-          xx-name: sopnode-sw1-eth0.inria.fr
-       sopnode-sw2-eth0.inria.fr:
-          xx-name: sopnode-sw2-eth0.inria.fr
-       sopnode-sw3-eth0.inria.fr:
-          xx-name: sopnode-sw3-eth0.inria.fr
+#        sopnode-sw1-eth0.inria.fr:
+#          xx-name: sopnode-sw1-eth0.inria.fr
+#        sopnode-sw2-eth0.inria.fr:
+#          xx-name: sopnode-sw2-eth0.inria.fr
+#        sopnode-sw3-eth0.inria.fr:
+#          xx-name: sopnode-sw3-eth0.inria.fr
     masters:
       hosts:
         sopnode-sw1-eth0.inria.fr:
           xx-name: sopnode-sw1-eth0.inria.fr
-       sopnode-sw2-eth0.inria.fr:
-          xx-name: sopnode-sw2-eth0.inria.fr
-       sopnode-sw3-eth0.inria.fr:
-          xx-name: sopnode-sw3-eth0.inria.fr
+#        sopnode-sw2-eth0.inria.fr:
+#          xx-name: sopnode-sw2-eth0.inria.fr
+#        sopnode-sw3-eth0.inria.fr:
+#          xx-name: sopnode-sw3-eth0.inria.fr
     switches:
       hosts:
         sopnode-sw1-eth0.inria.fr:
