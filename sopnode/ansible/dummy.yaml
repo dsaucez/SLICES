@@ -1,0 +1,9 @@
+---
+- name: Dummy playbook to check Ansible setup
+  hosts: computes
+
+  tasks:
+  - name: Ensure apache is at the latest version
+    ansible.builtin.debug:
+      msg:
+      - "This works fine"
