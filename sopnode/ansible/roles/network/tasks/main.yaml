@@ -32,9 +32,9 @@
   when: inventory_hostname in groups.dhcpd
 
 - name: Create interface aliases
-  ansible.builtin.shell: 'ip link property add dev {{ item.1 }} altname {{ item.0.ifname }}'
-  # ansible.builtin.debug:
-  #   msg: '{{ item.0.device_name }}: ip link property add dev {{ item.1 }} altname {{ item.0.ifname }}'
+  # ansible.builtin.shell: 'ip link property add dev {{ item.1 }} altname {{ item.0.ifname }}'
+  ansible.builtin.debug:
+    msg: '{{ item.0.device_name }}: ip link property add dev {{ item.1 }} altname {{ item.0.ifname }}'
   when: ansible_facts[item.1]['macaddress']|default(None) == item.0.mac and item.1 != item.0.ifname
   ignore_errors: true
   with_nested:
