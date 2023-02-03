@@ -2,8 +2,6 @@ all:
   children:
     computes:
       hosts:
-        sopnode-w1.inria.fr:
-          xx-name: sopnode-w1.inria.fr
         sopnode-l1.inria.fr:
           xx-name: sopnode-l1.inria.fr
         sopnode-w1.inria.fr:
