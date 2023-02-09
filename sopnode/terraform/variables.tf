@@ -1,7 +1,7 @@
 variable "switch" {
   type = map
   default = {
-      "instance_count" = 2
+      "instance_count" = 0
     }
 }
 
@@ -12,7 +12,7 @@ output "switch-ip" {
 variable "compute" {
   type = map
   default = {
-      "instance_count" = 1
+      "instance_count" = 3
     }
 }
 
