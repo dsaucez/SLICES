@@ -19,6 +19,8 @@ debian_9_dependencies:
     state: present
   - name: openssl
     state: present
+  - name: gnupg
+    state: present
 
 debian_10_dependencies:
   - name: git
@@ -42,6 +44,32 @@ debian_10_dependencies:
   - name: wget
     state: present
   - name: openssl
+    state: present
+  - name: gnupg
+    state: present
+
+debian_11_dependencies:
+  - name: git
+    state: present
+  - name: conntrack
+    state: present
+  - name: python3-pip
+    state: present
+  - name: curl
+    state: present
+  - name: apt-transport-https
+    state: present
+  - name: ca-certificates
+    state: present
+  - name: lsb-release
+    state: present
+  - name: patch
+    state: present
+  - name: wget
+    state: present
+  - name: openssl
+    state: present
+  - name: gnupg
     state: present
 
 ubuntu_20_dependencies:
