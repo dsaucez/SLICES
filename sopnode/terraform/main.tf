@@ -40,7 +40,9 @@ resource "google_compute_instance" "compute" {
 
   boot_disk {
     initialize_params {
+#      image = "ubuntu-os-cloud/ubuntu-2004-lts"
       image = "debian-cloud/debian-10"
+#      image = "debian-cloud/debian-11"
 #      image = "fedora-cloud/fedora-cloud-36"
       #image = "fedora-cloud/fedora-cloud-37"
     }
@@ -74,7 +76,9 @@ resource "google_compute_instance" "switch" {
   boot_disk {
     initialize_params {
       size = 50
+#      image = "ubuntu-os-cloud/ubuntu-2004-lts"
       image = "debian-cloud/debian-10"
+#      image = "debian-cloud/debian-11"
 #      image = "fedora-cloud/fedora-cloud-36"
 #      image = "fedora-cloud/fedora-cloud-37"
     }
