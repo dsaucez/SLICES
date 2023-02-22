@@ -1,17 +1,20 @@
 ---
-- name: Load kernel modules
-  community.general.modprobe:
-    name: '{{ item }}'
-    state: present
-  with_items: "{{ kernel.modules }}"
+- block:
+  - name: Load kernel modules
+    community.general.modprobe:
+      name: '{{ item }}'
+      state: present
+    with_items: "{{ kernel.modules }}"
 
-- name: Set kernel attributes
-  ansible.posix.sysctl:
-    name: '{{ item.option }}'
-    value: '{{ item.value }}'
-    sysctl_set: yes
-    state: present
-    reload: yes
-  with_items: "{{ kernel.attributes }}"
+  - name: Set kernel attributes
+    ansible.posix.sysctl:
+      name: '{{ item.option }}'
+      value: '{{ item.value }}'
+      sysctl_set: yes
+      state: present
+      reload: yes
+    with_items: "{{ kernel.attributes }}"
 
-- include_tasks: "{{ k8s.runtime + '.yaml' }}"
+  - include_tasks: "{{ k8s.runtime + '.yaml' }}"
+  
+  become: yes

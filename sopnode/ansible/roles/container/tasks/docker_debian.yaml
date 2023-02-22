@@ -18,7 +18,6 @@
   with_items: "{{ lookup('vars', (ansible_os_family | lower)+ '_docker')}}"
 
 - name: Allow all to use docker
-  become: yes
   ansible.builtin.file:
     path: /var/run/docker.sock
     mode: '0666'
