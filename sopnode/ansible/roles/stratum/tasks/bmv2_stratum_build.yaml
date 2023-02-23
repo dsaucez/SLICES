@@ -5,13 +5,6 @@
   become_user: 'root'
 
 - block:
-  - name: Patch to use newer libboost version
-    ansible.posix.patch:
-      src: build.patch
-      dest: ~/stratum/stratum/hal/bin/bmv2/BUILD
-      remote_src: no
-      state: present
-
   - name: Build stratum
     community.docker.docker_container_exec:
       container: stratum-container
