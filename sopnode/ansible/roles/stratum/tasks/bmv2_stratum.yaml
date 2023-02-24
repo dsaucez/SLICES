@@ -18,7 +18,7 @@
     when: not stat_result.stat.exists
 
   - name: Install stratum
-    ansible.builtin.shell: 'sudo apt-get install -y --reinstall /home/dsaucez/stratum/stratum_bmv2_deb.deb'
+    ansible.builtin.shell: 'sudo apt-get install -y --reinstall ~/stratum/stratum_bmv2_deb.deb'
 
   - name: Start stratum
     ansible.builtin.shell: sudo nohup stratum_bmv2 -chassis_config_file=/etc/stratum/chassis_config.pb.txt 2>1&  sleep 2
