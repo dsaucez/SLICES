@@ -4,6 +4,8 @@ deb_architecture:
   "aarch64": "arm64"
   "x86_64": "amd64"
 
+docker_compose: v2.16.0
+
 debian_docker:
   - docker-ce
   - docker-ce-cli

@@ -62,3 +62,15 @@
     state: restarted
     enabled: yes
     daemon_reload: yes
+
+# install Docker Compose
+- name: Download Docker Compose
+  ansible.builtin.get_url:
+    url: 'https://github.com/docker/compose/releases/download/{{ k8s.compose | default(docker_compose) }}/docker-compose-{{ ansible_system | lower }}-{{ ansible_architecture }}'
+    dest: '/usr/local/bin/docker-compose-{{ k8s.compose | default(docker_compose) }}-{{ ansible_system | lower }}-{{ ansible_architecture }}'
+    mode: '0555'
+- name: Install Docker Compose
+  ansible.builtin.file:
+    src: /usr/local/bin/docker-compose-{{ k8s.compose | default(docker_compose) }}-{{ ansible_system | lower }}-{{ ansible_architecture }}
+    dest: /usr/local/bin/docker-compose
+    state: link
