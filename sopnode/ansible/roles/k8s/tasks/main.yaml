@@ -28,3 +28,6 @@
 
 - name: Install helm (2/2)
   shell: "/tmp/get_helm.sh"
+
+- name: Install helm spray
+  shell: "helm plugin install --version {{ helm_spray }} https://github.com/ThalesGroup/helm-spray"
