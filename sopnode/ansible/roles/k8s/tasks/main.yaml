@@ -29,5 +29,8 @@
 - name: Install helm (2/2)
   shell: "/tmp/get_helm.sh"
 
-- name: Install helm spray
-  shell: "helm plugin install --version {{ helm_spray }} https://github.com/ThalesGroup/helm-spray"
+- name: Install Helm spray plugin
+  kubernetes.core.helm_plugin:
+    plugin_version: '{{ helm_spray }}'
+    plugin_path: https://github.com/ThalesGroup/helm-spray
+    state: present
