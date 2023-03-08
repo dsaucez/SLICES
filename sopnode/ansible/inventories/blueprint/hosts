@@ -1,0 +1,14 @@
+all:
+  children:
+    computes:
+      hosts:
+        192.0.2.2:
+          xx-name: node2
+        192.0.2.3:
+          xx-name: node3
+    masters:
+      hosts:
+        192.0.2.1:
+          xx-name: node1
+    switches:
+      hosts:
