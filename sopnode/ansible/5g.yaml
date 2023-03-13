@@ -1,0 +1,6 @@
+---
+- name: Deploy 5G network
+  hosts: masters
+  become: yes
+  roles:
+    - role: 5g

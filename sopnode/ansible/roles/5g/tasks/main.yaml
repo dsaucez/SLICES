@@ -1,0 +1,48 @@
+---
+- name: Retrieve OAI
+  ansible.builtin.git:
+    repo: https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed.git
+    dest: oai-cn5g-fed
+    version: v1.5.0
+    force: yes
+
+- name: Synchronize all git submodules
+  shell: "./scripts/syncComponents.sh"
+  args:
+    chdir: oai-cn5g-fed
+
+- name: Install Helm spray plugin
+  kubernetes.core.helm_plugin:
+    plugin_path: https://github.com/ThalesGroup/helm-spray
+    plugin_version: v4.0.10
+    state: present
+
+- name: Create OAI namespace 
+  kubernetes.core.k8s:
+    name: oai-tutorial
+    api_version: v1
+    kind: Namespace
+    state: present
+  become: yes
+
+- name: Get chart dependencies
+  ansible.builtin.shell: helm dependency update
+  args:
+    chdir: oai-cn5g-fed/charts/oai-5g-core/oai-5g-basic
+
+- name: Deploy 5G core
+  ansible.builtin.shell: helm spray --namespace oai-tutorial .
+  args:
+    chdir: oai-cn5g-fed/charts/oai-5g-core/oai-5g-basic
+
+- name: Deploy gNB
+  kubernetes.core.helm:
+    name: gnb
+    chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-gnb
+    release_namespace: oai-tutorial
+
+- name: Deploy UE
+  kubernetes.core.helm:
+    name: nrue
+    chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-nr-ue
+    release_namespace: oai-tutorial
