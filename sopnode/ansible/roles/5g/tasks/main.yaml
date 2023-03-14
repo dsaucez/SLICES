@@ -25,24 +25,14 @@
     state: present
   become: yes
 
-- name: Get chart dependencies
-  ansible.builtin.shell: helm dependency update
-  args:
-    chdir: oai-cn5g-fed/charts/oai-5g-core/oai-5g-basic
+- name: Setup 5G core
+  ansible.builtin.include_tasks: 'core.yaml'
+  when: GCN.core.present
 
-- name: Deploy 5G core
-  ansible.builtin.shell: helm spray --namespace oai-tutorial .
-  args:
-    chdir: oai-cn5g-fed/charts/oai-5g-core/oai-5g-basic
+- name: Setup RAN
+  ansible.builtin.include_tasks: 'ran.yaml'
+  when: GCN.RAN.present
 
-- name: Deploy gNB
-  kubernetes.core.helm:
-    name: gnb
-    chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-gnb
-    release_namespace: oai-tutorial
-
-- name: Deploy UE
-  kubernetes.core.helm:
-    name: nrue
-    chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-nr-ue
-    release_namespace: oai-tutorial
+- name: Setup UEs
+  ansible.builtin.include_tasks: 'ue.yaml'
+  when: GCN.UE.present

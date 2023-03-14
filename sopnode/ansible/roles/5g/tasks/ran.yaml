@@ -1,0 +1,6 @@
+---
+- name: Deploy gNB
+  kubernetes.core.helm:
+    name: gnb
+    chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-gnb
+    release_namespace: oai-tutorial

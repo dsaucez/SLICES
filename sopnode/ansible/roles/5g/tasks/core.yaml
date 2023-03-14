@@ -1,0 +1,10 @@
+---
+- name: Get chart dependencies
+  ansible.builtin.shell: helm dependency update
+  args:
+    chdir: oai-cn5g-fed/charts/oai-5g-core/oai-5g-basic
+
+- name: Deploy 5G core
+  ansible.builtin.shell: helm spray --namespace oai-tutorial .
+  args:
+    chdir: oai-cn5g-fed/charts/oai-5g-core/oai-5g-basic

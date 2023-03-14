@@ -1,0 +1,9 @@
+---
+# 5G config
+GCN:
+  core:
+    present: true
+  RAN:
+    present: true
+  UE:
+    present: true
