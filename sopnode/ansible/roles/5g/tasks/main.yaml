@@ -27,12 +27,12 @@
 
 - name: Setup 5G core
   ansible.builtin.include_tasks: 'core.yaml'
-  when: GCN.core.present
+  when: GCN.core.present is defined and GCN.core.present
 
 - name: Setup RAN
   ansible.builtin.include_tasks: 'ran.yaml'
-  when: GCN.RAN.present
+  when: GCN.RAN.present is defined  and GCN.RAN.present
 
 - name: Setup UEs
   ansible.builtin.include_tasks: 'ue.yaml'
-  when: GCN.UE.present
+  when: GCN.UE.present is defined and GCN.UE.present
