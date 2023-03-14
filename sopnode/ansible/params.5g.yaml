@@ -1,6 +1,7 @@
 ---
 # 5G config
 GCN:
+  namespace: blueprint
   core:
     present: true
   RAN:

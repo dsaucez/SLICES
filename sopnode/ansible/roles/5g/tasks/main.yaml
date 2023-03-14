@@ -17,9 +17,9 @@
     plugin_version: v4.0.10
     state: present
 
-- name: Create OAI namespace 
+- name: Create blueprint namespace 
   kubernetes.core.k8s:
-    name: oai-tutorial
+    name: '{{ GCN.namespace }}'
     api_version: v1
     kind: Namespace
     state: present
