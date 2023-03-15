@@ -8,3 +8,6 @@ GCN:
     present: true
   UE:
     present: true
+    tests:
+      landmark_ping:
+          landmark: google.fr

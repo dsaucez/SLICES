@@ -1,0 +1,29 @@
+---
+- name: Test 5G network
+  hosts: masters
+  become: yes
+  tasks:
+
+  - name: UE landmark ping
+    block:  
+      - name: Get UE's pod
+        kubernetes.core.k8s_info:
+          api_version: v1
+          kind: Pod
+          namespace: '{{ GCN.namespace }}'
+          label_selectors:
+            - app.kubernetes.io/name=oai-nr-ue
+            - app.kubernetes.io/instance=nrue
+        register: service_list
+
+      - name: Ping the landmark from the UE
+        kubernetes.core.k8s_exec:
+          namespace: '{{ GCN.namespace }}'
+          pod: '{{ service_list["resources"][0]["metadata"]["name"] }}'
+          command: 'ping -I oaitun_ue1 -c4 {{ GCN.UE.tests.landmark_ping.landmark }}'
+        register: ping
+
+      - name: Results of the ping to the landmark
+        ansible.builtin.debug:
+          msg: '{{ ping["stdout_lines"][-2] }}'
+    when: (GCN.UE.present is defined) and (GCN.UE.present) and (GCN.UE.tests.landmark_ping.landmark is defined)
