@@ -30,3 +30,15 @@
 
 - name: Install Calico
   shell: 'helm install calico projectcalico/tigera-operator --version v3.24.1 -f tigera_operator.yaml --namespace tigera-operator'
+
+- name: Retrieve multus
+  ansible.builtin.git:
+    repo: https://github.com/k8snetworkplumbingwg/multus-cni.git
+    dest: multus-cni
+    version: v3.9.3
+    force: yes
+
+- name: Install multus
+  kubernetes.core.k8s:
+    state: present
+    src: multus-cni/deployments/multus-daemonset.yml
