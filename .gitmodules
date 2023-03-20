@@ -1,3 +1,7 @@
 [submodule "sopnode/multus/multus-cni"]
 	path = sopnode/multus/multus-cni
 	url = https://github.com/k8snetworkplumbingwg/multus-cni.git
+
+[submodule "sopnode/ansible/roles/multus/files/multus-cni"]
+	path = sopnode/ansible/roles/multus/files/multus-cni
+	url = https://github.com/k8snetworkplumbingwg/multus-cni.git
