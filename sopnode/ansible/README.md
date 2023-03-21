@@ -304,6 +304,8 @@ Host *
         ServerAliveCountMax 2
 ```
 
+This configuration example is provided in `misc/ssh/config`.
+
 If timeouts still occur, agood enough solution is to increase timeouts for `ControlPersist`, `connect_timeout`, and `command_timeout` in Ansible
 configuration. In our setup we directly changed them to 3600 (i.e., 1h) in
 `/etc/ansible/ansible.cfg` as our ansible runs in a sandbox. In other scenarios, using environment variables is probably better (see [https://docs.ansible.com/ansible/latest/network/user_guide/network_debug_troubleshooting.html](https://docs.ansible.com/ansible/latest/network/user_guide/network_debug_troubleshooting.html) for more information).
