@@ -1,6 +1,5 @@
 FROM ubuntu:20.04
-RUN apt update
-RUN apt install -y python3-pip git
+RUN apt update && apt install -y python3-pip git
 RUN python3 -m pip install --user ansible-core==2.13.2
 RUN echo "export PATH=$PATH:~/.local/bin" >> ~/.bashrc
 RUN mkdir /reqs/
