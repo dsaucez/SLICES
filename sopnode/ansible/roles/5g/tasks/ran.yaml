@@ -1,6 +1,7 @@
 ---
 - name: Deploy gNB
   kubernetes.core.helm:
-    name: gnb
+    name: oai-gnb
     chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-gnb
     release_namespace: '{{ GCN.namespace }}'
+    wait: true

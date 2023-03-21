@@ -4,3 +4,4 @@
     name: nrue
     chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-nr-ue
     release_namespace: '{{ GCN.namespace }}'
+    wait: true
