@@ -10,4 +10,4 @@
     dest: ./kubeadm_config.yaml
 
 - name: Join k8s cluster
-  shell: 'kubeadm join --config ./kubeadm_config.yaml'
+  ansible.builtin.shell: 'kubeadm join --config ./kubeadm_config.yaml'

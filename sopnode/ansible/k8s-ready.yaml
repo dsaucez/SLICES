@@ -1,0 +1,8 @@
+- name: Wait for the node to be ready
+  ansible.builtin.shell: 'kubectl wait --timeout=300s --all-namespaces --for=condition=Ready nodes {{ hostvars[inventory_hostname]["xx-name"] }}'
+  register: node_wait
+  retries: 10
+  until: node_wait is succeeded
+
+- name: Wait for the pods to be ready
+  ansible.builtin.shell: 'kubectl wait --timeout=300s --all-namespaces --for=condition=Ready pods --field-selector spec.nodeName={{ hostvars[inventory_hostname]["xx-name"] }}' 
