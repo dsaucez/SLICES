@@ -49,6 +49,8 @@
     ca_cert_hash: "{{ hostvars['ansible_dummy_host']['_ca_cert_hash'] }}"
     kube_config_local_path: "{{ hostvars['ansible_dummy_host']['_kube_config'] }}"
     master: "{{ k8s['apiserver_advertise_address'] | default(hostvars['ansible_dummy_host']['_master']) }}"
+  environment:
+    PATH: '{{ansible_env.PATH }}:/usr/local/bin/'
 
   roles:
     - role: k8s-node

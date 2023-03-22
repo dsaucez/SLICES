@@ -27,7 +27,7 @@
     mode: '0555'
 
 - name: Install helm (2/2)
-  shell: "/tmp/get_helm.sh"
+  ansible.builtin.shell: "/tmp/get_helm.sh"
 
 - name: Install Helm spray plugin
   kubernetes.core.helm_plugin:
