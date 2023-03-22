@@ -169,8 +169,6 @@ rocky_9_dependencies:
     state: present
   - name: curl
     state: present
-  # - name: redhat-lsb
-  #   state: present
   - name: iproute-tc
     state: present
   - name: wget
