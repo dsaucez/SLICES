@@ -2,6 +2,8 @@
 - name: Install k8s master
   hosts: masters
   become: yes
+  environment:
+    PATH: '{{ansible_env.PATH }}:/usr/local/bin/'
 
   roles:
     - role: k8s-master
