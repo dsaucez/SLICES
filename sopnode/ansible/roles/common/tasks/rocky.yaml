@@ -2,9 +2,6 @@
 - name: Install kernel extra
   ansible.builtin.shell: dnf install -y kernel-modules-extra-`uname -r`
 
-- name: Load SCTP
-  ansible.builtin.shell: modprobe sctp
-
 - name: Set dependencies
   set_fact:
     dependencies:

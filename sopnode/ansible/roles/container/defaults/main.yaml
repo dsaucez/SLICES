@@ -15,6 +15,7 @@ debian_docker:
 
 kernel:
   modules:
+    - 'sctp'
     - 'overlay'
     - 'br_netfilter'
   attributes:
