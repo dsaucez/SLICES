@@ -1,6 +1,11 @@
 ---
 - name: Install kernel extra
   ansible.builtin.shell: dnf install -y kernel-modules-extra-`uname -r`
+  when: (hostvars[inventory_hostname]["rtlinux"] is undefined) or (not hostvars[inventory_hostname]["rtlinux"])
+
+- name: Install RT kernel extra
+  ansible.builtin.shell: dnf --enablerepo=rt install -y kernel-rt-modules-extra-`uname -r`
+  when: (hostvars[inventory_hostname]["rtlinux"] is defined) and (hostvars[inventory_hostname]["rtlinux"])
 
 - name: Set dependencies
   set_fact:
