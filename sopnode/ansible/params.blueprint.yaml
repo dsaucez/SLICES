@@ -7,7 +7,7 @@ k8s:
   dnsDomain: cluster.local
   apiserver_advertise_address: 192.0.2.1
   calico:
-  nodeAddressAutodetectionV4:
-    cidrs:
-      - 192.0.2.0/24
+    nodeAddressAutodetectionV4:
+      cidrs:
+        - 192.0.2.0/24
   encapsulation: VXLAN
