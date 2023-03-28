@@ -1,0 +1,9 @@
+---
+- name: Install kernel extra
+  ansible.builtin.shell: dnf install -y kernel-modules-extra-`uname -r`
+
+- name: Set dependencies
+  set_fact:
+    dependencies:
+      system: "{{ lookup('vars', (ansible_distribution | lower)+ '_'+ (ansible_distribution_major_version) +'_dependencies')}}"
+      python: "{{ python_packages }}"

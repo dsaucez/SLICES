@@ -41,6 +41,8 @@ resource "google_compute_instance" "compute" {
   boot_disk {
     initialize_params {
       size = 50
+#      image= "rhel-cloud/rhel-9"
+#      image= "rhel-cloud/rhel-8"
       image = "rocky-linux-cloud/rocky-linux-9-v20230306"
 #      image = "ubuntu-os-cloud/ubuntu-2004-lts"
 #      image = "debian-cloud/debian-10"
