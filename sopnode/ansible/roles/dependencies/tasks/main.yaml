@@ -11,6 +11,7 @@
   
 - name: Gather dependencies (Python)
   community.general.pip_package_info:
+    clients: [pip3, pip]
   register: installed_pip_packages
 
 - name: Install dependencies (Python)
