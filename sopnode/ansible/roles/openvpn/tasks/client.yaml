@@ -54,19 +54,26 @@
 
 - name: Configure client networks
   block:
-    - name: Add client networks (1/2)
+    - name: Add client networks (1/3)
       ansible.builtin.lineinfile:
         path: /etc/openvpn/server/server.conf
         state: present
         line: 'route {{ item.network }} {{ item.subnet }}'
       loop: '{{ client.routes }}'
 
-    - name: Add client networks (2/2)
+    - name: Add client networks (2/3)
       ansible.builtin.lineinfile:
         path: '/etc/openvpn/client/{{ client.name }}'
         state: present
         line: 'iroute {{ item.network }} {{ item.subnet }}'
         create: true
+      loop: '{{ client.routes }}'
+
+    - name: Add client networks (3/3)
+      ansible.builtin.lineinfile:
+        path: /etc/openvpn/server/server.conf
+        state: present
+        line: 'push "route {{ item.network }} {{ item.subnet }}"'
       loop: '{{ client.routes }}'
 
     - name: Restart OpenVPN
@@ -80,3 +87,5 @@
 
 - name: Generate ovpn file
   ansible.builtin.shell: '{{ client.name }}/make_config.sh {{ client.name }}'
+  notify:
+    - restart openvpn

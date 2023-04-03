@@ -1,0 +1,10 @@
+---
+- name: restart openvpn
+  ansible.builtin.systemd:
+    name: openvpn-server@server.service
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+  become: yes
+  when:
+    - not ansible_check_mode

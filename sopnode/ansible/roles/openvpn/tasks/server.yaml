@@ -28,6 +28,40 @@
   args:
     chdir: CA
 
+- name: Configure ufw
+  block:
+    - name: Configure ufw (1/5)
+      ansible.builtin.blockinfile:
+        path: /etc/ufw/before.rules
+        insertbefore: BOF
+        block: |
+          # START OPENVPN RULES
+          # NAT table rules
+          *nat
+          :POSTROUTING ACCEPT [0:0]
+          # Allow traffic from OpenVPN client to {{ ansible_default_ipv4.interface }}
+          -A POSTROUTING -s 10.8.0.0/8 -o {{ ansible_default_ipv4.interface }} -j MASQUERADE
+          # END OPENVPN RULES
+
+    - name: Configure ufw (2/5)
+      ansible.builtin.lineinfile:
+        path: /etc/ufw/before.rules
+        state: present
+        line: 'COMMIT'
+
+    - name: Configure ufw (3/5)
+      ansible.builtin.replace:
+        path: /etc/default/ufw
+        regexp: 'DEFAULT_FORWARD_POLICY=".*"'
+        replace: DEFAULT_FORWARD_POLICY="ACCEPT"
+
+    - name: Configure ufw (4/5)
+      ansible.builtin.shell: ufw allow 1194/udp
+
+    - name: Configure ufw (5/5)
+      ansible.builtin.shell: ufw reload
+  become: yes
+
 - name: Create server directory
   ansible.builtin.file:
     path: server
@@ -51,10 +85,6 @@
   args:
     chdir: server
 
-- name: Install server key
-  ansible.builtin.shell: cp server/pki/private/server.key /etc/openvpn/server/
-  become: yes
-
 - name: Import server certificate
   ansible.builtin.shell: easyrsa import-req ../server/pki/reqs/server.req server
   args:
@@ -65,21 +95,22 @@
   args:
     chdir: CA
 
-- name: Install server certificate
-  ansible.builtin.shell: cp CA/pki/issued/server.crt /etc/openvpn/server/
-  become: yes
-
-- name: Install CA certificate
-  ansible.builtin.shell: cp CA/pki/ca.crt /etc/openvpn/server/
-  become: yes
-
 - name: Generate server secret key
   ansible.builtin.shell: openvpn --genkey --secret ta.key
   args:
     chdir: server
 
-- name: Install server secret key
-  ansible.builtin.shell: cp server/ta.key /etc/openvpn/server/
+- name: Install server creds
+  ansible.builtin.copy:
+    src: '{{ item }}'
+    dest: /etc/openvpn/server/{{ item | basename }}
+    mode: "0400"
+    remote_src: yes
+  loop:
+    - server/pki/private/server.key
+    - CA/pki/issued/server.crt
+    - CA/pki/ca.crt
+    - server/ta.key
   become: yes
 
 - name: Configure openvpn server
@@ -88,47 +119,5 @@
     dest: /etc/openvpn/server/server.conf
     mode: '0400'
   become: yes
-
-- name: Configure ufw (1/5)
-  ansible.builtin.blockinfile:
-    path: /etc/ufw/before.rules
-    insertbefore: BOF
-    block: |
-      # START OPENVPN RULES
-      # NAT table rules
-      *nat
-      :POSTROUTING ACCEPT [0:0]
-      # Allow traffic from OpenVPN client to {{ ansible_default_ipv4.interface }}
-      -A POSTROUTING -s 10.8.0.0/8 -o {{ ansible_default_ipv4.interface }} -j MASQUERADE
-      # END OPENVPN RULES
-  become: yes
-
-- name: Configure ufw (2/5)
-  ansible.builtin.lineinfile:
-    path: /etc/ufw/before.rules
-    state: present
-    line: 'COMMIT'
-  become: yes
-
-- name: Configure ufw (3/5)
-  ansible.builtin.replace:
-    path: /etc/default/ufw
-    regexp: 'DEFAULT_FORWARD_POLICY=".*"'
-    replace: DEFAULT_FORWARD_POLICY="ACCEPT"
-  become: yes
-
-- name: Configure ufw (4/5)
-  ansible.builtin.shell: ufw allow 1194/udp
-  become: yes
-
-- name: Configure ufw (5/5)
-  ansible.builtin.shell: ufw reload
-  become: yes
-
-- name: Start OpenVPN
-  ansible.builtin.systemd:
-    name: openvpn-server@server.service
-    state: restarted
-    enabled: yes
-    daemon_reload: yes
-  become: yes
+  notify:
+    - restart openvpn
