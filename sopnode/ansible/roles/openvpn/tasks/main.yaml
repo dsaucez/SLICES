@@ -1,0 +1,32 @@
+## Inspired form https://www.digitalocean.com/community/tutorials/how-to-set-up-and-configure-an-openvpn-server-on-ubuntu-20-04
+
+- name: OpenVPN
+  block:
+    - name: Gather dependencies (system)
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Install dependencies (system)
+      ansible.builtin.package:
+        name:
+          - easy-rsa
+          - openvpn
+        state: present
+      become: yes
+
+    - name: check if the server is already setup
+      stat:
+        path: CA
+      register: ca
+
+    - include_tasks: "server.yaml"
+      when: ca.stat.exists == false
+
+    - name: Create clients
+      include_tasks: "client.yaml"
+      loop: '{{ openvpn.clients }}'
+      loop_control:
+        loop_var: client
+
+  environment:
+    PATH: '{{ansible_env.PATH }}:/usr/share/easy-rsa/'

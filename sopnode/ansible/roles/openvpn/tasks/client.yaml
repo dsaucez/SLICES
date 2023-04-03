@@ -1,0 +1,82 @@
+- name: Create client directory
+  ansible.builtin.file:
+    path: '{{ client.name }}'
+    state: directory
+    mode: '0700'
+
+- name: Client base file
+  ansible.builtin.template:
+    src: base.conf.j2
+    dest: '{{ client.name }}/base.conf'
+
+- name: Client creation script
+  ansible.builtin.copy:
+    content: |
+      #!/bin/bash
+      # First argument: Client identifier
+      CLIENT_DIR="{{ client.name }}"
+      CA_DIR=CA
+      SERVER_DIR=server
+      BASE_CONFIG="${CLIENT_DIR}/base.conf"
+      cat ${BASE_CONFIG} \
+          <(echo -e '<ca>') \
+          ${CA_DIR}/pki/ca.crt \
+          <(echo -e '</ca>\n<cert>') \
+          ${CA_DIR}/pki/issued/${1}.crt \
+          <(echo -e '</cert>\n<key>') \
+          ${CLIENT_DIR}/pki/private/${1}.key \
+          <(echo -e '</key>\n<tls-crypt>') \
+          ${SERVER_DIR}/ta.key \
+          <(echo -e '</tls-crypt>') \
+          > ${CLIENT_DIR}/${1}.ovpn
+    dest: '{{ client.name }}/make_config.sh'
+    mode: '0700'
+
+- name: Initialize client PKI
+  ansible.builtin.shell: echo 'yes' | easyrsa init-pki
+  args:
+    chdir: '{{ client.name }}'
+
+- name: Client request
+  ansible.builtin.shell: 'echo "{{ client.name }}" | easyrsa gen-req {{ client.name }} nopass'
+  args:
+    chdir: '{{ client.name }}'
+
+- name: Import client certificate
+  ansible.builtin.shell: 'easyrsa import-req ../{{ client.name }}/pki/reqs/{{ client.name }}.req {{ client.name }}'
+  args:
+    chdir: CA
+
+- name: Create client certificate
+  ansible.builtin.shell: 'echo "yes" | easyrsa sign-req client {{ client.name }}'
+  args:
+    chdir: CA
+
+- name: Configure client networks
+  block:
+    - name: Add client networks (1/2)
+      ansible.builtin.lineinfile:
+        path: /etc/openvpn/server/server.conf
+        state: present
+        line: 'route {{ item.network }} {{ item.subnet }}'
+      loop: '{{ client.routes }}'
+
+    - name: Add client networks (2/2)
+      ansible.builtin.lineinfile:
+        path: '/etc/openvpn/client/{{ client.name }}'
+        state: present
+        line: 'iroute {{ item.network }} {{ item.subnet }}'
+        create: true
+      loop: '{{ client.routes }}'
+
+    - name: Restart OpenVPN
+      ansible.builtin.systemd:
+        name: openvpn-server@server.service
+        state: restarted
+        enabled: yes
+        daemon_reload: yes
+  when: client.routes is defined
+  become: yes
+
+- name: Generate ovpn file
+  ansible.builtin.shell: '{{ client.name }}/make_config.sh {{ client.name }}'

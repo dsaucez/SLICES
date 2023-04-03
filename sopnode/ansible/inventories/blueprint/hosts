@@ -12,3 +12,7 @@ all:
           xx-name: node1
     switches:
       hosts:
+    openvpn:
+      hosts:
+        192.0.2.42:
+          xx-name: openvpn
