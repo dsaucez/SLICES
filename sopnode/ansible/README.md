@@ -103,6 +103,7 @@ k8s:
   serviceSubnet: <ip prefix>
   podSubnet: <ip prefix>
   dnsDomain: <dns name>
+  apiserver_advertise_address: <ip address>
   calico:
     nodeAddressAutodetectionV4: <KubernetesAutodetectionMethod>
     encapsulation: <EncapsulationType>

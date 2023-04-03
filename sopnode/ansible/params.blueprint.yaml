@@ -5,8 +5,9 @@ k8s:
   podSubnet: 10.244.0.0/16
   serviceSubnet: 10.96.0.0/16
   dnsDomain: cluster.local
+  apiserver_advertise_address: 192.0.2.1
   calico:
     nodeAddressAutodetectionV4:
       cidrs:
         - 192.0.2.0/24
-    encapsulation: VXLAN
+  encapsulation: VXLAN

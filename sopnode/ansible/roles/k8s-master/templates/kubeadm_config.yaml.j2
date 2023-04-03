@@ -5,6 +5,10 @@ nodeRegistration:
   criSocket: "{{ runtime[k8s.runtime].cri.socket }}"
   kubeletExtraArgs:
     enable-controller-attach-detach: "false"
+{% if k8s.apiserver_advertise_address is defined %}
+localAPIEndpoint:
+  advertiseAddress: "{{ k8s.apiserver_advertise_address }}"
+{% endif %}
 ---
 apiVersion: kubeadm.k8s.io/v1beta3
 kind: ClusterConfiguration
