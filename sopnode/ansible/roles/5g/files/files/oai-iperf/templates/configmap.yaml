@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: iperf-pod
+data:
+  script.sh: |
+   #!/bin/sh
+   microdnf install -y iputils iperf3 iproute net-tools procps-ng
+   ip route add {{ .Values.config.ueroute }} via {{ .Values.config.upfIpadd }} dev net1
+   iperf3 --server --daemon 
+   iperf3 --server --daemon -p 5200
+   iperf3 --server --daemon -p 5300
+   iperf3 --server --daemon -p 5400
+   iperf3 --server --daemon -p 5500
+   iperf3 --server --daemon -p 5600
+   iperf3 --server --daemon -p 5700
+   /bin/bash -c 'trap : TERM INT; sleep infinity & wait'

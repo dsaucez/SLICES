@@ -4,6 +4,8 @@ GCN:
   namespace: blueprint
   core:
     present: true
+    custom_files: files     # directory where charts files are located, respect directory structure
+    custom_values: values   # directory where values files are located, respect directory structure
   RAN:
     present: true
   UE:

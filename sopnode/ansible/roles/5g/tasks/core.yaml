@@ -1,13 +1,15 @@
 ---
-- name: Update files
-  ansible.builtin.unarchive:
-    src: files.zip
-    dest: oai-cn5g-fed/charts/oai-5g-core/
-
-- name: Set values
+- name: Custom chart files
   ansible.builtin.copy:
-    src: values/
+    src: '{{ GCN.core.custom_files }}/'
     dest: oai-cn5g-fed/charts/oai-5g-core/
+  when: GCN.core.custom_files is defined
+
+- name: Custom chart values
+  ansible.builtin.copy:
+    src: '{{ GCN.core.custom_values }}/'
+    dest: oai-cn5g-fed/charts/oai-5g-core/
+  when: GCN.core.custom_values is defined
 
 - name: Get chart dependencies
   ansible.builtin.shell: helm dependency update
