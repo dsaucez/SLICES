@@ -1,0 +1,10 @@
+multus:
+  create: true
+  IPadd: "172.21.9.3"
+  Netmask: "22"
+  Gateway: "172.21.11.254"
+  hostInterface: "ens1f0np0"      # Interface of the host machine on which this pod will be scheduled
+
+config:
+  ueroute: 12.1.1.0/24
+  upfIpadd: 172.21.9.2

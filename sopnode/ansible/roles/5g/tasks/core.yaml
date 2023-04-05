@@ -1,4 +1,14 @@
 ---
+- name: Update files
+  ansible.builtin.unarchive:
+    src: files.zip
+    dest: oai-cn5g-fed/charts/oai-5g-core/
+
+- name: Set values
+  ansible.builtin.copy:
+    src: values/
+    dest: oai-cn5g-fed/charts/oai-5g-core/
+
 - name: Get chart dependencies
   ansible.builtin.shell: helm dependency update
   args:
