@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: iperf-pod
+  annotations:
+    k8s.v1.cni.cncf.io/networks: >-
+          [{
+            	 "name": "{{ .Chart.Name }}-net1"
+          }]
+spec:
+  securityContext:
+    runAsUser: 0
+    runAsGroup: 0
+  containers:
+  - name: iperf3
+    volumeMounts:
+    - mountPath: /tmp/script.sh
+      name: scripts
+      subPath: script.sh 
+    securityContext:
+      privileged: true
+    command: ["./tmp/script.sh"]
+    #command: ["/bin/bash", "-c", "trap : TERM INT; sleep infinity & wait"]
+    image: docker.io/rockylinux:9.1-minimal
+    imagePullPolicy: IfNotPresent
+  volumes:
+  - name: scripts
+    configMap:
+      name: iperf-pod
+      defaultMode: 0777

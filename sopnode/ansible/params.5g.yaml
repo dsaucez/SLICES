@@ -4,10 +4,12 @@ GCN:
   namespace: blueprint
   core:
     present: true
+    custom_files: ubuntu2004/files # rocky/files
+    custom_values: ubuntu2004/values # rocky/values
   RAN:
-    present: true
+    present: false
   UE:
-    present: true
+    present: false
     tests:
       landmark_ping:
           landmark: google.fr
