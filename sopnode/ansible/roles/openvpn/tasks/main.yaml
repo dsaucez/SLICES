@@ -14,13 +14,7 @@
         state: present
       become: yes
 
-    - name: check if the server is already setup
-      stat:
-        path: CA
-      register: ca
-
     - include_tasks: "server.yaml"
-      when: ca.stat.exists == false
 
     - name: Create clients
       include_tasks: "client.yaml"
