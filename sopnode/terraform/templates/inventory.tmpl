@@ -20,3 +20,10 @@ all:
         ${ access_ip_switch[index] }:
           xx-name: ${ hostname_switch[index] }
 %{ endfor ~}
+    openvpn:
+      hosts:
+%{ for index, group in ansible_group_openvpn ~}
+        ${ access_ip_openvpn[index] }:
+          xx-name: ${ hostname_openvpn[index] }
+%{ endfor ~}
+
