@@ -35,7 +35,7 @@
   ansible.builtin.git:
     repo: https://github.com/k8snetworkplumbingwg/multus-cni.git
     dest: multus-cni
-    version: v3.9.3
+    version: v4.0.1
     force: yes
 
 - name: Install multus
