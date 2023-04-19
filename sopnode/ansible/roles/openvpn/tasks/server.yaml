@@ -56,7 +56,7 @@
             *nat
             :POSTROUTING ACCEPT [0:0]
             # Allow traffic from OpenVPN client to {{ ansible_default_ipv4.interface }}
-            -A POSTROUTING -s 10.8.0.0/8 -o {{ ansible_default_ipv4.interface }} -j MASQUERADE
+            -A POSTROUTING -s 10.8.0.0/24 -o {{ ansible_default_ipv4.interface }} -j MASQUERADE
             # END OPENVPN RULES
 
       - name: Configure ufw (2/5)

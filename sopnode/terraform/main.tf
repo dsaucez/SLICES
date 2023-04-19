@@ -15,20 +15,21 @@ provider "google" {
   zone    = "europe-west8-a"
 }
 
-resource "google_compute_network" "vpc_network" {
-  name                    = "my-custom-mode-network"
+resource "google_compute_network" "default_network" {
+  name                    = "default-network"
   auto_create_subnetworks = false
 }
 
-resource "google_compute_subnetwork" "default" {
-  name          = "my-custom-subnet"
+resource "google_compute_subnetwork" "default_network" {
+  name          = "default-subnet"
   ip_cidr_range = "10.0.1.0/24"
   region        = "europe-west8"
-  network       = google_compute_network.vpc_network.id
+  network       = google_compute_network.default_network.id
 }
 
 resource "google_compute_instance" "compute" {
   count        = var.compute.instance_count
+  can_ip_forward = true
   name         = "compute-${count.index + 1}"
   machine_type = "e2-standard-4"
   zone         = "europe-west8-a"
@@ -53,18 +54,16 @@ resource "google_compute_instance" "compute" {
   }
 
   # Install busybox
-  metadata_startup_script = "sudo apt-get update && sudo apt-get install -yq busybox"
+#  metadata_startup_script = "sudo apt-get update && sudo apt-get install -yq busybox"
 
   network_interface {
-    subnetwork = google_compute_subnetwork.default.id
+    subnetwork = google_compute_subnetwork.default_network.id
 
     access_config {
       # Include this section to give the VM an external IP address
     }
   }
 }
-
-
 
 resource "google_compute_instance" "switch" {
   count        = var.switch.instance_count
@@ -92,7 +91,7 @@ resource "google_compute_instance" "switch" {
   metadata_startup_script = "sudo apt-get update && sudo apt-get install -yq busybox"
 
   network_interface {
-    subnetwork = google_compute_subnetwork.default.id
+    subnetwork = google_compute_subnetwork.default_network.id
 
     access_config {
       # Include this section to give the VM an external IP address
@@ -105,7 +104,7 @@ resource "google_compute_instance" "openvpn" {
   count        = var.openvpn.instance_count
   name         = "openvpn-${count.index + 1}"
   can_ip_forward = true
-  machine_type = "e2-micro"
+  machine_type = "e2-standard-2"
   zone         = "europe-west8-a"
   tags         = ["ssh","openvpn"]
 
@@ -124,7 +123,7 @@ resource "google_compute_instance" "openvpn" {
   metadata_startup_script = "sudo apt-get update && sudo apt-get install -yq busybox"
 
   network_interface {
-    subnetwork = google_compute_subnetwork.default.id
+    subnetwork = google_compute_subnetwork.default_network.id
 
     access_config {
       # Include this section to give the VM an external IP address
@@ -140,7 +139,7 @@ resource "google_compute_firewall" "ssh" {
     protocol = "tcp"
   }
   direction     = "INGRESS"
-  network       = google_compute_network.vpc_network.id
+  network       = google_compute_network.default_network.id
   priority      = 1000
   source_ranges = ["0.0.0.0/0"]
   target_tags   = ["ssh"]
@@ -153,7 +152,7 @@ resource "google_compute_firewall" "openvpn" {
     protocol = "udp"
   }
   direction     = "INGRESS"
-  network       = google_compute_network.vpc_network.id
+  network       = google_compute_network.default_network.id
   priority      = 1000
   source_ranges = ["0.0.0.0/0"]
   target_tags   = ["openvpn"]
@@ -161,7 +160,7 @@ resource "google_compute_firewall" "openvpn" {
 
 resource "google_compute_firewall" "switch" {
   name    = "switch-firewall"
-  network = google_compute_network.vpc_network.id
+  network = google_compute_network.default_network.id
 
   allow {
     protocol = "tcp"
@@ -173,7 +172,7 @@ resource "google_compute_firewall" "switch" {
 
 resource "google_compute_firewall" "icmp" {
   name    = "allow-icmp"
-  network = google_compute_network.vpc_network.id
+  network = google_compute_network.default_network.id
 
   allow {
     protocol = "icmp"
@@ -183,7 +182,7 @@ resource "google_compute_firewall" "icmp" {
 
 resource "google_compute_firewall" "internal" {
   name    = "allow-internal"
-  network = google_compute_network.vpc_network.id
+  network = google_compute_network.default_network.id
 
   allow {
     protocol = "all"

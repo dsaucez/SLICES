@@ -4,8 +4,8 @@ GCN:
   namespace: blueprint
   core:
     present: true
-    custom_files: ubuntu2004/files # rocky/files
-    custom_values: ubuntu2004/values # rocky/values
+    custom_files: blueprint/files
+    custom_values: blueprint/values
   RAN:
     present: false
   UE:

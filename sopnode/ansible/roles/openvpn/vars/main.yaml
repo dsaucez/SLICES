@@ -1,9 +1,9 @@
 openvpn:
   clients:
     - name: client1
-      routes:
+      routes:      
         - network: 10.0.10.0
-          subnet: 255.255.255.0
+          subnet: 255.255.255.0 
     - name: client2
       routes:
         - network: 10.0.20.0
@@ -13,3 +13,5 @@ openvpn:
     routes:
       - network: 10.0.1.0
         subnet: 255.255.255.0
+      - network: 172.21.8.0
+        subnet: 255.255.252.0
