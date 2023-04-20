@@ -2,18 +2,22 @@ all:
   children:
     computes:
       hosts:
-        34.163.28.196:
+        34.154.187.186:
           xx-name: compute-1
+        34.154.205.18:
+          xx-name: compute-2
     controllers:
       hosts:
-        34.163.28.196:
+        34.154.187.186:
+          xx-name: compute-1
     masters:
       hosts:
-        34.163.28.196:
+        34.154.187.186:
           xx-name: compute-1
     switches:
       hosts:
-        34.163.21.188:
-          xx-name: switch-1
-        34.155.85.172:
-          xx-name: switch-2
+    openvpn:
+      hosts:
+        34.154.187.192:
+          xx-name: openvpn-1
+

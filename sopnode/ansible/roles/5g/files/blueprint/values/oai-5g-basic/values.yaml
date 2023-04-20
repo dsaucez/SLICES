@@ -70,10 +70,10 @@ oai-amf:
     create: true 
     n1IPadd: "10.8.0.4"
     n1Netmask: "24"
-    n1Gateway: "172.21.7.254"
+    n1Gateway: "172.21.10.254"
     n2IPadd: "172.21.10.6"
-    n2Netmask: "22"
-    hostInterface: "veth_uth0"      # Interface of the host machine on which this pod will be scheduled
+    n2Netmask: "24"
+    hostInterface: "ran0"      # Interface of the host machine on which this pod will be scheduled
   config:
     amfInterfaceNameForNGAP: "net1" # If multus creation is true then net1 else eth0
     amfInterfaceNameForN11: "eth0"  # Service based interface
@@ -107,9 +107,9 @@ oai-spgwu-tiny:
   multus:
     create: true 
     n3IPadd: "172.21.10.7"
-    n3Netmask: "22"
-    n6Gw: "172.21.7.254"
-    hostInterface: "veth_uth0"
+    n3Netmask: "24"
+    n6Gw: "172.21.10.254"
+    hostInterface: "ran0"
   config:
     n3If: "net1"  # net1 if gNB is outside the cluster network and multus creation is true else eth0
     n4If: "eth0" # use for SMF communication
@@ -145,8 +145,8 @@ oai-smf:
   config:
     useLocalSubscriptionInfo: "no" #this means ip-address information will be fetched from UDR
     ueMtu: 1500
-    dnsIpv4Address: "172.21.3.100" # configure the dns for UE don't use Kubernetes DNS
-    dnsSecIpv4Address: "172.21.3.100" # configure the dns for UE don't use Kubernetes DNS
+    dnsIpv4Address: "8.8.8.8" # configure the dns for UE don't use Kubernetes DNS
+    dnsSecIpv4Address: "8.8.8.8" # configure the dns for UE don't use Kubernetes DNS
     defaultCSCFIpv4Address: "172.21.6.13" # For IMS server if needed
     discoverUpf: "yes"              # if NRF is used then it can be used for UPF discovery
     # You can define maximum 4 slices from here in case of more please change the configuration file.
