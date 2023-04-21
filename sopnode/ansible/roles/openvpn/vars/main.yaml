@@ -13,5 +13,5 @@ openvpn:
     routes:
       - network: 10.0.1.0
         subnet: 255.255.255.0
-      - network: 172.21.8.0
-        subnet: 255.255.252.0
+      - network: 172.21.10.0
+        subnet: 255.255.255.0
