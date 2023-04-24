@@ -7,9 +7,11 @@ GCN:
     custom_files: blueprint/files
     custom_values: blueprint/values
   RAN:
-    present: false
+    present: yes
+    custom_files: blueprint/ran_files
+    custom_values: blueprint/ran_values
   UE:
-    present: false
+    present: yes
     tests:
       landmark_ping:
           landmark: google.fr
