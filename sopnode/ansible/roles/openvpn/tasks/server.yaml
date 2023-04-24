@@ -44,40 +44,6 @@
 
 - name: configure network
   block:
-  - name: Configure ufw
-    block:
-      - name: Configure ufw (1/5)
-        ansible.builtin.blockinfile:
-          path: /etc/ufw/before.rules
-          insertbefore: BOF
-          block: |
-            # START OPENVPN RULES
-            # NAT table rules
-            *nat
-            :POSTROUTING ACCEPT [0:0]
-            # Allow traffic from OpenVPN client to {{ ansible_default_ipv4.interface }}
-            -A POSTROUTING -s 10.8.0.0/24 -o {{ ansible_default_ipv4.interface }} -j MASQUERADE
-            # END OPENVPN RULES
-
-      - name: Configure ufw (2/5)
-        ansible.builtin.lineinfile:
-          path: /etc/ufw/before.rules
-          state: present
-          line: 'COMMIT'
-
-      - name: Configure ufw (3/5)
-        ansible.builtin.replace:
-          path: /etc/default/ufw
-          regexp: 'DEFAULT_FORWARD_POLICY=".*"'
-          replace: DEFAULT_FORWARD_POLICY="ACCEPT"
-
-      - name: Configure ufw (4/5)
-        ansible.builtin.shell: ufw allow 1194/udp
-
-      - name: Configure ufw (5/5)
-        ansible.builtin.shell: ufw reload
-    become: yes
-
   - name: Create server directory
     ansible.builtin.file:
       path: server

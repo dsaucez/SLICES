@@ -1,5 +1,4 @@
 ---
-
 - name: Custom chart files
   ansible.builtin.copy:
     src: '{{ GCN.RAN.custom_files }}/'
