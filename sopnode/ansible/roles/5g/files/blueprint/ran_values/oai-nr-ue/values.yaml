@@ -45,15 +45,15 @@ start:
 
 multus:
   create: true 
-  ipadd: "172.21.10.204"  # interface needed to connect with gnb
+  ipadd: "172.22.10.204"  # interface needed to connect with gnb
   netmask: "24"
-  defaultGateway: "172.21.10.1"
+  defaultGateway: "172.22.10.1"
   hostInterface: "ran0"
 
 config:
   mountConfig: false
   timeZone: "Europe/Paris"
-  rfSimulator: "172.21.10.203" # "oai-gnb"    # ip-address of gnb rf-sim or service name oai-gnb in case of du change it with oai-gnb-du if multus is true then provide ip-address of oai-gnb
+  rfSimulator: "172.22.10.203" # "oai-gnb"    # ip-address of gnb rf-sim or service name oai-gnb in case of du change it with oai-gnb-du if multus is true then provide ip-address of oai-gnb
   fullImsi: "001010000000100"       # make sure all the below entries are present in the subscriber database
   fullKey: "fec86ba6eb707ed08905757b1bb44b8f" 
   opc: "C42449363BBAD02B66D16BC975D77CC1"

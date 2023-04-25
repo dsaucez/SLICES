@@ -9,12 +9,12 @@ openvpn:
         - network: 10.0.20.0
           subnet: 255.255.255.0
   server:
-    public_ip: 34.154.187.192
+    public_ip: 34.154.187.186
     server:
       network: "10.8.0.0"
       subnet: "255.255.255.0"
     routes:
       - network: 10.0.1.0
         subnet: 255.255.255.0
-      - network: 172.21.10.0
+      - network: 172.22.10.0
         subnet: 255.255.255.0

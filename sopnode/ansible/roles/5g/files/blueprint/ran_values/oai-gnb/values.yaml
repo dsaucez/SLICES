@@ -53,9 +53,9 @@ start:
 
 multus:    # needed when gnB service will run on another interface rather than traditional eth0
   create: true
-  n2n3IPadd: "172.21.10.203"
+  n2n3IPadd: "172.22.10.203"
   n2n3Netmask: "24"
-  defaultGateway: "172.21.10.1"
+  defaultGateway: "172.22.10.1"
   hostInterface: "ran0"      # Interface of the host machine on which this pod will be scheduled
 
 config:
@@ -71,11 +71,11 @@ config:
   tac: "1"     # check the information with AMF
   nssaiSst: "1"  #currently only 4 standard values are allowed 1,2,3,4 
   nssaiSd0: "ffffff"    #values in hexa-decimal format
-  amfIpAddress: "172.21.10.6" # "oai-amf-svc"  # amf ip-address or service-name oai-amf-svc
+  amfIpAddress: "172.22.10.6" # "oai-amf-svc"  # amf ip-address or service-name oai-amf-svc
   gnbNgaIfName: "net1"            # net1 in case multus create is true that means another interface is created for ngap interface, n2 to communicate with amf
-  gnbNgaIpAddress: "172.21.10.203" # "status.podIP" # n2n3IPadd in case multus create is true
+  gnbNgaIpAddress: "172.22.10.203" # "status.podIP" # n2n3IPadd in case multus create is true
   gnbNguIfName: "net1"   #net1 in case multus create is true gtu interface for upf/spgwu
-  gnbNguIpAddress: "172.21.10.203" # "status.podIP" # n2n3IPadd in case multus create is true
+  gnbNguIpAddress: "172.22.10.203" # "status.podIP" # n2n3IPadd in case multus create is true
   useAdditionalOptions: "--sa -E --rfsim --log_config.global_log_options level,nocolor,time"
   threadParallelConfig: "PARALLEL_SINGLE_THREAD"
   sdrAddrs: "serial=XXXXXXX"

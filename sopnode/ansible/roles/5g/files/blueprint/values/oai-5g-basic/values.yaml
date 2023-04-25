@@ -70,8 +70,8 @@ oai-amf:
     create: true 
     n1IPadd: "10.8.0.4"
     n1Netmask: "24"
-    n1Gateway: "172.21.10.254"
-    n2IPadd: "172.21.10.6"
+    n1Gateway: "172.22.10.254"
+    n2IPadd: "172.22.10.6"
     n2Netmask: "24"
     hostInterface: "ran0"      # Interface of the host machine on which this pod will be scheduled
   config:
@@ -106,9 +106,9 @@ oai-spgwu-tiny:
     - name: "regcred"
   multus:
     create: true 
-    n3IPadd: "172.21.10.7"
+    n3IPadd: "172.22.10.7"
     n3Netmask: "24"
-    n6Gw: "172.21.10.254"
+    n6Gw: "172.22.10.1"
     hostInterface: "ran0"
   config:
     n3If: "net1"  # net1 if gNB is outside the cluster network and multus creation is true else eth0
@@ -147,7 +147,7 @@ oai-smf:
     ueMtu: 1500
     dnsIpv4Address: "8.8.8.8" # configure the dns for UE don't use Kubernetes DNS
     dnsSecIpv4Address: "8.8.8.8" # configure the dns for UE don't use Kubernetes DNS
-    defaultCSCFIpv4Address: "172.21.6.13" # For IMS server if needed
+    defaultCSCFIpv4Address: "172.22.6.13" # For IMS server if needed
     discoverUpf: "yes"              # if NRF is used then it can be used for UPF discovery
     # You can define maximum 4 slices from here in case of more please change the configuration file.
     dnnNi0: "oai"
