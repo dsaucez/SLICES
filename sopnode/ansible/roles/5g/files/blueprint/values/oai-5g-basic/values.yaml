@@ -61,7 +61,7 @@ oai-amf:
   kubernetesType: Vanilla #Openshift/Vanilla Vanilla for Upstream Kubernetes
   nfimage:  # image name either locally present or in a public/private repository
     repository: docker.io/oaisoftwarealliance/oai-amf           ## The image will be pulled from dockerhub
-    version: v1.5.0                                    ## The branch to be used to pull from dockerhub
+    version: develop # v1.5.0                                    ## The branch to be used to pull from dockerhub
     # pullPolicy: IfNotPresent or Never or Always
     pullPolicy: IfNotPresent
   imagePullSecrets:
@@ -92,6 +92,7 @@ oai-amf:
     useHttp2: "no"
     intAlgoList: '[ "NIA1" , "NIA1" , "NIA2" ]'
     ciphAlgoList: '[ "NEA1" , "NEA1" , "NEA2" ]'
+    logLevel: "debug"
   nodeSelector: {}
 oai-spgwu-tiny:
   enabled: true
