@@ -1,0 +1,172 @@
+---
+    - name: OAI-RAN
+      hosts: rans
+      become: yes
+      
+      vars:
+        - tcp_rmem: "4096 87380 {{ 67108864 if ansible_memtotal_mb >= 64000 else 33554432 if ansible_memtotal_mb >= 32000 else 16777216 }}"
+        - tcp_wmem: "4096 87380 {{ 67108864 if ansible_memtotal_mb >= 64000 else 33554432 if ansible_memtotal_mb >= 32000 else 16777216 }}"
+    
+      tasks:
+        - name: Check if the system is Ubuntu 20.04 or Ubuntu 22.04
+          assert:
+            that:
+              - "'Ubuntu' in ansible_distribution"
+              - "'20.04' in ansible_distribution_version or '22.04' in ansible_distribution_version"
+        
+        - name: Update and upgrade packages
+          apt:
+            update_cache: yes
+            upgrade: dist
+            force_apt_get: yes
+            autoremove: yes
+
+        - name: Check current kernel version
+          command: uname -r
+          register: kernel_version    
+        
+        - name: Install linux-image-lowlatency package
+          apt:
+            name: linux-image-lowlatency
+            state: present
+          when: "'lowlatency' not in kernel_version.stdout"  
+    
+        - name: Modify GRUB_CMDLINE_LINUX_DEFAULT in /etc/default/grub
+          lineinfile:
+            path: /etc/default/grub
+            regexp: '^GRUB_CMDLINE_LINUX_DEFAULT='
+            line: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet splash elevator=bfq"'
+            backup: yes
+    
+        - name: Modify /etc/sysctl.conf file
+          lineinfile:
+            path: /etc/sysctl.conf
+            line: '{{ item }}'
+          with_items:
+            - 'vm.swappiness=1'
+            - 'net.core.somaxconn = 65535'
+            - 'net.ipv4.tcp_tw_reuse = 1'
+            - 'net.ipv4.tcp_fin_timeout = 30'
+            - 'net.ipv4.tcp_keepalive_time = 1200'
+            - 'net.ipv4.ip_local_port_range = 1024 65000'
+            - 'net.ipv4.tcp_syncookies = 1'
+            - 'net.ipv4.tcp_synack_retries = 2'
+            - 'net.ipv4.tcp_timestamps = 1'
+            - 'net.ipv4.tcp_max_syn_backlog = 65535'
+            - 'net.core.netdev_max_backlog = 65535'
+            - 'net.ipv4.tcp_rmem = {{ tcp_rmem }}'
+            - 'net.ipv4.tcp_wmem = {{ tcp_wmem }}'
+            - 'net.core.rmem_max = {{ tcp_rmem.split()[-1] }}'
+            - 'net.core.wmem_max = {{ tcp_wmem.split()[-1] }}'
+    
+        - name: Modify /etc/security/limits.conf file
+          lineinfile:
+            path: /etc/security/limits.conf
+            line: '{{ item }}'
+          with_items:
+            - '* hard nofile 4194304'
+            - '* soft nofile 4194304'
+    
+        - name: Reboot the system
+          reboot:
+            post_reboot_delay: 120
+            connect_timeout: 5
+            reboot_timeout: 400
+        
+        - name: Wait for the system to come back online
+          wait_for_connection:
+            connect_timeout: 100
+            sleep: 5
+            delay: 5
+            timeout: 300
+    
+    
+        - name: Update and upgrade packages
+          apt:
+            update_cache: yes
+            upgrade: dist
+            force_apt_get: yes
+            autoremove: yes
+    
+        - name: Install required packages
+          apt:
+            name:
+              - libboost-all-dev
+              - libusb-1.0-0-dev
+              - doxygen
+              - python3-docutils
+              - python3-mako
+              - python3-numpy
+              - python3-requests
+              - python3-ruamel.yaml
+              - python3-setuptools
+              - cmake
+              - build-essential
+            state: present   
+          
+    
+        - name: Clone UHD repository
+          git:
+            repo: https://github.com/EttusResearch/uhd.git
+            dest: ~/uhd
+            version: v4.4.0.0
+    
+        - name: Configure and install UHD
+          become: true
+          become_user: root
+          shell:
+            cmd: |
+              cd ~/uhd/host
+              mkdir build
+              cd build
+              cmake ../
+              make -j $(nproc)
+              make install
+              ldconfig
+              uhd_images_downloader -t sdimg -t n3xx
+            executable: /bin/bash
+          register: shell_output
+
+        - name: Print shell output
+          debug:
+            var: shell_output.stdout_lines
+    
+        - name: Check for UHD device
+          command: "uhd_usrp_probe"
+          register: uhd_probe_output
+          ignore_errors: yes
+    
+        - name: Print error if UHD device not found
+          debug:
+            msg: "USRP device not found. Make sure that USRP is reachable from the node. If not, you may need to update the UHD image on the USRP (SDCard image on N310s)"
+          when: "'Detected Device:' not in uhd_probe_output.stdout"
+    
+        - name: Clone openairinterface5g repo
+          become: true
+          git:
+            repo: https://gitlab.eurecom.fr/oai/openairinterface5g.git
+            dest: ~/openairinterface5g
+    
+        - name: Checkout to specific OAI version
+          become: true
+          command: git checkout develop
+          args:
+            chdir: ~/openairinterface5g
+    
+        - name: Build Basic OAI
+          become: true
+          shell: "./build_oai -I" 
+          args:
+            chdir: ~/openairinterface5g/cmake_targets
+
+        - name: Source OAI
+          become: true
+          shell: "./build_oai -w USRP --ninja --gNB -c"
+          args:
+            chdir: ~/openairinterface5g/cmake_targets
+
+#        - name: Build OAI
+#          become: true
+#          shell: "./build_oai -w USRP --ninja --gNB -c"
+#          args:
+#            chdir: ~/openairinterface5g/cmake_targets
