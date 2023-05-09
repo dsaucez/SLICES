@@ -1,4 +1,14 @@
 ---
+- name: Create docker systemd directory
+  ansible.builtin.file:
+    path: '/etc/systemd/system/docker.service.d/'
+    state: directory
+
+- name: Support ramdisk when needed
+  ansible.builtin.template:
+    src: docker.service.d.j2
+    dest: '/etc/systemd/system/docker.service.d/10-ramdisk.conf'
+
 - include_tasks: "{{ 'docker_' + (ansible_distribution | lower) + '.yaml' }}"
 
 # install Go
