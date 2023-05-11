@@ -1,2 +1,2 @@
 [Service]
-Environment=DOCKER_RAMDISK={{ hostvars[inventory_hostname]['xx-ramdisk'] | default('false') }}
+Environment=DOCKER_RAMDISK={{ hostvars[inventory_hostname]['xx-ramdisk'] | lower | default('false') }}
