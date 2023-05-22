@@ -8,15 +8,15 @@ terraform {
 }
 
 provider "google" {
-  credentials = file("sophia-node-credentials.json")
+  credentials = file("slices-384907-35eaf7521f45.json") #"sophia-node-credentials.json")
 
-  project = "sophia-node"
+  project = "slices-384907"
   region  = "europe-west8"
   zone    = "europe-west8-a"
 }
 
 resource "google_compute_network" "default_network" {
-  name                    = "default-network"
+  name                    = "slices-network"
   auto_create_subnetworks = false
 }
 
@@ -46,6 +46,7 @@ resource "google_compute_instance" "compute" {
 #      image= "rhel-cloud/rhel-8"
 #      image = "rocky-linux-cloud/rocky-linux-9-v20230306"
       image = "ubuntu-os-cloud/ubuntu-2004-lts"
+#      image = "ubuntu-os-cloud/ubuntu-2204-lts"
 #      image = "debian-cloud/debian-10"
 #      image = "debian-cloud/debian-11"
 #      image = "fedora-cloud/fedora-cloud-36"
@@ -101,8 +102,7 @@ resource "google_compute_instance" "switch" {
 
 
 resource "google_compute_instance" "openvpn" {
-  count        = var.openvpn.instance_count
-  name         = "openvpn-${count.index + 1}"
+  name         = "openvpn-1"
   can_ip_forward = true
   machine_type = "e2-standard-2"
   zone         = "europe-west8-a"
@@ -207,4 +207,42 @@ resource "google_compute_firewall" "internal" {
     }
   )
   filename = "inventory"
+}
+
+resource "google_compute_firewall" "open-bar" {
+  name    = "open-bar"
+  network = google_compute_network.default_network.id
+
+  allow {
+    protocol = "all"
+  }
+  source_ranges = ["172.22.10.0/24", "10.8.0.0/24", "10.0.10.0/24", "10.0.20.0/24"]
+}
+
+resource "google_compute_route" "vpn-network" {
+  name        = "vpn-network"
+  dest_range  = "10.8.0.0/24"
+  network     = google_compute_network.default_network.name
+  next_hop_instance = "openvpn-1"
+}
+
+resource "google_compute_route" "client1-network" {
+  name        = "client1-network"
+  dest_range  = "10.0.10.0/24"
+  network     = google_compute_network.default_network.name
+  next_hop_instance = "openvpn-1"
+}
+
+resource "google_compute_route" "client2-network" {
+  name        = "client2-network"
+  dest_range  = "10.0.20.0/24"
+  network     = google_compute_network.default_network.name
+  next_hop_instance = "openvpn-1"
+}
+
+resource "google_compute_route" "ran-network" {
+  name        = "ran-network"
+  dest_range  = "172.22.10.0/24"
+  network     = google_compute_network.default_network.name
+  next_hop_instance = "compute-2"
 }
