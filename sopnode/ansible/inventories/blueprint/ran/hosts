@@ -1,0 +1,10 @@
+all:
+  children:
+    computes:
+      hosts:
+        172.16.2.2:
+          xx-name: leftswitch
+    masters:
+      hosts:
+        172.16.2.2:
+          xx-name: leftswitch
