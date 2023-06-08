@@ -63,9 +63,6 @@
 - name: Allow scheduling on masters that are also computes
   hosts: masters:&computes
   become: yes
-
-  - name: Untaint control-plane
-    shell: kubectl taint nodes {{ ansible_hostname }} node-role.kubernetes.io/control-plane-
-  
-  - name: Untaint master
-    shell: kubectl taint nodes {{ ansible_hostname }} node-role.kubernetes.io/master-
+  tasks:
+  - name: Remove NoSchedule
+    shell: "kubectl taint nodes {{ ansible_hostname }} node-role.kubernetes.io/control-plane:NoSchedule-"
