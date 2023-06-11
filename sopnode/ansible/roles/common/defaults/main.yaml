@@ -21,6 +21,8 @@ debian_9_dependencies:
     state: present
   - name: gnupg
     state: present
+  - name: openvpn
+    state: present
 
 debian_10_dependencies:
   - name: git
@@ -47,6 +49,8 @@ debian_10_dependencies:
     state: present
   - name: gnupg
     state: present
+  - name: openvpn
+    state: present
 
 debian_11_dependencies:
   - name: git
@@ -71,6 +75,8 @@ debian_11_dependencies:
     state: present
   - name: gnupg
     state: present
+  - name: openvpn
+    state: present
 
 ubuntu_20_dependencies:
   - name: git
@@ -93,6 +99,8 @@ ubuntu_20_dependencies:
     state: present
   - name: openssl
     state: present
+  - name: openvpn
+    state: present
 
 ubuntu_22_dependencies:
   - name: git
@@ -114,6 +122,8 @@ ubuntu_22_dependencies:
   - name: wget
     state: present
   - name: openssl
+    state: present
+  - name: openvpn
     state: present
 
 fedora_36_dependencies:
