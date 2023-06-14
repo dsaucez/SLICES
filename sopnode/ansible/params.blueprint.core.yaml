@@ -17,5 +17,5 @@ GCN:
   namespace: blueprint
   core:
     present: true
-    custom_files: blueprint/core/files
-    custom_values: blueprint/core/values
+    custom_files:  blueprint/v1.5.1/files
+    custom_values: blueprint/v1.5.1/values

@@ -17,8 +17,8 @@ GCN:
   namespace: blueprint
   RAN:
     present: true
-    custom_files: blueprint/ran/files
-    custom_values: blueprint/ran/values
+    custom_files: blueprint/v1.5.1/ran_files
+    custom_values: blueprint/v1.5.1/ran_values
   UE:
     present: true
     tests:
