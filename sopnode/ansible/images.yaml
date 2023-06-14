@@ -1,46 +1,46 @@
 docker:
   insecure_registries:
-    - "dockerhub:5000"
+    - "n065-03.wall2.ilabt.iminds.be:5000"
   pull:
-    - remote: dockerhub:5000/ubuntu:20.04
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/ubuntu:20.04
       local: ubuntu:20.04
-    - remote: dockerhub:5000/oaisoftwarealliance/oai-gnb:develop
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/oaisoftwarealliance/oai-gnb:develop
       local: oaisoftwarealliance/oai-gnb:develop
-    - remote: dockerhub:5000/ghcr.io/k8snetworkplumbingwg/multus-cni:snapshot
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/ghcr.io/k8snetworkplumbingwg/multus-cni:snapshot
       local: ghcr.io/k8snetworkplumbingwg/multus-cni:snapshot
-    - remote: dockerhub:5000/registry.k8s.io/kube-apiserver:v1.25.2
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/registry.k8s.io/kube-apiserver:v1.25.2
       local: registry.k8s.io/kube-apiserver:v1.25.2
-    - remote: dockerhub:5000/registry.k8s.io/kube-controller-manager:v1.25.2
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/registry.k8s.io/kube-controller-manager:v1.25.2
       local: registry.k8s.io/kube-controller-manager:v1.25.2
-    - remote: dockerhub:5000/registry.k8s.io/kube-scheduler:v1.25.2
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/registry.k8s.io/kube-scheduler:v1.25.2
       local: registry.k8s.io/kube-scheduler:v1.25.2
-    - remote: dockerhub:5000/registry.k8s.io/kube-proxy:v1.25.2
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/registry.k8s.io/kube-proxy:v1.25.2
       local: registry.k8s.io/kube-proxy:v1.25.2
-    - remote: dockerhub:5000/quay.io/tigera/operator:v1.28.1
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/quay.io/tigera/operator:v1.28.1
       local: quay.io/tigera/operator:v1.28.1
-    - remote: dockerhub:5000/calico/typha:v3.24.1
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/calico/typha:v3.24.1
       local: calico/typha:v3.24.1
-    - remote: dockerhub:5000/calico/kube-controllers:v3.24.1
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/calico/kube-controllers:v3.24.1
       local: calico/kube-controllers:v3.24.1
-    - remote: dockerhub:5000/calico/apiserver:v3.24.1
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/calico/apiserver:v3.24.1
       local: calico/apiserver:v3.24.1
-    - remote: dockerhub:5000/calico/cni:v3.24.1
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/calico/cni:v3.24.1
       local: calico/cni:v3.24.1
-    - remote: dockerhub:5000/calico/node-driver-registrar:v3.24.1
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/calico/node-driver-registrar:v3.24.1
       local: calico/node-driver-registrar:v3.24.1
-    - remote: dockerhub:5000/calico/csi:v3.24.1
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/calico/csi:v3.24.1
       local: calico/csi:v3.24.1
-    - remote: dockerhub:5000/calico/pod2daemon-flexvol:v3.24.1
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/calico/pod2daemon-flexvol:v3.24.1
       local: calico/pod2daemon-flexvol:v3.24.1
-    - remote: dockerhub:5000/calico/node:v3.24.1
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/calico/node:v3.24.1
       local: calico/node:v3.24.1
-    - remote: dockerhub:5000/registry.k8s.io/pause:3.8
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/registry.k8s.io/pause:3.8
       local: registry.k8s.io/pause:3.8
-    - remote: dockerhub:5000/registry.k8s.io/etcd:3.5.4-0
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/registry.k8s.io/etcd:3.5.4-0
       local: registry.k8s.io/etcd:3.5.4-0
-    - remote: dockerhub:5000/registry.k8s.io/coredns/coredns:v1.9.3
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/registry.k8s.io/coredns/coredns:v1.9.3
       local: registry.k8s.io/coredns/coredns:v1.9.3
-    - remote: dockerhub:5000/registry.k8s.io/pause:3.6
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/registry.k8s.io/pause:3.6
       local: registry.k8s.io/pause:3.6
-    - remote: dockerhub:5000/corfr/tcpdump:latest
+    - remote: n065-03.wall2.ilabt.iminds.be:5000/corfr/tcpdump:latest
       local: corfr/tcpdump:latest
