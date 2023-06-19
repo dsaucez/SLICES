@@ -23,7 +23,7 @@ imagePullSecrets:
 
 ## Change these ip-addresses according to your environment
 multus:
-  create: true 
+  create: false 
   ipadd: "10.0.10.205"  # interface needed to connect with gnb
   netmask: "24"
 #  defaultGateway: "172.22.10.1"

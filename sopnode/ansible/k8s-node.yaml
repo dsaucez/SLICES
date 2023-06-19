@@ -59,3 +59,10 @@
   post_tasks:
     - name: Wait for the node to be ready
       ansible.builtin.include_tasks: k8s-ready.yaml
+
+- name: Allow scheduling on masters that are also computes
+  hosts: masters:&computes
+  become: yes
+  tasks:
+  - name: Remove NoSchedule
+    shell: "kubectl taint nodes {{ ansible_hostname }} node-role.kubernetes.io/control-plane:NoSchedule-"

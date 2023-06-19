@@ -1,0 +1,21 @@
+---
+# k8s config
+k8s:
+  runtime: docker
+  podSubnet: 10.244.0.0/16
+  serviceSubnet: 172.22.10.0/24
+  dnsDomain: cluster.local
+  apiserver_advertise_address: 172.16.2.26
+  calico:
+    nodeAddressAutodetectionV4:
+      cidrs:
+        - 172.16.0.0/12
+        #- 192.0.2.0/24
+  encapsulation: VXLAN
+# 5G config
+GCN:
+  namespace: blueprint
+  core:
+    present: true
+    custom_files:  blueprint/v1.5.1/files
+    custom_values: blueprint/v1.5.1/values

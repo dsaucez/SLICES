@@ -37,7 +37,7 @@ multus:
   # if default gatway is empty then it will be removed
   defaultGateway: 
   n2Interface:
-    create: true
+    create: false
     # #name inside the pod is hardcoded right now
     # name: "n2"
     IPadd: "10.0.10.203"
@@ -47,7 +47,7 @@ multus:
     routes: [{'dst': '172.22.10.0/24','gw': '10.0.10.1'}]
     hostInterface: "ran0"      # Interface of the host machine on which this pod will be scheduled
   n3Interface:
-    create: true
+    create: false
     IPadd: "10.0.10.204"
     # #name inside the pod is hardcoded right now
     # name: "n3"
@@ -88,10 +88,10 @@ config:
   nssaiSd0: "ffffff"    #values in hexa-decimal format
   #entrypoint.sh tries to resolve the amfHost name if the resolution did not work gNB will not start
   amfIpAddress: "172.22.10.6"  # amf ip-address or service-name oai-amf-svc or 172.21.6.94
-  gnbNgaIfName: "n2"            # if multus.n2Interface.create is true then use n2 
-  gnbNgaIpAddress: "10.0.10.203" # if multus.n2Interface.create is true then use multus.n2Interface.Ipadd 
-  gnbNguIfName: "n3"   #if multus.n3Interface.create is true then use n3 or you can only use 1 interface n2 or eth0 
-  gnbNguIpAddress: "10.0.10.204" # if multus.n3Interface.create is true then use multus.n3Interface.Ipadd or multus.n2Interface.Ipadd if you are using only 1 extra interface
+  gnbNgaIfName: "eth0"            # if multus.n2Interface.create is true then use n2 
+  gnbNgaIpAddress: "status.podIP" # if multus.n2Interface.create is true then use multus.n2Interface.Ipadd 
+  gnbNguIfName: "eth0"   #if multus.n3Interface.create is true then use n3 or you can only use 1 interface n2 or eth0 
+  gnbNguIpAddress: "status.podIP" # if multus.n3Interface.create is true then use multus.n3Interface.Ipadd or multus.n2Interface.Ipadd if you are using only 1 extra interface
   threadParallelConfig: "PARALLEL_SINGLE_THREAD"
   sdrAddrs: "serial=XXXXXXX"
 

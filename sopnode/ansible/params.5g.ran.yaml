@@ -1,0 +1,13 @@
+---
+# 5G config
+GCN:
+  namespace: blueprint
+  RAN:
+    present: true
+    custom_files: blueprint/ran/files
+    custom_values: blueprint/ran/values
+  UE:
+    present: true
+    tests:
+      landmark_ping:
+          landmark: 172.22.10.1

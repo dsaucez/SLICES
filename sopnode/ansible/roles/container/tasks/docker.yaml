@@ -11,7 +11,31 @@
       dest: '/etc/systemd/system/docker.service.d/10-ramdisk.conf'
   when: (hostvars[inventory_hostname]['xx-ramdisk'] is defined) and (hostvars[inventory_hostname]['xx-ramdisk'])
 
+- name: Allow insecure registries
+  block:
+  - name: Create docker systemd directory
+    ansible.builtin.file:
+      path: '/etc/docker/'
+      state: directory
+  - name: Add insecure registries
+    ansible.builtin.template:
+      src: daemon.json.j2
+      dest: '/etc/docker/daemon.json'
+  when: (docker.insecure_registries is defined)
+
 - include_tasks: "{{ 'docker_' + (ansible_distribution | lower) + '.yaml' }}"
+
+- name: Pre load images
+  block:
+  - name: Pull the images
+    community.docker.docker_image:
+      name: '{{ item.remote }}'
+      source: pull
+    with_items: '{{ docker.pull }}'
+  - name: Local name 
+    ansible.builtin.shell: 'docker tag {{ item.remote }} {{ item.local }}'
+    with_items: '{{ docker.pull }}'
+  when: (docker.pull is defined)
 
 # install Go
 - name: Download Go
