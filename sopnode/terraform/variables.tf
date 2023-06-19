@@ -16,6 +16,13 @@ variable "compute" {
     }
 }
 
+variable "master" {
+  type = map
+  default = {
+      "instance_count" = 1
+    }
+}
+
 output "compute-ip" {
   value = zipmap(google_compute_instance.compute[*].name, google_compute_instance.compute[*].network_interface.0.access_config.0.nat_ip)
 }
