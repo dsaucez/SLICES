@@ -42,7 +42,7 @@ resource "google_compute_instance" "compute" {
   boot_disk {
     initialize_params {
       size = 50
-      image = "ubuntu-os-cloud/ubuntu-2004-lts"
+      image = var.compute_image
     }
   }
 
@@ -73,12 +73,12 @@ resource "google_compute_instance" "master" {
   boot_disk {
     initialize_params {
       size = 50
-      image = "ubuntu-os-cloud/ubuntu-2004-lts"
+      image = var.master_image
     }
   }
 
   # Install busybox
-#  metadata_startup_script = "sudo apt-get update && sudo apt-get install -yq busybox"
+  metadata_startup_script = "sudo apt-get update && sudo apt-get install -yq busybox"
 
   network_interface {
     subnetwork = google_compute_subnetwork.default_network.id
@@ -103,7 +103,7 @@ resource "google_compute_instance" "switch" {
   boot_disk {
     initialize_params {
       size = 50
-      image = "debian-cloud/debian-10"
+      image = var.switch_image
     }
   }
 
@@ -122,7 +122,6 @@ resource "google_compute_instance" "switch" {
 resource "google_compute_instance" "openvpn" {
   count        = var.openvpn.instance_count
   name         = "openvpn-${count.index + 1}"
-#  name         = "openvpn-1"
   can_ip_forward = true
   machine_type = "e2-standard-2"
   zone         = "europe-west8-a"
@@ -135,7 +134,7 @@ resource "google_compute_instance" "openvpn" {
   boot_disk {
     initialize_params {
       size = 10
-      image = "ubuntu-os-cloud/ubuntu-2004-lts"
+      image = var.openvpn_image
     }
   }
 
