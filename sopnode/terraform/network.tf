@@ -95,5 +95,5 @@ resource "google_compute_route" "ran-network" {
   name        = "ran-network"
   dest_range  = "172.22.10.0/24"
   network     = google_compute_network.default_network.name
-  next_hop_instance = "compute-2"
+  next_hop_instance = "compute-1"
 }
