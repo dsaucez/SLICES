@@ -1,7 +1,13 @@
+- name: Create a certificate key
+  shell: 'kubeadm certs certificate-key | tee certificate-key.pass'
+  register: kubeadm_certificate_key
+
 - name: Create kubeadm configuration
   ansible.builtin.template:
     src: kubeadm_config.yaml.j2
     dest: ./kubeadm_config.yaml
+  vars:
+    - certificate_key: '{{ kubeadm_certificate_key.stdout_lines[0] }}'
 
 - name: Initialize the master node
   shell: 'kubeadm init --upload-certs --config kubeadm_config.yaml'
