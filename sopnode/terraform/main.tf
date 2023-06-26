@@ -31,7 +31,7 @@ resource "google_compute_instance" "compute" {
   count        = var.compute.instance_count
   can_ip_forward = true
   name         = "compute-${count.index + 1}"
-  machine_type = "e2-standard-2"
+  machine_type = "e2-medium" # "e2-standard-2"
   zone         = "europe-west8-a"
   tags         = ["ssh"]
   allow_stopping_for_update = true

@@ -37,7 +37,7 @@ variable "master_image" {
 variable "master" {
   type = map
   default = {
-      "instance_count" = 1
+      "instance_count" = 2
     }
 }
 
