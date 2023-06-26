@@ -12,3 +12,9 @@ all:
       hosts:
         172.16.2.5:
           xx-name: leftclient
+    HAproxy:
+      hosts:
+        172.16.2.7:
+          xx-name: haproxy
+          xx-local-ip: 10.0.1.4
+          xx-port: 6443
