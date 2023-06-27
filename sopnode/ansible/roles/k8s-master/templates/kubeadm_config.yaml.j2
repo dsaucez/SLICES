@@ -20,12 +20,6 @@ networking:
 kubernetesVersion: "v1.25.2"
 {% if k8s.controlPlaneEndpoint is defined %}
 controlPlaneEndpoint: "{{ k8s.controlPlaneEndpoint }}"
-{% else %}
-{% if groups['HAproxy'] is defined and groups['HAproxy'] | length > 0 %}
-controlPlaneEndpoint: "{{ hostvars[groups['HAproxy'][0]]['xx-local-ip'] + ':' + hostvars[groups['HAproxy'][0]]['xx-port'] | string | default('6443')}}"
-{% elif hostvars[inventory_hostname]['xx-local-ip'] is defined  %}
-controlPlaneEndpoint: "{{ hostvars[inventory_hostname]['xx-local-ip'] + ':6443' }}"
-{% endif %}
 {% endif %}
 ---
 apiVersion: kubelet.config.k8s.io/v1beta1
