@@ -1,4 +1,4 @@
-- name: Create a token on k8s master
+- name: Get cluster infos
   hosts: masters
   run_once: true
   become: yes
