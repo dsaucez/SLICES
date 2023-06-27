@@ -3,14 +3,14 @@
 k8s:
   runtime: docker
   podSubnet: 10.244.0.0/16
-  serviceSubnet: 172.22.10.0/24
+  serviceSubnet: 10.96.0.0/16
   dnsDomain: cluster.local
-  apiserver_advertise_address: 172.16.2.26
+  #controlPlaneEndpoint: 10.0.1.4:6443
+  #apiserver_advertise_address: 192.0.2.1
   calico:
-    nodeAddressAutodetectionV4:
-      cidrs:
-        - 172.16.0.0/12
-        #- 192.0.2.0/24
+    # nodeAddressAutodetectionV4:
+    #   cidrs:
+    #     - 192.0.2.0/24
   encapsulation: VXLAN
 # 5G config
 GCN:
