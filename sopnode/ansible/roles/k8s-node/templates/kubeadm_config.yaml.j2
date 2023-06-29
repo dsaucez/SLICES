@@ -7,7 +7,11 @@ nodeRegistration:
     enable-controller-attach-detach: "false"
 discovery:
   bootstrapToken:
+{% if k8s.controlPlaneEndpoint is defined %}
     apiServerEndpoint: "{{ k8s.controlPlaneEndpoint }}"
+{% else %}
+    apiServerEndpoint: "{{ hostvars[groups['masters'][0]]['xx-local-ip'] }}:6443"
+{% endif %}
     token: '{{ token }}'
     caCertHashes:
     - '{{ ca_cert_hash }}'
