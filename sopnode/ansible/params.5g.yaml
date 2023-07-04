@@ -4,12 +4,12 @@ GCN:
   namespace: blueprint
   core:
     present: true
-    #custom_files: blueprint/files
-    #custom_values: blueprint/values
+    custom_files: blueprint/files
+    custom_values: blueprint/values
   RAN:
     present: true
-    #custom_files: blueprint/ran_files
-    #custom_values: blueprint/ran_values
+    custom_files: blueprint/ran_files
+    custom_values: blueprint/ran_values
   UE:
     present: true
     tests:
