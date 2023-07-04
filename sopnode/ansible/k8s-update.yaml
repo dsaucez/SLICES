@@ -21,7 +21,7 @@
     - role: k8s-update
 
 - name: Update nodes
-  hosts: computes:masters:!masters[0]
+  hosts: computes:switches:masters:!masters[0]
   strategy: free
   become: yes
   vars:
