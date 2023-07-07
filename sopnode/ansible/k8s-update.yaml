@@ -12,16 +12,8 @@
 #
 # Example of usage: ansible-playbook -i inventories/blueprint/core/ k8s-update.yaml --extra-vars="update_version=1.27.2" to upgrade to 1.27.2
  
-- name: Update control-plane
-  hosts: masters[0]
-  become: yes
-  vars:
-    update_version: 1.26.2
-  roles:
-    - role: k8s-update
-
 - name: Update nodes
-  hosts: computes:switches:masters:!masters[0]
+  hosts: update
   strategy: free
   become: yes
   vars:
