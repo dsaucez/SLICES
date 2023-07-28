@@ -44,7 +44,7 @@
     dest: './installer_linux'
     mode: '0500'
 - name: Install Go
-  ansible.builtin.shell: './installer_linux'
+  ansible.builtin.shell: './installer_linux -version 1.18'
 
 # install cri-dockerd
 - name: Retrieve cri-dockerd (1/2)

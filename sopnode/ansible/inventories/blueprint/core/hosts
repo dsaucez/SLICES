@@ -2,13 +2,17 @@ all:
   children:
     computes:
       hosts:
-        172.16.2.6:
-          xx-name: rightclient
+        192.168.3.2:
+          xx-name: fit02
+        138.96.245.51:
+          xx-name: sopnode-w1
+          rtlinux: true
     masters:
       hosts:
-        172.16.2.5:
-          xx-name: leftclient
+        138.96.245.51:
+          xx-name: sopnode-w1
+          rtlinux: true
     openvpn:
       hosts:
-        172.16.2.5:
-          xx-name: leftclient
+        138.96.245.51:
+          xx-name: sopnode-w1
