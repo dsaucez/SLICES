@@ -107,6 +107,7 @@ stages:
 
         export PATH="$HOME/.local/bin:$PATH"
         . ~/.bashrc
+        git checkout 2nd-summer-school-stable
         echo 'Setting IP@ variables ...'
         
         #Set variables 
