@@ -142,7 +142,7 @@ stages:
         echo 'Cluster interconnection ...'
         #Cluster interconection
         #Set up openvpn server
-        sed -i "s/34\.154\.187\.186/$leftclient/g" roles/openvpn/vars/main.yaml &
+        sed -i "s/34\.154\.187\.186/$leftclient/g" roles/openvpn/vars/main.yaml
         ansible-playbook  -i inventories/blueprint/core/ openvpn.yaml --extra-vars "@params.blueprint.core.yaml"
         
       displayName: 'K8S Clusters Setup'
