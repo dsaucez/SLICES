@@ -143,7 +143,7 @@ stages:
         echo 'Cluster interconnection ...'
         #Cluster interconection
         #Set up openvpn server
-        sed -i "s/192\.0\.2\.1/$leftclient/g" roles/openvpn/vars/main.yaml &
+        sed -i "s/34\.154\.187\.186/$leftclient/g" roles/openvpn/vars/main.yaml &
         ansible-playbook  -i inventories/blueprint/core/ openvpn.yaml --extra-vars "@params.blueprint.core.yaml"
         
       displayName: 'K8S Clusters Setup'
@@ -166,9 +166,9 @@ stages:
         sshEndpoint: 'sopnode-z1'
         runOptions: 'commands'
         commands: |
-           multipass transfer leftclient:/home/ubuntu/core/core.ovpn . 
-           multipass transfer core.ovpn rightclient:/home/ubuntu/
-           multipass exec rightclient -- nohup sudo openvpn core.ovpn </dev/null >nohup.log 2>&1 &
+           multipass transfer leftclient:/home/ubuntu/client1/client1.ovpn . 
+           multipass transfer client1.ovpn rightclient:/home/ubuntu/
+           multipass exec rightclient -- nohup sudo openvpn client1.ovpn </dev/null >nohup.log 2>&1 &
         readyTimeout: '2000'
 
     - task: SSH@0
@@ -178,8 +178,8 @@ stages:
         sshEndpoint: 'sopnode-z1'
         runOptions: 'commands'
         commands: |
-           multipass transfer leftclient:/home/ubuntu/ran/ran.ovpn . 
-           multipass transfer ran.ovpn leftswitch:/home/ubuntu/
+           multipass transfer leftclient:/home/ubuntu/client2/client2.ovpn . 
+           multipass transfer client2.ovpn leftswitch:/home/ubuntu/
            multipass exec leftswitch -- nohup sudo openvpn ran.ovpn </dev/null >nohup.log 2>&1 &
         readyTimeout: '2000'
 
