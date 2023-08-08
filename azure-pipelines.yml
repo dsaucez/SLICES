@@ -179,7 +179,7 @@ stages:
         commands: |
            multipass transfer leftclient:/home/ubuntu/client2/client2.ovpn . 
            multipass transfer client2.ovpn leftswitch:/home/ubuntu/
-           multipass exec leftswitch -- nohup sudo openvpn ran.ovpn </dev/null >nohup.log 2>&1 &
+           multipass exec leftswitch -- nohup sudo openvpn client2.ovpn </dev/null >nohup.log 2>&1 &
         readyTimeout: '2000'
 
     - script: |
