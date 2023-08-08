@@ -200,7 +200,7 @@ stages:
         export PATH="$HOME/.local/bin:$PATH"
         . ~/.bashrc
         cd sopnode/ansible
-        ansible-playbook  -i inventories/blueprint/ran/  5g.yaml  --extra-vars "@params.5g.ran.yaml"
+        ansible-playbook  -i inventories/blueprint/ran/  5g.yaml  --extra-vars "@params.blueprint.ran.yaml"
       displayName: 'RAN deployment'
       continueOnError: true
     - task: SSH@0
