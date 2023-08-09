@@ -48,6 +48,21 @@ stages:
 - stage: Blueprint_Ubuntu_Deployment
   displayName: blueprint Deployment
   jobs:
+  - job: BuildAndTestDeployment
+    strategy:
+      matrix:
+        Ubuntu 20.04:
+          os: 'ubuntu-latest'
+          architecture: 'x64'
+        Windows 11:
+          os: 'windows-latest'
+          architecture: 'x64'
+        macOS:
+          os: 'macOS-latest'
+          architecture: 'x64'
+    steps:
+    - script: echo Building and testing on $(os) $(architecture)
+      displayName: 'Build and Test'
   - job: Build
     displayName: Ubuntu 22.04 Deployment
     pool:
