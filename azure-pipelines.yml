@@ -45,10 +45,11 @@ resources:
 
 
 stages:
-- stage: Blueprint_Ubuntu_Deployment
+- stage: Blueprint_Deployment
   displayName: blueprint Deployment
   jobs:
   - job: BuildAndTestDeployment
+    # Use this as the multi-os matrix to run the pipeline in different versions
     strategy:
       matrix:
         Ubuntu 20.04:
