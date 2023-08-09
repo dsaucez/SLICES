@@ -73,6 +73,7 @@ stages:
     #  Create VMs
     - task: SSH@0
       displayName: 'Launch Multipass VMs'
+      continueOnError: true
       inputs:
         sshEndpoint: 'sopnode-z1'
         runOptions: 'commands'
