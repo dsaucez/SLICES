@@ -23,9 +23,9 @@
 # Build a Docker image
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
-trigger:
-- develop
-## Use this for scheduled runs
+# trigger:
+# - develop
+## Use this for scheduled runs; you can also do it from the interface with triggers, click on the":" next to save
 # schedules:
 # - cron: '0 0 * * *'
 #   displayName: Daily midnight build
