@@ -32,6 +32,8 @@
 #   branches:
 #     include:
 #     - main
+trigger:
+- none
 
 pool:
  name: Default
