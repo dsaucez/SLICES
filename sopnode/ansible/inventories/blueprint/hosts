@@ -4,7 +4,6 @@ all:
       hosts:
         138.96.245.51:
           xx-name: sopnode-w1.inria.fr
-	  rtlinux: false
         192.168.3.61:
           xx-name: up01
     masters:

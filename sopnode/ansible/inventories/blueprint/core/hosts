@@ -6,12 +6,10 @@ all:
           xx-name: up01
         138.96.245.51:
           xx-name: sopnode-w1.inria.fr
-          rtlinux: true
     masters:
       hosts:
         138.96.245.51:
           xx-name: sopnode-w1.inria.fr
-          rtlinux: true
     openvpn:
       hosts:
         138.96.245.51:
