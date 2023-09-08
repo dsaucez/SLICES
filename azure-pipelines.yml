@@ -1,0 +1,272 @@
+# # Starter pipeline
+# # Start with a minimal pipeline that you can customize to build and deploy your code.
+# # Add steps that build, run tests, deploy, and more:
+# # https://aka.ms/yaml
+
+# trigger:
+# - main
+
+# pool:
+#   vmImage: ubuntu-latest
+
+# steps:
+# - script: echo Hello, world!
+#   displayName: 'Run a one-line script'
+
+# - script: |
+#     echo Add other tasks to build, test, and deploy your project.
+#     echo See https://aka.ms/yaml
+#   displayName: 'Run a multi-line script'
+
+
+
+# Build a Docker image
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+# trigger:
+# - develop
+## Use this for scheduled runs; you can also do it from the interface with triggers, click on the":" next to save
+# schedules:
+# - cron: '0 0 * * *'
+#   displayName: Daily midnight build
+#   branches:
+#     include:
+#     - main
+trigger:
+- none
+
+pool:
+ name: Default
+ #name: Azure Pipelines
+ 
+resources:
+- repo: self
+
+
+
+stages:
+- stage: Blueprint_Deployment
+  displayName: blueprint Deployment
+  jobs:
+  - job: BuildAndTestDeployment
+    # Use this as the multi-os matrix to run the pipeline in different versions
+    strategy:
+      matrix:
+        Ubuntu 20.04:
+          os: 'ubuntu-latest'
+          architecture: 'x64'
+        Windows 11:
+          os: 'windows-latest'
+          architecture: 'x64'
+        macOS:
+          os: 'macOS-latest'
+          architecture: 'x64'
+    steps:
+    - script: echo Building and testing on $(os) $(architecture)
+      displayName: 'Build and Test'
+  - job: Build
+    displayName: Ubuntu 22.04 Deployment
+    pool:
+      name: Default
+
+    steps:
+
+
+    # - script: |
+    #     whoami
+    #     touch ~/.ssh/authorized-keys
+    #     echo $(Z1_PUBLIC_KEY) > ~/.ssh/authorized-keys
+      # - task: SSH@0
+    #   inputs:
+    #     sshEndpoint: 'sopnode-z1'
+    #     runOptions: 'commands'
+    #     commands: |
+    #       echo '##vso[task.setvariable variable=FOO] \$(multipass info dn --format json | jq -r '.info.dn.ipv4[0]')'
+    #     readyTimeout: '20000'
+
+
+
+
+
+    #  Create VMs
+    - task: SSH@0
+      displayName: 'Launch Multipass VMs'
+      continueOnError: true
+      inputs:
+        sshEndpoint: 'sopnode-z1'
+        runOptions: 'commands'
+        commands: |
+          multipass launch --cloud-init azurevm-init.yaml --cpus 4 --disk 40G --mem 16G --name leftclient
+          multipass launch --cloud-init azurevm-init.yaml --cpus 4 --disk 40G --mem 16G --name rightclient
+          multipass launch --cloud-init azurevm-init.yaml --cpus 4 --disk 40G --mem 16G --name leftswitch
+        readyTimeout: '20000'
+    # Fetch IP@ of VMs to be used in ansible hosts files
+    - task: SSH@0
+      displayName: 'Fetch IP@ of VMs'
+      inputs:
+        sshEndpoint: 'sopnode-z1'
+        runOptions: 'commands'
+        commands: |
+          multipass info leftclient --format json | jq -r '.info.leftclient.ipv4[0]' > vm.txt
+          multipass info rightclient --format json | jq -r '.info.rightclient.ipv4[0]' >> vm.txt
+          multipass info leftswitch --format json | jq -r '.info.leftswitch.ipv4[0]' >> vm.txt
+
+          #Send the vm.txt to the azure VM (already exists before the pipeline)
+          scp -o StrictHostKeyChecking=no $HOME/vm.txt ubuntu@10.92.171.99:/home/ubuntu/
+          #Send the vm.txt to the azure agent container
+          multipass exec azure --  docker cp /home/ubuntu/vm.txt azureagent:/root/
+        readyTimeout: '20000'
+        
+
+  
+    - script: |
+ 
+
+        # Setup Environment
+
+        export PATH="$HOME/.local/bin:$PATH"
+        . ~/.bashrc
+        #git checkout 2nd-summer-school-stable
+        echo 'Setting IP@ variables ...'
+        
+        #Set variables 
+        leftclient=$(sed -n '1p' /root/vm.txt)
+        rightclient=$(sed -n '2p' /root/vm.txt)
+        leftswitch=$(sed -n '3p' /root/vm.txt)
+        cd sopnode/ansible
+
+        # Update ansbile RAN hosts
+        sed -i "s/172\.16\.2\.2/$leftswitch/g" inventories/blueprint/ran/hosts
+        sed -i 's/root/ubuntu/g' inventories/blueprint/ran/group_vars/all
+        sed -i "s/172\.16\.2\.27/$leftswitch/g; s/172\.16\.0\.0\/12/10\.92\.171\.0\/24/g" params.blueprint.ran.yaml 
+        cat inventories/blueprint/ran/hosts
+        #ansible-playbook -i inventories/blueprint/ran/ k8s-master.yaml --extra-vars "@params.blueprint.ran.yaml"
+        #ansible-playbook -i inventories/blueprint/ran/ k8s-node.yaml --extra-vars "@params.blueprint.ran.yaml"
+
+
+        # Update ansible core hosts
+        sed -i 's/root/ubuntu/g' inventories/blueprint/core/group_vars/all
+        sed -i "s/172\.16\.2\.26/$leftclient/g; s/172\.16\.0\.0\/12/10\.92\.171\.0\/24/g" params.blueprint.core.yaml
+        sed -i "s/172\.16\.2\.5/$leftclient/g; s/172\.16\.2\.6/$rightclient/g" inventories/blueprint/core/hosts
+        cat inventories/blueprint/core/hosts
+        #ansible-playbook -i inventories/blueprint/core/ k8s-master.yaml --extra-vars "@params.blueprint.core.yaml"
+        #ansible-playbook -i inventories/blueprint/core/ k8s-node.yaml --extra-vars "@params.blueprint.core.yaml"
+
+        #Create clusters
+        echo 'Creating RAN & core cluster ...'
+        ansible-playbook -i inventories/blueprint/core/ k8s-master.yaml --extra-vars "@params.blueprint.core.yaml" &
+        ansible-playbook -i inventories/blueprint/ran/ k8s-master.yaml --extra-vars "@params.blueprint.ran.yaml" 
+        wait
+        ansible-playbook -i inventories/blueprint/ran/ k8s-node.yaml --extra-vars "@params.blueprint.ran.yaml" &
+        ansible-playbook -i inventories/blueprint/core/ k8s-node.yaml --extra-vars "@params.blueprint.core.yaml" 
+        echo 'Cluster interconnection ...'
+        #Cluster interconection
+        #Set up openvpn server 192.0.2.1
+        sed -i "s/192\.0\.2\.1/$leftclient/g" roles/openvpn/vars/main.yaml
+        ansible-playbook  -i inventories/blueprint/core/ openvpn.yaml --extra-vars "@params.blueprint.core.yaml"
+        
+      displayName: 'K8S Clusters Setup'
+  
+    - task: SSH@0
+      displayName: 'Setup ran0 interface'
+      continueOnError: true
+      inputs:
+        sshEndpoint: 'sopnode-z1'
+        runOptions: 'commands'
+        commands: |
+          multipass exec leftswitch -- /bin/bash -c 'sudo ip link add ran0 type veth peer name ran0_0 && sudo ip link set up ran0 && sudo ip link set up ran0_0 && sudo ip addr add 10.0.10.1/24 dev ran0_0'
+          multipass exec rightclient -- /bin/bash -c 'sudo ip link add ran0 type veth peer name ran0_0 && sudo ip link set up ran0 && sudo ip link set up ran0_0 && sudo ip addr add 172.22.10.1/24 dev ran0_0'
+        readyTimeout: '20000'
+
+    - task: SSH@0
+      displayName: 'Set  OpenVPN client in core'
+      continueOnError: true
+      inputs:
+        sshEndpoint: 'sopnode-z1'
+        runOptions: 'commands'
+        commands: |
+           multipass transfer leftclient:/home/ubuntu/core/core.ovpn . 
+           multipass transfer core.ovpn rightclient:/home/ubuntu/
+           multipass exec rightclient -- nohup sudo openvpn core.ovpn </dev/null >nohup.log 2>&1 &
+        readyTimeout: '2000'
+
+    - task: SSH@0
+      displayName: 'Set  OpenVPN client in RAN'
+      continueOnError: true
+      inputs:
+        sshEndpoint: 'sopnode-z1'
+        runOptions: 'commands'
+        commands: |
+           multipass transfer leftclient:/home/ubuntu/ran/ran.ovpn . 
+           multipass transfer ran.ovpn leftswitch:/home/ubuntu/
+           multipass exec leftswitch -- nohup sudo openvpn ran.ovpn </dev/null >nohup.log 2>&1 &
+        readyTimeout: '2000'
+
+    - script: |
+ 
+        #Setup Environment
+        export PATH="$HOME/.local/bin:$PATH"
+        . ~/.bashrc
+        cd sopnode/ansible
+        #Core deployment
+        echo 'deploying 5G core ...'
+        ansible-playbook  -i inventories/blueprint/core/  5g.yaml  --extra-vars "@params.blueprint.core.yaml"
+
+      displayName: '5G core deployment'
+    - script: |
+ 
+        # Setup Environment
+        export PATH="$HOME/.local/bin:$PATH"
+        . ~/.bashrc
+        cd sopnode/ansible
+        ansible-playbook  -i inventories/blueprint/ran/  5g.yaml  --extra-vars "@params.blueprint.ran.yaml"
+      displayName: 'RAN deployment'
+      continueOnError: true
+    - task: SSH@0
+      displayName: 'Interconnection test'
+      continueOnError: true
+      inputs:
+        sshEndpoint: 'sopnode-z1'
+        runOptions: 'commands'
+        commands: |
+           multipass exec leftswitch -- ping -c 1 -I 10.0.10.1 172.22.10.1
+        readyTimeout: '20000'
+
+    - task: SSH@0
+      inputs:
+        sshEndpoint: 'sopnode-z1'
+        runOptions: 'commands'
+        commands: |
+          multipass delete --purge leftclient
+          multipass delete --purge rightclient
+          multipass delete --purge leftswitch
+        readyTimeout: '20000'
+      displayName: Destroy VMs
+    
+
+
+
+      ## You can use this for parallel execution
+      # cat <<'EOF' > run_master_playbooks.sh
+      # #!/bin/bash
+
+      # playbook1="ansible-playbook -i inventories/blueprint/ran/ k8s-master.yaml --extra-vars '@params.blueprint.ran.yaml'"
+      # playbook2="ansible-playbook -i inventories/blueprint/core/ k8s-master.yaml --extra-vars '@params.blueprint.core.yaml'"
+
+      # parallel --halt now,fail=1 ::: "$playbook1" "$playbook2"
+      # EOF
+      # chmod +x run_master_playbooks.sh
+      # ./run_master_playbooks.sh
+
+    ##Use this for docker builds  
+    # - task: DockerInstaller@0
+    #   inputs:
+    #     dockerVersion: '17.09.0-ce'
+    #   displayName: Install docker
+    #     # Docker
+    # - task: Docker@2
+    #   inputs:
+    #     containerRegistry: 'dockeregistry'
+    #     repository: 'anassdahchour/blueprint'
+    #     command: 'buildAndPush'
+    #     Dockerfile: 'sopnode/ansible/Dockerfile'

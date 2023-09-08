@@ -1,20 +1,36 @@
+# openvpn:
+#   clients:
+#     - name: client1
+#       routes:      
+#         - network: 10.0.10.0
+#           subnet: 255.255.255.0 
+#     - name: client2
+#       routes:
+#         - network: 10.0.20.0
+#           subnet: 255.255.255.0
+#   server:
+#     public_ip: 34.154.187.186
+#     server:
+#       network: "10.8.0.0"
+#       subnet: "255.255.255.0"
+#     routes:
+#       - network: 10.0.1.0
+#         subnet: 255.255.255.0
+#       - network: 172.22.10.0
+#         subnet: 255.255.255.0
 openvpn:
   clients:
-    - name: client1
-      routes:      
-        - network: 10.0.10.0
-          subnet: 255.255.255.0 
-    - name: client2
+    - name: ran
       routes:
-        - network: 10.0.20.0
+        - network: 10.0.10.0
+          subnet: 255.255.255.0
+    - name: core
+      routes:
+        - network: 172.22.10.0
           subnet: 255.255.255.0
   server:
-    public_ip: 34.154.187.186
+    public_ip: 192.0.2.1
     server:
       network: "10.8.0.0"
       subnet: "255.255.255.0"
-    routes:
-      - network: 10.0.1.0
-        subnet: 255.255.255.0
-      - network: 172.22.10.0
-        subnet: 255.255.255.0
+    routes: []
