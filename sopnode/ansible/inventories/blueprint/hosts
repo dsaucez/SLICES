@@ -2,17 +2,18 @@ all:
   children:
     computes:
       hosts:
-        192.0.2.2:
-          xx-name: node2
-        192.0.2.3:
-          xx-name: node3
+        138.96.245.51:
+          xx-name: sopnode-w1.inria.fr
+	  rtlinux: false
+        192.168.3.61:
+          xx-name: up01
     masters:
       hosts:
-        192.0.2.1:
-          xx-name: node1
+        138.96.245.51:
+          xx-name: sopnode-w1.inria.fr
     switches:
       hosts:
     openvpn:
       hosts:
-        192.0.2.42:
-          xx-name: openvpn
+        138.96.245.51:
+          xx-name: sopnode-w1.inria.fr
