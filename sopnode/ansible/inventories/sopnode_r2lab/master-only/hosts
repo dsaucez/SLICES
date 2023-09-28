@@ -1,0 +1,16 @@
+all:
+  children:
+    computes:
+      hosts:
+        138.96.245.51:
+          xx-name: sopnode-w1.inria.fr
+    masters:
+      hosts:
+        138.96.245.51:
+          xx-name: sopnode-w1.inria.fr
+    switches:
+      hosts:
+    openvpn:
+      hosts:
+        138.96.245.51:
+          xx-name: sopnode-w1.inria.fr
