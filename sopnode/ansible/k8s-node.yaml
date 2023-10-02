@@ -65,4 +65,4 @@
   become: yes
   tasks:
   - name: Remove NoSchedule
-    shell: "kubectl taint nodes {{ ansible_hostname }} node-role.kubernetes.io/control-plane:NoSchedule-"
+    shell: "kubectl taint nodes {{ ansible_hostname }}.inria.fr node-role.kubernetes.io/control-plane:NoSchedule-"
