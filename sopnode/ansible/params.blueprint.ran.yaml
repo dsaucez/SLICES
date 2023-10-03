@@ -18,7 +18,7 @@ GCN:
   RAN:
     present: true
     custom_files: blueprint/v1.5.1/ran_files
-    custom_values: blueprint/v1.5.1/ran_values
+    custom_values: blueprint/oai-cn5g-fed__v1.5.1/charts/oai-5g-ran
   UE:
     present: true
     tests:

@@ -18,4 +18,4 @@ GCN:
   core:
     present: true
     custom_files:  blueprint/v1.5.1/files
-    custom_values: blueprint/v1.5.1/values
+    custom_values: blueprint/oai-cn5g-fed__v1.5.1/charts/oai-5g-core

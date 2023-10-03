@@ -1,0 +1,81 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app.kubernetes.io/version: "v1"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Chart.Name }}
+      app.kubernetes.io/instance: {{ .Chart.Name }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Chart.Name }}
+      annotations:
+        k8s.v1.cni.cncf.io/networks: >-
+              [{
+                   "name": "{{ .Chart.Name }}-net1",
+                   "default-route": ["{{ .Values.multus.defaultGateway }}"]
+              }]
+    spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+      - name: iperf3
+        volumeMounts:
+        - mountPath: /tmp/script.sh
+          name: scripts
+          subPath: script.sh 
+        command: ["/tmp/script.sh"]
+        image: "{{ .Values.trafficServer.repository }}:{{ .Values.trafficServer.version }}"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+           privileged: true
+           capabilities:
+              add:
+               - NET_ADMIN
+              drop:
+               - ALL
+        {{- if .Values.readinessProbe}}
+        readinessProbe:
+          exec:
+            command:
+            - pgrep
+            - iperf3
+          initialDelaySeconds: 5
+          periodSeconds: 3
+        {{- end}}
+        {{- if .Values.livenessProbe}}
+        livenessProbe:
+          exec:
+            command:
+            - pgrep
+            - iperf3
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        {{- end}}
+      volumes:
+      - name: scripts
+        configMap:
+          name: iperf-pod
+          defaultMode: 0777
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      {{- if .Values.nodeSelector}}
+      nodeSelector:
+         {{- toYaml .Values.nodeSelector | nindent 12 }}
+      {{- end }}
+      {{- if .Values.nodeName}}
+      nodeName: {{ .Values.nodeName }}
+      {{- end }}
+{{- end }}

@@ -1,0 +1,62 @@
+apiVersion: v2
+name: oai-5g-slicing
+version: v1.5.1
+appVersion: develop-v1.5.1
+icon: http://www.openairinterface.org/wp-content/uploads/2015/06/cropped-oai_final_logo.png
+description: OAI 5G Release 16 Core Network
+type: application
+
+keywords:
+  - 5GCN
+  - SLICING
+  - AMF
+  - SMF
+  - NRF
+  - UDM
+  - UDR
+  - NSSF
+  - AUSF
+  - UPF
+
+
+maintainers:
+  - name:  OPENAIRINTERFACE
+    email: contact@openairinterface.org
+
+dependencies:
+- condition: mysql.enabled
+  name: mysql
+  repository: "file://../mysql"
+  version: 1.6.9
+- condition: oai-nssf.enabled
+  name: oai-nssf
+  repository: "file://../oai-nssf"
+  version: v1.5.1
+- condition: oai-nrf.enabled
+  name: oai-nrf
+  repository: "file://../oai-nrf"
+  version: v1.5.1
+- condition: oai-udr.enabled
+  name: oai-udr
+  repository: "file://../oai-udr"
+  version: v1.5.1
+- condition: oai-udm.enabled
+  name: oai-udm
+  repository: "file://../oai-udm"
+  version: v1.5.1
+- condition: oai-ausf.enabled
+  name: oai-ausf
+  repository: "file://../oai-ausf"
+  version: v1.5.1
+- condition: oai-amf.enabled
+  name: oai-amf
+  repository: "file://../oai-amf"
+  version: v1.5.1
+- condition: oai-smf.enabled
+  name: oai-smf
+  repository: "file://../oai-smf"
+  version: v1.5.1
+- condition: oai-spgwu-tiny.enabled
+  name: oai-spgwu-tiny
+  repository: "file://../oai-spgwu-tiny"
+  version: v1.5.1
