@@ -1,12 +1,12 @@
 all:
   hosts:
-    ${MASTER}:
-      xx-name: ${MASTER_NAME}
-      xx-local-ip: ${MASTER_IP}
+    ${RAN_MASTER}:
+      xx-name: ${RAN_MASTER_NAME}
+      xx-local-ip: ${RAN_MASTER_IP}
   children:
     computes:
       hosts:
-        ${MASTER}:
+        ${RAN_MASTER}:
     masters:
       hosts:
-        ${MASTER}:
+        ${RAN_MASTER}:

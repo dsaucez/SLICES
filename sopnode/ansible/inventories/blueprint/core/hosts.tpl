@@ -1,11 +1,11 @@
 all:
   hosts:
-    ${COMPUTE}:
-      xx-name: ${COMPUTE_NAME}
-      xx-local-ip: ${COMPUTE_IP}
-    ${MASTER}:
-      xx-name: ${MASTER_NAME}
-      xx-local-ip: ${MASTER_IP}
+    ${CORE_COMPUTE}:
+      xx-name: ${CORE_COMPUTE_NAME}
+      xx-local-ip: ${CORE_COMPUTE_IP}
+    ${CORE_MASTER}:
+      xx-name: ${CORE_MASTER_NAME}
+      xx-local-ip: ${CORE_MASTER_IP}
     ${OPENVPN}:
       xx-name: ${OPENVPN_NAME}
       xx-local-ip: ${OPENVPN_IP}
@@ -16,10 +16,10 @@ all:
   children:
     computes:
       hosts:
-        ${COMPUTE}:
+        ${CORE_COMPUTE}:
     masters:
       hosts:
-        ${MASTER}:
+        ${CORE_MASTER}:
     switches:
       hosts:
     openvpn:
