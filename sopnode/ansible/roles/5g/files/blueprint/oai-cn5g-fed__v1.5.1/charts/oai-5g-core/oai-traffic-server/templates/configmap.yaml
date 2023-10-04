@@ -1,0 +1,25 @@
+{{- if .Values.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: iperf-pod
+data:
+  script.sh: |
+    #!/bin/bash
+    ip route add {{ .Values.config.ueroute }} via {{ .Values.config.upfIpadd }} dev net1
+    num_servers={{ .Values.config.noOfIperf3Server }}
+    base_port=5200
+    # Run iperf multiple times
+    for i in `seq 1 $num_servers`; do
+
+      # Set server port
+      server_port=$(($base_port+$i));
+
+      # Report file includes server port
+      report_file=iperf3-${server_port}.txt
+
+      # Run iperf
+      iperf3 -s --daemon -p $server_port
+    done
+    /bin/bash -c 'trap : TERM INT; sleep infinity & wait'
+{{- end }}

@@ -7,7 +7,19 @@ nodeRegistration:
     enable-controller-attach-detach: "false"
 discovery:
   bootstrapToken:
-    apiServerEndpoint: "{{ master }}:6443"
+{% if k8s.controlPlaneEndpoint is defined %}
+    apiServerEndpoint: "{{ k8s.controlPlaneEndpoint }}"
+{% else %}
+    apiServerEndpoint: "{{ hostvars[groups['masters'][0]]['xx-local-ip'] }}:6443"
+{% endif %}
     token: '{{ token }}'
     caCertHashes:
     - '{{ ca_cert_hash }}'
+{% if control_plane_node is defined and control_plane_node %}
+controlPlane:
+{% if k8s.apiserver_advertise_address is defined or hostvars[inventory_hostname]['xx-local-ip'] is defined %}
+  localAPIEndpoint:
+    advertiseAddress: "{{ k8s.apiserver_advertise_address | default( hostvars[inventory_hostname]['xx-local-ip'] )}}"
+{% endif %}
+  certificateKey: "{{ certificate_key }}"
+{% endif %}

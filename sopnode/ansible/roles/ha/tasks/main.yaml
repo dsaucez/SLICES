@@ -1,0 +1,13 @@
+- name: Create HAProxy configuration
+  ansible.builtin.template:
+    src: haproxy.cfg.j2
+    dest: /tmp/haproxy.cfg
+
+- name: Deploy HAProxy
+  docker_container:
+    name: load-balancer
+    image: haproxytech/haproxy-ubuntu
+    ports:
+      - "6443:6443"
+    volumes:
+      - /tmp/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg

@@ -1,0 +1,6 @@
+---
+- name: Create HA proxy
+  hosts: HAproxy
+
+  roles:
+    - role: ha
