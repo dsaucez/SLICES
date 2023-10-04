@@ -159,6 +159,7 @@ stages:
 
         # Update ansbile RAN hosts
         envsubst < inventories/blueprint/ran/hosts.tpl > inventories/blueprint/ran/hosts
+        echo "coucou" >> inventories/blueprint/ran/hosts
         #        sed -i "s/172\.16\.2\.2/$leftswitch/g" inventories/blueprint/ran/hosts
         sed -i 's/root/ubuntu/g' inventories/blueprint/ran/group_vars/all
         #        sed -i "s/172\.16\.2\.27/$leftswitch/g; s/172\.16\.0\.0\/12/10\.92\.171\.0\/24/g" params.blueprint.ran.yaml 
