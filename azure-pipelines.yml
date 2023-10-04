@@ -135,24 +135,24 @@ stages:
         leftswitch=$(sed -n '3p' /root/vm.txt)
 
 
-        export CORE_MASTER=$(sed -n '1p' /home/ubuntu/vm.txt)
-        export CORE_MASTER_IP=$(sed -n '1p' /home/ubuntu/vm.txt)
+        export CORE_MASTER=$(sed -n '1p' /root/vm.txt)
+        export CORE_MASTER_IP=$(sed -n '1p' /root/vm.txt)
         export CORE_MASTER_NAME="leftclient"
 
-        export OPENVPN=$(sed -n '1p' /home/ubuntu/vm.txt)
-        export OPENVPN_IP=$(sed -n '1p' /home/ubuntu/vm.txt)
+        export OPENVPN=$(sed -n '1p' /root/vm.txt)
+        export OPENVPN_IP=$(sed -n '1p' /root/vm.txt)
         export OPENVPN_NAME="leftclient"
 
-        export HAPROXY=$(sed -n '1p' /home/ubuntu/vm.txt)
-        export HAPROXY_IP=$(sed -n '1p' /home/ubuntu/vm.txt)
+        export HAPROXY=$(sed -n '1p' /root/vm.txt)
+        export HAPROXY_IP=$(sed -n '1p' /root/vm.txt)
         export HAPROXY_NAME="leftclient"
         
-        export CORE_COMPUTE=$(sed -n '2p' /home/ubuntu/vm.txt)
-        export CORE_COMPUTE_IP=$(sed -n '2p' /home/ubuntu/vm.txt)
+        export CORE_COMPUTE=$(sed -n '2p' /root/vm.txt)
+        export CORE_COMPUTE_IP=$(sed -n '2p' /root/vm.txt)
         export CORE_COMPUTE_NAME="rightclient"
 
-        export RAN_MASTER=$(sed -n '3p' /home/ubuntu/vm.txt)
-        export RAN_MASTER_IP=$(sed -n '3p' /home/ubuntu/vm.txt)
+        export RAN_MASTER=$(sed -n '3p' /root/vm.txt)
+        export RAN_MASTER_IP=$(sed -n '3p' /root/vm.txt)
         export RAN_MASTER_NAME="leftswitch"
 
         cd sopnode/ansible
@@ -257,16 +257,16 @@ stages:
            multipass exec leftswitch -- ping -c 1 -I 10.0.10.1 172.22.10.1
         readyTimeout: '20000'
 
-    - task: SSH@0
-      inputs:
-        sshEndpoint: 'sopnode-z1'
-        runOptions: 'commands'
-        commands: |
-          multipass delete --purge leftclient
-          multipass delete --purge rightclient
-          multipass delete --purge leftswitch
-        readyTimeout: '20000'
-      displayName: Destroy VMs
+    #- task: SSH@0
+    #  inputs:
+    #    sshEndpoint: 'sopnode-z1'
+    #    runOptions: 'commands'
+    #    commands: |
+    #      multipass delete --purge leftclient
+    #      multipass delete --purge rightclient
+    #      multipass delete --purge leftswitch
+    #    readyTimeout: '20000'
+    #  displayName: Destroy VMs
     
 
 
