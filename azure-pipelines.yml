@@ -135,24 +135,24 @@ stages:
         leftswitch=$(sed -n '3p' /root/vm.txt)
 
 
-        export CORE_MASTER=$(sed -n '1p' /root/vm.txt)
-        export CORE_MASTER_IP=$(sed -n '1p' /root/vm.txt)
+        export CORE_MASTER=$(sed -n '1p' /home/ubuntu/vm.txt)
+        export CORE_MASTER_IP=$(sed -n '1p' /home/ubuntu/vm.txt)
         export CORE_MASTER_NAME="leftclient"
 
-        export OPENVPN=$(sed -n '1p' /root/vm.txt)
-        export OPENVPN_IP=$(sed -n '1p' /root/vm.txt)
+        export OPENVPN=$(sed -n '1p' /home/ubuntu/vm.txt)
+        export OPENVPN_IP=$(sed -n '1p' /home/ubuntu/vm.txt)
         export OPENVPN_NAME="leftclient"
 
-        export HAPROXY=$(sed -n '1p' /root/vm.txt)
-        export HAPROXY_IP=$(sed -n '1p' /root/vm.txt)
+        export HAPROXY=$(sed -n '1p' /home/ubuntu/vm.txt)
+        export HAPROXY_IP=$(sed -n '1p' /home/ubuntu/vm.txt)
         export HAPROXY_NAME="leftclient"
         
-        export CORE_COMPUTE=$(sed -n '2p' /root/vm.txt)
-        export CORE_COMPUTE_IP=$(sed -n '2p' /root/vm.txt)
+        export CORE_COMPUTE=$(sed -n '2p' /home/ubuntu/vm.txt)
+        export CORE_COMPUTE_IP=$(sed -n '2p' /home/ubuntu/vm.txt)
         export CORE_COMPUTE_NAME="rightclient"
 
-        export RAN_MASTER=$(sed -n '3p' /root/vm.txt)
-        export RAN_MASTER_IP=$(sed -n '3p' /root/vm.txt)
+        export RAN_MASTER=$(sed -n '3p' /home/ubuntu/vm.txt)
+        export RAN_MASTER_IP=$(sed -n '3p' /home/ubuntu/vm.txt)
         export RAN_MASTER_NAME="leftswitch"
 
         cd sopnode/ansible
