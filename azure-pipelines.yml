@@ -158,7 +158,7 @@ stages:
         cd sopnode/ansible
 
         # Update ansbile RAN hosts
-        envsubst < inventories/blueprint/ran/hosts.tpl > inventories/blueprint/ran/hosts
+        envsubst < inventories/blueprint/templates/ran/hosts.tpl > inventories/blueprint/ran/hosts
         #        sed -i "s/172\.16\.2\.2/$leftswitch/g" inventories/blueprint/ran/hosts
         sed -i 's/root/ubuntu/g' inventories/blueprint/ran/group_vars/all
         #        sed -i "s/172\.16\.2\.27/$leftswitch/g; s/172\.16\.0\.0\/12/10\.92\.171\.0\/24/g" params.blueprint.ran.yaml 
@@ -168,7 +168,7 @@ stages:
 
 
         # Update ansible core hosts
-        envsubst < inventories/blueprint/core/hosts.tpl > inventories/blueprint/core/hosts
+        envsubst < inventories/blueprint/templates/core/hosts.tpl > inventories/blueprint/core/hosts
         sed -i 's/root/ubuntu/g' inventories/blueprint/core/group_vars/all
         #        sed -i "s/172\.16\.2\.26/$leftclient/g; s/172\.16\.0\.0\/12/10\.92\.171\.0\/24/g" params.blueprint.core.yaml
         #        sed -i "s/172\.16\.2\.5/$leftclient/g; s/172\.16\.2\.6/$rightclient/g" inventories/blueprint/core/hosts
