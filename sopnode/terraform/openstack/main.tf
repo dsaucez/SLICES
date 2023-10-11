@@ -75,6 +75,19 @@ resource "openstack_compute_instance_v2" "master" {
   }
 }
 
+resource "openstack_compute_instance_v2" "switch" {
+  count           = var.switch.instance_count
+  name            = "switch-${count.index + 1}"
+  image_name      = var.switch_image
+  flavor_name     = "ds1G"
+  key_pair        = "${openstack_compute_keypair_v2.ssh_key.name}"
+  security_groups = ["firewall"]
+
+  network {
+    name = "${openstack_networking_network_v2.default_network.name}"
+  }
+}
+
 resource "openstack_compute_instance_v2" "openvpn" {
   count           = var.openvpn.instance_count
   name            = "openvpn-${count.index + 1}"
@@ -89,55 +102,56 @@ resource "openstack_compute_instance_v2" "openvpn" {
 }
 
 
-# ============== RAN ===============================================================
-# == Create the network ============================================================
-resource "openstack_networking_network_v2" "ran_network" {
-  name           = "ran-network"
-  admin_state_up = "true"
-}
+### ============== RAN ===============================================================
+### == Create the network ============================================================
+##resource "openstack_networking_network_v2" "ran_network" {
+##  name           = "ran-network"
+##  admin_state_up = "true"
+##}
+##
+##resource "openstack_networking_subnet_v2" "ran_network" {
+##  name            = "default-subnet"
+##  ip_version      = 4
+##  cidr            = "10.0.1.0/24"
+##  dns_nameservers = ["8.8.8.8"]
+##  network_id      = openstack_networking_network_v2.ran_network.id
+##}
+##
+### Attach the network to the external network
+##resource "openstack_networking_router_v2" "ran_network_router" {
+##  name                = "ran_network_router"
+##  external_network_id = "a2a9e3e7-c94f-4a8d-be15-5a043dbefcc4"
+##}
+##
+##resource "openstack_networking_router_interface_v2" "router_interface_2" {
+##  router_id = openstack_networking_router_v2.ran_network_router.id
+##  subnet_id = openstack_networking_subnet_v2.ran_network.id
+##}
+##
+### == Launch instances ===============================================================
+##resource "openstack_compute_instance_v2" "ran_compute" {
+##  count           = var.compute.instance_count
+##  name            = "compute-${count.index + 1}"
+##  image_name      = var.compute_image
+##  flavor_name     = "ds1G"
+##  key_pair        = "${openstack_compute_keypair_v2.ssh_key.name}"
+##  security_groups = ["firewall"]
+##
+##  network {
+##    name = "${openstack_networking_network_v2.ran_network.name}"
+##  }
+##}
+##
+##resource "openstack_compute_instance_v2" "ran_master" {
+##  count           = var.master.instance_count
+##  name            = "master-${count.index + 1}"
+##  image_name      = var.master_image
+##  flavor_name     = "ds1G"
+##  key_pair        = "${openstack_compute_keypair_v2.ssh_key.name}"
+##  security_groups = ["firewall"]
+##
+##  network {
+##    name = "${openstack_networking_network_v2.ran_network.name}"
+##  }
+##}
 
-resource "openstack_networking_subnet_v2" "ran_network" {
-  name            = "default-subnet"
-  ip_version      = 4
-  cidr            = "10.0.1.0/24"
-  dns_nameservers = ["8.8.8.8"]
-  network_id      = openstack_networking_network_v2.ran_network.id
-}
-
-# Attach the network to the external network
-resource "openstack_networking_router_v2" "ran_network_router" {
-  name                = "ran_network_router"
-  external_network_id = "a2a9e3e7-c94f-4a8d-be15-5a043dbefcc4"
-}
-
-resource "openstack_networking_router_interface_v2" "router_interface_2" {
-  router_id = openstack_networking_router_v2.ran_network_router.id
-  subnet_id = openstack_networking_subnet_v2.ran_network.id
-}
-
-# == Launch instances ===============================================================
-resource "openstack_compute_instance_v2" "ran_compute" {
-  count           = var.compute.instance_count
-  name            = "compute-${count.index + 1}"
-  image_name      = var.compute_image
-  flavor_name     = "ds1G"
-  key_pair        = "${openstack_compute_keypair_v2.ssh_key.name}"
-  security_groups = ["firewall"]
-
-  network {
-    name = "${openstack_networking_network_v2.ran_network.name}"
-  }
-}
-
-resource "openstack_compute_instance_v2" "ran_master" {
-  count           = var.master.instance_count
-  name            = "master-${count.index + 1}"
-  image_name      = var.master_image
-  flavor_name     = "ds1G"
-  key_pair        = "${openstack_compute_keypair_v2.ssh_key.name}"
-  security_groups = ["firewall"]
-
-  network {
-    name = "${openstack_networking_network_v2.ran_network.name}"
-  }
-}

@@ -24,6 +24,10 @@ variable "switch" {
       "instance_count" = 0
     }
 }
+variable "switch_image" {
+  type = string
+  default = "ubuntu-20.04-server" #"ubuntu-os-cloud/ubuntu-2004-lts"
+}
 
 variable "compute_image" {
   type = string

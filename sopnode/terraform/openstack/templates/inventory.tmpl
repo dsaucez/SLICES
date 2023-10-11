@@ -1,0 +1,30 @@
+all:
+  children:
+    computes:
+      hosts:
+%{ for index, group in ansible_group_compute ~}
+        ${ access_ip_compute[index] }:
+          xx-name: ${ hostname_compute[index] }
+          xx-local-ip: ${ internal_ip_compute[index] }
+%{ endfor ~}
+    controllers:
+      hosts:
+        ${ access_ip_compute[0] }:
+          xx-name: ${ hostname_compute[0] }
+    masters:
+      hosts:
+%{ for index, group in ansible_group_master ~}
+        ${ access_ip_master[index] }:
+          xx-name: ${ hostname_master[index] }
+          xx-local-ip: ${ internal_ip_master[index] }
+%{ endfor ~}
+    switches:
+      hosts:
+    openvpn:
+      hosts:
+%{ for index, group in ansible_group_openvpn ~}
+        ${ access_ip_openvpn[index] }:
+          xx-name: ${ hostname_openvpn[index] }
+          xx-local-ip: ${ internal_ip_openvpn[index] }
+%{ endfor ~}
+
