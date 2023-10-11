@@ -55,11 +55,6 @@ resource "openstack_networking_secgroup_rule_v2" "internal" {
   security_group_id = openstack_networking_secgroup_v2.firewall.id
 }
 
-variable "prefixes" {
-  type    = list(string)
-  default = ["172.22.10.0/24", "10.8.0.0/24", "10.0.10.0/24", "10.0.20.0/24"]
-}
-
 resource "openstack_networking_secgroup_rule_v2" "open-bar" {
   count             = "${length(var.prefixes)}"
   description       = "open-bar-${count.index + 1}"
@@ -69,3 +64,11 @@ resource "openstack_networking_secgroup_rule_v2" "open-bar" {
   security_group_id = openstack_networking_secgroup_v2.firewall.id
 }
 
+#resource "openstack_networking_floatingip_v2" "floatip_test_vm" {
+#  pool = "public"
+#}
+#
+#resource "openstack_compute_floatingip_associate_v2" "fip_1" {
+#  floating_ip = openstack_networking_floatingip_v2.floatip_test_vm.address
+#  instance_id = openstack_compute_instance_v2.compute.id
+#}
