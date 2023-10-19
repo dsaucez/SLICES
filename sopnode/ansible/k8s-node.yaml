@@ -42,7 +42,7 @@
       _ca_cert_hash:  "{{ ca_cert_hash.stdout_lines[0] }}"
 
 - name: Install k8s nodes
-  hosts: computes:switches:!masters
+  hosts: computes:!masters
   become: yes
   vars:
     token: "{{ hostvars['ansible_dummy_host']['_token'] }}"
@@ -60,9 +60,9 @@
     - name: Wait for the node to be ready
       ansible.builtin.include_tasks: k8s-ready.yaml
 
-- name: Allow scheduling on masters that are also computes
-  hosts: masters:&computes
+- name: Allow scheduling on FIT worker nodes only for oai-gnb pods
+  hosts: computes:!masters
   become: yes
   tasks:
-  - name: Remove NoSchedule
-    shell: "kubectl taint nodes {{ ansible_hostname }}.inria.fr node-role.kubernetes.io/control-plane:NoSchedule-"
+  - name: Add NoSchedule
+    shell: "kubectl taint nodes {{ ansible_hostname }} app.kubernetes.io/name=oai-gnb:NoSchedule"

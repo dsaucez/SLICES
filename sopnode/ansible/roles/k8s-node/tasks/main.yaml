@@ -3,6 +3,7 @@
   ansible.builtin.copy:
     src: '{{ kube_config_local_path }}'
     dest: ~/.kube/config
+    mode: 0600
 
 - name: Create kubeadm configuration
   ansible.builtin.template:

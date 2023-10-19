@@ -2,8 +2,7 @@ all:
   children:
     computes:
       hosts:
-        192.168.3.62:
-          xx-name: up02
+WORKER_ITEMS
         138.96.245.51:
           xx-name: sopnode-w1.inria.fr
     masters:
