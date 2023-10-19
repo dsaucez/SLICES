@@ -1,0 +1,13 @@
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: JoinConfiguration
+nodeRegistration:
+  name: "{{ hostvars[inventory_hostname]['xx-name'] }}"
+  criSocket: "unix:///var/run/cri-dockerd.sock"
+  kubeletExtraArgs:
+    enable-controller-attach-detach: "false"
+discovery:
+  bootstrapToken:
+    apiServerEndpoint: "{{ master }}:6443"
+    token: '{{ token }}'
+    caCertHashes:
+    - '{{ ca_cert_hash }}'
