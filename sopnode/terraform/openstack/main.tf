@@ -10,6 +10,7 @@ required_version = ">= 0.14.0"
 
 # == Configure the provider ========================================================
 provider "openstack" {
+#  token = "gAAAAABlN4NeztQ-HQNDqWy-BymDNlWGJDx4lOILM47liWcdAjh6YM0Gws-uAVigUIx8dw9f93Kc_8wwQYxEZ5MgqWk2jErX7IJQ33yrqzEClmVChhLHv6Wc2lUE9s3Wc9Ds8--G4pBtaRo-OMpektSa9qc6xfPG1rY1hKdtLcptD3worBBvXw4"
   user_name   = "admin"
   tenant_name = "admin"
   password    = "secret"
