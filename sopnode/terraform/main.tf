@@ -16,7 +16,7 @@ provider "openstack" {
   region      = "RegionOne"
 }
 
-module "generic" {
+module "ssh" {
     source = "./modules/ssh"
     cloud_provider = var.cloud_provider
     publickey = var.publickey
@@ -25,4 +25,6 @@ module "generic" {
 module "network" {
     source = "./modules/network"
     cloud_provider = var.cloud_provider
+    whitelist = ["10.0.1.0/24", "172.22.10.0/24", "10.8.0.0/24", "10.0.10.0/24", "10.0.20.0/24"]
+    rules = var.rules
 }
