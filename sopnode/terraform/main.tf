@@ -5,6 +5,10 @@ terraform {
       source  = "terraform-provider-openstack/openstack"
       version = "~> 1.51.1"
     }
+    google = {
+      source  = "hashicorp/google"
+      version = "3.5.0"
+    }
   }
 }
 
@@ -16,8 +20,16 @@ provider "openstack" {
   region      = "RegionOne"
 }
 
-module "ssh" {
-    source = "./modules/ssh"
+provider "google" {
+  credentials = file("gcp/slices-384907-35eaf7521f45.json")
+
+  project = "slices-384907"
+  region  = "europe-west8"
+  zone    = "europe-west8-a"
+}
+
+module "key" {
+    source = "./modules/key"
     cloud_provider = var.cloud_provider
     publickey = var.publickey
 }
@@ -27,4 +39,5 @@ module "network" {
     cloud_provider = var.cloud_provider
     whitelist = ["10.0.1.0/24", "172.22.10.0/24", "10.8.0.0/24", "10.0.10.0/24", "10.0.20.0/24"]
     rules = var.rules
+    network = var.network
 }

@@ -15,3 +15,10 @@ variable "rules" {
 variable "whitelist" {
   type = list(string)
 }
+
+variable "network" {
+  type = object({
+    subnet = string
+    nameservers = optional(list(string))
+  })
+}

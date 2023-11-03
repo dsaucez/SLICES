@@ -8,12 +8,41 @@ terraform {
   }
 }
 
-##################
+## Network
+# Create the network
+resource "openstack_networking_network_v2" "default_network" {
+  name           = "slices-network"
+  admin_state_up = "true"
+}
+
+# Create the subnet
+resource "openstack_networking_subnet_v2" "default_network" {
+  name            = "default-subnet"
+  ip_version      = 4
+  cidr            = var.network.subnet
+  dns_nameservers = var.network.nameservers
+  network_id      = openstack_networking_network_v2.default_network.id
+}
+
+# Attach the network to the external network
+resource "openstack_networking_router_v2" "default_network_router" {
+  name                = "default_network_router"
+  external_network_id = "a2a9e3e7-c94f-4a8d-be15-5a043dbefcc4"
+}
+
+resource "openstack_networking_router_interface_v2" "router_interface_1" {
+  router_id = openstack_networking_router_v2.default_network_router.id
+  subnet_id = openstack_networking_subnet_v2.default_network.id
+}
+
+## Firewall
+# Create a security group
 resource "openstack_networking_secgroup_v2" "firewall" {
   name        = "firewall"
   description = "a security group"
 }
 
+# Firewall rules
 resource "openstack_networking_secgroup_rule_v2" "firewall-rules" {
   for_each          = var.rules
   description       = each.value["description"]
@@ -26,6 +55,7 @@ resource "openstack_networking_secgroup_rule_v2" "firewall-rules" {
   security_group_id = openstack_networking_secgroup_v2.firewall.id
 }
 
+# Whitelist
 resource "openstack_networking_secgroup_rule_v2" "open-bar" {
   count             = "${length(var.whitelist)}"
   description       = "open-bar-${count.index + 1}"
