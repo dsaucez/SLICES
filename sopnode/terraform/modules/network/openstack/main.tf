@@ -11,13 +11,13 @@ terraform {
 ## Network
 # Create the network
 resource "openstack_networking_network_v2" "default_network" {
-  name           = "slices-network"
+  name           = var.network.name
   admin_state_up = "true"
 }
 
 # Create the subnet
 resource "openstack_networking_subnet_v2" "default_network" {
-  name            = "default-subnet"
+  name            = var.network.subnet_name
   ip_version      = 4
   cidr            = var.network.subnet
   dns_nameservers = var.network.nameservers
@@ -27,7 +27,7 @@ resource "openstack_networking_subnet_v2" "default_network" {
 # Attach the network to the external network
 resource "openstack_networking_router_v2" "default_network_router" {
   name                = "default_network_router"
-  external_network_id = "a2a9e3e7-c94f-4a8d-be15-5a043dbefcc4"
+  external_network_id = var.network.external_network_id
 }
 
 resource "openstack_networking_router_interface_v2" "router_interface_1" {

@@ -4,7 +4,3 @@ variable "publickey" {
     key   = string
   })
 }
-
-variable "cloud_provider" {
-  type = string
-}

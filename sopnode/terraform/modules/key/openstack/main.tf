@@ -8,11 +8,7 @@ terraform {
   }
 }
 
-variable "publickey" {
-  type = string
-}
-
 resource "openstack_compute_keypair_v2" "ssh_key" {
-  name       = "my-key-terraform-generic"
-  public_key = var.publickey
+  name       = var.publickey.name
+  public_key = var.publickey.key
 }

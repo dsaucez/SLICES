@@ -18,7 +18,10 @@ variable "whitelist" {
 
 variable "network" {
   type = object({
-    subnet = string
-    nameservers = optional(list(string))
+    name                = string
+    subnet_name         = string
+    subnet              = string
+    nameservers         = optional(list(string))
+    external_network_id = optional(string)
   })
 }

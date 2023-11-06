@@ -41,3 +41,9 @@ module "network" {
     rules = var.rules
     network = var.network
 }
+
+module "vm" {
+    source         = "./modules/vm"
+    cloud_provider = var.cloud_provider
+    instances      = var.instances
+}
