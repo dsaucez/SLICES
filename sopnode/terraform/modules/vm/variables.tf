@@ -10,7 +10,7 @@ variable "instances" {
     flavor          = string
     zone            = optional(string)
     publickey_name  = string
-    network_name    = string
+    network_name    = optional(string)
     security_groups = optional(list(string))
     tags            = optional(list(string))
   }))

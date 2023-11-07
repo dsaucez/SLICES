@@ -6,6 +6,7 @@ module "openstack" {
     source         = "./openstack"
     count          = "${var.cloud_provider == "openstack" ? 1 : 0}"
     instances      = var.instances
+    subnetwork     = var.subnetwork
 }
 
 module "gcp" {

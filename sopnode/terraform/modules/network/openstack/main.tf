@@ -73,3 +73,7 @@ resource "openstack_networking_secgroup_rule_v2" "open-bar" {
 #  floating_ip = openstack_networking_floatingip_v2.floatip_test_vm.address
 #  instance_id = openstack_compute_instance_v2.compute.id
 #}
+
+output "network_id" {
+  value = openstack_networking_network_v2.default_network.name
+}

@@ -18,7 +18,7 @@ resource "openstack_compute_instance_v2" "compute" {
   security_groups = var.instances.compute.security_groups
 
   network {
-    name = var.instances.compute.network_name
+    name = var.instances.compute.network_name == null ? var.subnetwork : var.instances.compute.network_name
   }
 }
 
@@ -32,7 +32,7 @@ resource "openstack_compute_instance_v2" "master" {
   security_groups = var.instances.master.security_groups
 
   network {
-    name = var.instances.master.network_name
+    name = var.instances.master.network_name == null ? var.subnetwork : var.instances.master.network_name
   }
 }
 
@@ -46,7 +46,7 @@ resource "openstack_compute_instance_v2" "switch" {
   security_groups = var.instances.switch.security_groups
 
   network {
-    name = var.instances.switch.network_name
+    name = var.instances.switch.network_name == null ? var.subnetwork : var.instances.switch.network_name
   }
 }
 
@@ -60,6 +60,6 @@ resource "openstack_compute_instance_v2" "openvpn" {
   security_groups = var.instances.openvpn.security_groups
 
   network {
-    name = var.instances.openvpn.network_name
+    name = var.instances.openvpn.network_name == null ? var.subnetwork : var.instances.openvpn.network_name
   }
 }

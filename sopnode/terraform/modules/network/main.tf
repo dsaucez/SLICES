@@ -19,5 +19,5 @@ module "gcp" {
 }
 
 output "network_id" {
-  value = var.cloud_provider == "gcp" ? module.gcp[0].network_id : ""
+  value = var.cloud_provider == "gcp" ? module.gcp[0].network_id : var.cloud_provider == "openstack" ? module.openstack[0].network_id : ""
 }
