@@ -17,3 +17,7 @@ module "gcp" {
     whitelist = var.whitelist
     network = var.network
 }
+
+output "network_id" {
+  value = var.cloud_provider == "gcp" ? module.gcp[0].network_id : ""
+}

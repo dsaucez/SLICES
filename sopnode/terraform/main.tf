@@ -46,4 +46,5 @@ module "vm" {
     source         = "./modules/vm"
     cloud_provider = var.cloud_provider
     instances      = var.instances
+    subnetwork     = module.network.network_id
 }

@@ -1,3 +1,5 @@
+cloud_provider = "gcp"
+
 publickey = {
     name  = "mykey"
     key   = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCuamOAVQDpVDyIb5yhP8kvEFGuTv32YBV5sZJ8+5HkPte0qq0/kmA7vp/9L7Mgbq4vCA4jBkbAflJeTw25F+0yl8P/Jaz0wnLkoYxtYXbBwv9sdGjbcvp1To1uyXhj+JCkklGKAqJ+V+Ap98NQEwm61AbuztGNgtpWUCaeqc2xYMxSYqTWX08P0F6KRQdQwLH3myiueflQKDXOLH31KPqmYVIEch5R+3SEmqLxUFDPWKmJgZ4eQESTkM1TfkN8jnoyPqBSs/01k+qMXd/DBsAD/rINJPE6ht8vl1k4SkrIFl4Apc5hO7xAJp+d7hvScrVGa3gZdcpPpaReVs2N1AAqw1RHEZqADm3t3bUwjvcIu7vz9WeNdSE5UjSM9oydr3w1iVR73iPpybWdzRvxtywQ8qzwJjeb3DvbcDH/jtoRr0N30Dd7HO3sFK8RD2ZMTxOnU72oyYdk3BrlvsV/6AsZvtYM1eSc4x0iDjGSaJmfc+6OeNi+KYZb7MOBHM/FoHE= dsaucez@srv-diana"
@@ -50,35 +52,43 @@ network = {
 
 instances = {
     "compute" = {
-        instance_count  = 2
-        image           = "ubuntu-20.04-server"
-        flavor          = "ds1G"
+        instance_count  = 1
+        image           = "ubuntu-os-cloud/ubuntu-2004-lts"
+        flavor          = "e2-medium"
+        zone            = "europe-west8-a"
         publickey_name  = "mykey"
         network_name    = "slices-network"
         security_groups = ["firewall"]
+        tags            = ["ssh"]
     }
     "master" = {
         instance_count  = 1
-        image           = "ubuntu-20.04-server"
-        flavor          = "ds1G"
+        image           = "ubuntu-os-cloud/ubuntu-2004-lts"
+        flavor          = "e2-medium"
+        zone            = "europe-west8-a"
         publickey_name  = "mykey"
         network_name    = "slices-network"
         security_groups = ["firewall"]
+        tags            = ["ssh"]
     }
     "switch" = {
         instance_count  = 1
-        image           = "ubuntu-20.04-server"
-        flavor          = "ds1G"
+        image           = "ubuntu-os-cloud/ubuntu-2004-lts"
+        flavor          = "e2-medium"
+        zone            = "europe-west8-a"
         publickey_name  = "mykey"
         network_name    = "slices-network"
         security_groups = ["firewall"]
+        tags            = ["ssh", "switch"]
     }
     "openvpn" = {
         instance_count  = 1
-        image           = "ubuntu-20.04-server"
-        flavor          = "ds1G"
+        image           = "ubuntu-os-cloud/ubuntu-2004-lts"
+        flavor          = "e2-medium"
+        zone            = "europe-west8-a"
         publickey_name  = "mykey"
-        network_name    = "shared"
+        network_name    = "slices-network"
         security_groups = ["firewall"]
+        tags            = ["ssh", "openvpn"]
     }
 }

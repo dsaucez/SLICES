@@ -69,3 +69,7 @@ resource "google_compute_firewall" "open-bar" {
   network       = google_compute_network.default_network.id
   source_ranges = var.whitelist
 }
+
+output "network_id" {
+  value = google_compute_subnetwork.default_network.id
+}

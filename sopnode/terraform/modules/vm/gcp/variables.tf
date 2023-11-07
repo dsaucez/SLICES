@@ -1,7 +1,3 @@
-variable "cloud_provider" {
-  type = string
-}
-
 variable "instances" {
   type = map(object({
     instance_count  = number
