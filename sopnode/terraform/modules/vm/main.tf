@@ -15,3 +15,7 @@ module "gcp" {
     instances      = var.instances
     subnetwork     = var.subnetwork
 }
+
+output "vms" {
+  value = var.cloud_provider == "gcp" ? module.gcp[0].vms : var.cloud_provider == "openstack" ? module.openstack[0].vms : {}
+}

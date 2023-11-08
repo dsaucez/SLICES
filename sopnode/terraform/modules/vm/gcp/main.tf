@@ -95,7 +95,6 @@ resource "google_compute_instance" "switch" {
   }
 }
 
-
 # OpenVpn
 resource "google_compute_instance" "openvpn" {
   count        = var.instances.openvpn.instance_count
@@ -121,6 +120,31 @@ resource "google_compute_instance" "openvpn" {
     subnetwork = var.subnetwork
 
     access_config {
+    }
+  }
+}
+
+output "vms" {
+  value = {
+    "compute": {
+      "hostname":    google_compute_instance.compute.*.name,
+      "access_ip":   google_compute_instance.compute[*].network_interface.0.access_config.0.nat_ip,
+      "internal_ip": google_compute_instance.compute[*].network_interface.0.network_ip
+    },
+    "master": {
+      "hostname":    google_compute_instance.master.*.name,
+      "access_ip":   google_compute_instance.master[*].network_interface.0.access_config.0.nat_ip,
+      "internal_ip": google_compute_instance.master[*].network_interface.0.network_ip
+    },
+    "switch": {
+      "hostname":    google_compute_instance.switch.*.name,
+      "access_ip":   google_compute_instance.switch[*].network_interface.0.access_config.0.nat_ip,
+      "internal_ip": google_compute_instance.switch[*].network_interface.0.network_ip
+    }
+    "openvpn": {
+      "hostname":    google_compute_instance.openvpn.*.name,
+      "access_ip":   google_compute_instance.openvpn[*].network_interface.0.access_config.0.nat_ip,
+      "internal_ip": google_compute_instance.openvpn[*].network_interface.0.network_ip
     }
   }
 }

@@ -1,0 +1,45 @@
+all:
+  hosts:
+%{ for index, value in vms.compute.hostname ~}
+    ${ vms.compute.access_ip[index] }:
+      xx-name: ${ vms.compute.hostname[index] }
+      xx-local-ip: ${ vms.compute.internal_ip[index] }
+%{ endfor ~}
+%{ for index, value in vms.master.hostname ~}
+    ${ vms.master.access_ip[index] }:
+      xx-name: ${ vms.master.hostname[index] }
+      xx-local-ip: ${ vms.master.internal_ip[index] }
+%{ endfor ~}
+%{ for index, value in vms.switch.hostname ~}
+    ${ vms.switch.access_ip[index] }:
+      xx-name: ${ vms.switch.hostname[index] }
+      xx-local-ip: ${ vms.switch.internal_ip[index] }
+%{ endfor ~}
+%{ for index, value in vms.openvpn.hostname ~}
+    ${ vms.openvpn.access_ip[index] }:
+      xx-name: ${ vms.openvpn.hostname[index] }
+      xx-local-ip: ${ vms.openvpn.internal_ip[index] }
+%{ endfor ~}
+  children:
+    computes:
+      hosts:
+%{ for index, value in vms.compute.hostname ~}
+        ${ vms.compute.access_ip[index] }:
+%{ endfor ~}
+    masters:
+      hosts:
+%{ for index, value in vms.master.hostname ~}
+        ${ vms.master.access_ip[index] }:
+%{ endfor ~}
+    switches:
+      hosts:
+%{ for index, value in vms.switch.hostname ~}
+        ${ vms.switch.access_ip[index] }:
+%{ endfor ~}
+    openvpn:
+      hosts:
+%{ for index, value in vms.openvpn.hostname ~}
+        ${ vms.openvpn.access_ip[index] }:
+%{ endfor ~}
+    HAproxy:
+      hosts:

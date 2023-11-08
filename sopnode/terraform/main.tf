@@ -48,3 +48,13 @@ module "vm" {
     instances      = var.instances
     subnetwork     = module.network.network_id
 }
+
+module "ansible" {
+    source         = "./modules/ansible"
+    cloud_provider = var.cloud_provider
+    vms            = module.vm.vms
+}
+
+output "hello" {
+  value = module.vm.vms
+}

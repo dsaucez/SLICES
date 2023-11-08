@@ -7,8 +7,9 @@ variable "rules" {
     description       = string
     direction         = string
     protocol          = string
-    port              = number
+    port              = optional(number)
     remote_prefix     = string
+    tags               = optional(list(string))
   }))
 }
 

@@ -63,3 +63,28 @@ resource "openstack_compute_instance_v2" "openvpn" {
     name = var.instances.openvpn.network_name == null ? var.subnetwork : var.instances.openvpn.network_name
   }
 }
+
+output "vms" {
+  value = {
+    "compute": {
+      "hostname":    openstack_compute_instance_v2.compute.*.name,
+      "access_ip":   openstack_compute_instance_v2.compute[*].access_ip_v4,
+      "internal_ip": openstack_compute_instance_v2.compute[*].access_ip_v4
+    },
+    "master": {
+      "hostname":    openstack_compute_instance_v2.master.*.name,
+      "access_ip":   openstack_compute_instance_v2.master[*].access_ip_v4,
+      "internal_ip": openstack_compute_instance_v2.master[*].access_ip_v4
+    },
+    "switch": {
+      "hostname":    openstack_compute_instance_v2.switch.*.name,
+      "access_ip":   openstack_compute_instance_v2.switch[*].access_ip_v4,
+      "internal_ip": openstack_compute_instance_v2.switch[*].access_ip_v4
+    }
+    "openvpn": {
+      "hostname":    openstack_compute_instance_v2.openvpn.*.name,
+      "access_ip":   openstack_compute_instance_v2.openvpn[*].access_ip_v4,
+      "internal_ip": openstack_compute_instance_v2.openvpn[*].access_ip_v4
+    }
+  }
+}

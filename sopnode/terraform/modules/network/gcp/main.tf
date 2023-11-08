@@ -40,7 +40,7 @@ resource "google_compute_firewall" "firewall-rules" {
   network       = google_compute_network.default_network.id
   priority      = 1000
   source_ranges = [each.value.remote_prefix]
-#  target_tags   = each.value.tags
+  target_tags   = each.value.tags
 }
 
 resource "google_compute_firewall" "firewall-rules-icmp" {
@@ -56,7 +56,7 @@ resource "google_compute_firewall" "firewall-rules-icmp" {
   network       = google_compute_network.default_network.id
   priority      = 1000
   source_ranges = [each.value.remote_prefix]
-#  target_tags   = each.value.tags
+  target_tags   = each.value.tags
 }
 
 # Whitelist
