@@ -92,3 +92,30 @@ instances = {
         tags            = ["ssh", "openvpn"]
     }
 }
+
+instance_routes = [
+      {
+        name               = "vpn-network"
+        destination_prefix = "10.8.0.0/24"
+        network_name       = "slices-network"
+        next_hop_instance  = "openvpn-1"
+      },
+      {
+        name               = "client1-network"
+        destination_prefix = "10.0.10.0/24"
+        network_name       = "slices-network"
+        next_hop_instance  = "openvpn-1"
+      },
+      {
+        name               = "client2-network"
+        destination_prefix = "10.0.20.0/24"
+        network_name       = "slices-network"
+        next_hop_instance  = "openvpn-1"
+      },
+      {
+        name               = "ran-network"
+        destination_prefix = "172.22.10.0/24"
+        network_name       = "slices-network"
+        next_hop_instance  = "compute-1"
+      }
+    ]

@@ -49,12 +49,15 @@ module "vm" {
     subnetwork     = module.network.network_id
 }
 
+module "routes" {
+    source          = "./modules/routes"
+    cloud_provider  = var.cloud_provider
+    instance_routes = var.instance_routes
+    depends_on      = [module.vm.vms]
+}
+
 module "ansible" {
     source         = "./modules/ansible"
     cloud_provider = var.cloud_provider
     vms            = module.vm.vms
-}
-
-output "hello" {
-  value = module.vm.vms
 }
