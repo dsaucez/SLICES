@@ -7,7 +7,7 @@ nodeRegistration:
     enable-controller-attach-detach: "false"
 discovery:
   bootstrapToken:
-    apiServerEndpoint: "{{ master }}:6443"
+    apiServerEndpoint: "{{ hostvars[groups['masters'][0]]['xx-local-ip'] }}:6443"
     token: '{{ token }}'
     caCertHashes:
     - '{{ ca_cert_hash }}'
