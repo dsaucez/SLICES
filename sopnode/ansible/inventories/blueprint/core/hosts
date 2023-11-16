@@ -1,16 +1,35 @@
 all:
+  hosts:
+    192.0.2.2:
+      xx-name: node2
+      xx-local-ip: 192.0.2.2
+    192.0.2.3:
+      xx-name: node3
+      xx-local-ip: 192.0.2.3
+    192.0.2.1:
+      xx-name: node1
+      xx-local-ip: 192.0.2.1
+    192.0.2.42:
+      xx-name: openvpn
+      xx-local-ip: 192.0.2.42
+    192.0.2.42:
+      xx-name: haproxy
+      xx-local-ip: 192.0.2.42
+      xx-port: 6443
   children:
     computes:
       hosts:
-        192.168.3.61:
-          xx-name: up01
-        138.96.245.51:
-          xx-name: sopnode-w1.inria.fr
+        192.0.2.2:
+        192.0.2.3:
     masters:
       hosts:
-        138.96.245.51:
-          xx-name: sopnode-w1.inria.fr
+        192.0.2.1:
+    switches:
+      hosts:
     openvpn:
       hosts:
-        138.96.245.51:
-          xx-name: sopnode-w1.inria.fr
+        192.0.2.42:
+    HAproxy:
+      hosts:
+        192.0.2.42:
+

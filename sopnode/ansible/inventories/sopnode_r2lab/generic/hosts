@@ -5,11 +5,12 @@ all:
 WORKER_ITEMS
         138.96.245.51:
           xx-name: sopnode-w1.inria.fr
+          xx-local-ip: 192.168.100.92
     masters:
       hosts:
         138.96.245.51:
           xx-name: sopnode-w1.inria.fr
+          xx-local-ip: 192.168.100.92
     openvpn:
       hosts:
-        138.96.245.51:
-          xx-name: sopnode-w1.inria.fr
+

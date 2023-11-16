@@ -1,0 +1,32 @@
+- name: Install kubeadm {{ update_version }}
+  ansible.builtin.apt:
+    name: kubeadm={{ update_version }}-00
+    allow_downgrade: yes
+    autoclean: yes
+    state: present
+
+- name: Upgrade to kubeadmin {{ update_version }} on first control
+  shell: 'kubeadm upgrade apply v{{ update_version }} -f'
+  when: inventory_hostname == groups['masters'][0]
+
+- name: Upgrade to kubeadmin {{ update_version }} on nodes
+  shell: 'kubeadm upgrade node'
+  when: inventory_hostname != groups['masters'][0]
+
+- name: Isolate worker node
+  shell: kubectl drain {{ hostvars[inventory_hostname]['xx-name'] }} --ignore-daemonsets
+  when: inventory_hostname not in groups['masters']
+
+- name: Install k8s {{ update_version }}
+  ansible.builtin.apt:
+    name: '{{ item }}={{ update_version }}-00'
+    allow_downgrade: yes
+    autoclean: yes
+    state: present
+  with_items:
+    - kubelet
+    - kubectl
+
+- name: Uncordon worker node
+  shell: kubectl uncordon {{ hostvars[inventory_hostname]['xx-name'] }}
+  when: inventory_hostname not in groups['masters']

@@ -1,0 +1,17 @@
+all:
+  children:
+    computes:
+      hosts:
+        192.168.100.102:
+          xx-name: fit02
+          xx-local-ip: 192.168.100.102
+        192.168.100.92:
+          xx-name: sopnode-w1.inria.fr
+          xx-local-ip: 192.168.100.92
+    masters:
+      hosts:
+        192.168.100.92:
+          xx-name: sopnode-w1.inria.fr
+          xx-local-ip: 192.168.100.92
+    openvpn:
+      hosts:

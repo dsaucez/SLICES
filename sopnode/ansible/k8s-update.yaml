@@ -1,0 +1,22 @@
+---
+# Quick hack to update k8s clusters
+# 
+# Valid for
+#  - 1.25.x to v1.25.y for y > x
+#  - 1.26.x to v1.26.y for y > x
+#  - 1.27.x to v1.27.y for y > x
+#  - 1.25.* to v1.26.* 
+#  - 1.26.* to v1.27.*
+#
+# Works only on apt based systems, tested on Ubuntu 20.04
+#
+# Example of usage: ansible-playbook -i inventories/blueprint/core/ k8s-update.yaml --extra-vars="update_version=1.27.2" to upgrade to 1.27.2
+ 
+- name: Update nodes
+  hosts: update
+  strategy: free
+  become: yes
+  vars:
+    update_version: 1.26.2
+  roles:
+    - role: k8s-update

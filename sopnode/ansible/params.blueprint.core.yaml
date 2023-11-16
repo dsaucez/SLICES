@@ -5,12 +5,12 @@ k8s:
   podSubnet: 10.244.0.0/16
   serviceSubnet: 10.96.0.0/16
   dnsDomain: cluster.local
-  apiserver_advertise_address: 138.96.245.51
+  #controlPlaneEndpoint: 10.0.1.4:6443
+  #apiserver_advertise_address: 192.0.2.1
   calico:
-    nodeAddressAutodetectionV4:
-      cidrs:
-        - 192.168.3.0/24
-        - 138.96.0.0/16
+    # nodeAddressAutodetectionV4:
+    #   cidrs:
+    #     - 192.0.2.0/24
   encapsulation: VXLAN
 # 5G config
 GCN:
@@ -18,4 +18,4 @@ GCN:
   core:
     present: true
     custom_files:  blueprint/v1.5.1/files
-    custom_values: blueprint/v1.5.1/values
+    custom_values: blueprint/oai-cn5g-fed__v1.5.1/charts/oai-5g-core

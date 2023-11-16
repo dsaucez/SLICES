@@ -1,0 +1,43 @@
+kubernetesType: Vanilla  # Vanilla (Community Kubernetes) or Openshift (For RedHat Openshift)
+
+podSecurityContext:
+  runAsUser: 0
+  runAsGroup: 0
+
+trafficServer:
+  repository: docker.io/oaisoftwarealliance/trf-gen-cn5g
+  version: latest
+  #pullPolicy: IfNotPresent or Never or Always
+  pullPolicy: IfNotPresent
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: "oai-traffic-server"
+
+multus:
+  create: false
+  IPadd: "172.21.6.99"
+  Netmask: "22"
+  defaultGateway: "172.21.7.254"
+  hostInterface: "bond0"      # Interface of the host machine on which this pod will be scheduled
+
+config:
+  ueroute: 12.1.1.0/24
+  upfIpadd: 172.21.6.95
+  noOfIperf3Server: 10
+
+readinessProbe: true
+
+livenessProbe: false
+
+# Control if the charts will be deployed or not
+enabled: true
+
+terminationGracePeriodSeconds: 2
+
+nodeSelector: {}
+
+nodeName: 
