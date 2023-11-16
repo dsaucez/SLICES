@@ -19,7 +19,7 @@ discovery:
 controlPlane:
 {% if k8s.apiserver_advertise_address is defined or hostvars[inventory_hostname]['xx-local-ip'] is defined %}
   localAPIEndpoint:
-    advertiseAddress: "{{ k8s.apiserver_advertise_address | default( hostvars[inventory_hostname]['xx-local-ip'] )}}"
+    advertiseAddress: "{{ k8s.apiserver_advertise_address | default( hostvars[inventory_hostname]['xx-local-ip'] ) }}"
 {% endif %}
   certificateKey: "{{ certificate_key }}"
 {% endif %}
