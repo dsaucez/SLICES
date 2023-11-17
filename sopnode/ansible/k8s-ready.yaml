@@ -8,4 +8,4 @@
   ansible.builtin.shell: 'kubectl wait --timeout=300s --all-namespaces --for=condition=Ready pods --field-selector spec.nodeName={{ hostvars[inventory_hostname]["xx-name"] }}'
 
 - name: Remove the NoSchedule taint on the master node
- ansible.builtin.shell: 'kubectl taint nodes {{ hostvars[inventory_hostname]["xx-name"] }} node-role.kubernetes.io/control-plane:NoSchedule- '
+  ansible.builtin.shell: 'kubectl taint nodes {{ hostvars[inventory_hostname]["xx-name"] }} node-role.kubernetes.io/control-plane:NoSchedule- '
