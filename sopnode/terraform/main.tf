@@ -21,7 +21,7 @@ provider "openstack" {
 }
 
 provider "google" {
-  credentials = file("gcp/slices-384907-35eaf7521f45.json")
+  credentials = file("${var.credentials_file}")
 
   project = "slices-384907"
   region  = "europe-west8"
@@ -37,7 +37,7 @@ module "key" {
 module "network" {
     source = "./modules/network"
     cloud_provider = var.cloud_provider
-    whitelist = ["10.0.1.0/24", "172.22.10.0/24", "10.8.0.0/24", "10.0.10.0/24", "10.0.20.0/24"]
+    whitelist = var.whitelist
     rules = var.rules
     network = var.network
 }

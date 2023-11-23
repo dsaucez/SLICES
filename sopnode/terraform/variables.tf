@@ -9,6 +9,10 @@ variable "publickey" {
   })
 }
 
+variable "credentials_file" {
+  type = string
+}
+
 variable "rules" {
   type = map(object({
     description       = string
