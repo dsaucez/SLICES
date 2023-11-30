@@ -8,3 +8,8 @@ This documentation describes the SLICES blueprint. Historically blueprints were 
 With the blueprint, sites are able to deploy and operate partial or full 5G networks, with simulated and/or hardware components.
 
 The blueprint is designed in a modular way such that one can either deploy it fully or only partially. For example, people only interested in 5G can only deploy the core and use a simulated RAN while people interested only by the RAN can just deploy a RAN, assuming they have access to a core (e.g., via the SLICE central node or another partner). Advanced users may even deploy a core and connect it with multiple RANs.
+
+## Architecture
+In this blueprint, the core and RAN are implemented with OpenAirInterface (see https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed for details) that are deployed in kubernetes clusters that can be remotely connected as shown in the figure below.
+
+<img src="./5g_ran_advanced_different_clusters.svg">
