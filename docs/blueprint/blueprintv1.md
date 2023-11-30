@@ -49,4 +49,11 @@ The following figure presents the installation setup.
 
 <img src="./deploy.svg">
 
+To simplify operations, we containerized the deployment node. Check the following for more details about the installation and configuration of the deployment node.
 
+# Contact and Support
+The blueprint is a joint effort of SLICES community, please send all questions and comments to slices-blueprint@inria.fr.
+
+All emails archived at https://sympa.inria.fr/sympa/arc/slices-blueprint.
+
+Please read the archives, maybe your problem as already been addressed in one thread.
