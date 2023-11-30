@@ -13,3 +13,40 @@ The blueprint is designed in a modular way such that one can either deploy it fu
 In this blueprint, the core and RAN are implemented with OpenAirInterface (see https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed for details) that are deployed in kubernetes clusters that can be remotely connected as shown in the figure below.
 
 <img src="./5g_ran_advanced_different_clusters.svg">
+
+The deployment of the blueprint is split in four main steps:
+1. Kubernetes clusters must be deployed to host the core and/or the RAN.
+2. The core can be deployed in a cluster.
+3. Finally, the RAN can be deployed and connected core.
+4. Nodes and sites interconnection
+
+But the first step is to make sure that you properly setup your deployment environment.
+
+## Deployment Setup
+Functions and services of the blueprint run on hosts with operating systems installed. It is recommended to run the operating system directly on baremetal devices but virtual machines are also possible, unless stated otherwise.
+
+It is assumed that the hosts (or vhost) used in the blueprint have one of the following operating system installed
+
+* Ubuntu 20.04
+* Ubuntu 22.04
+* Rocky 9.1 (with or without real-time kernel)
+* RHEL 8
+* RHEL 9
+* Debian 10
+* Debian 11
+* Fedora 36
+* Fedora 37
+
+and that they are all configured with remote access for privileged users with SSH keys. A good choice to start with the blueprint is to use an Ubuntu 20.04 environment. These hosts are assumed to have Internet access and no network filtering between them.
+
+Vanilla installations are considered. No extra software or configuration shall be setup. The only exception being the installation and configuration of an SSH server allowing key authentication.
+
+Only the AMD64 architecture has been extensively tested.
+
+The blueprint installation is automated and can be run from any location as long as it has an SSH access to the nodes of the infrastructure (if no direct SSH access is possible, the use of a proxy or jump host is possible). The node used to deploy the blueprint in the infrastructure is called the deployment node and it is assumed to run either Linux or macOS, in either x86, amd64, or arm64 architectures. We provide a container to play the role of the deployment node.
+
+The following figure presents the installation setup.
+
+<img src="./deploy.svg">
+
+
