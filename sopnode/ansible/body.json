@@ -1,0 +1,79 @@
+{
+    "$type": "Dataset",
+    "identifier": "${SLICES_IDENTIFIER}",
+    "systemCreationDate": null,
+    "internalIdentifier": null,
+    "alternateIdentifier": null,
+    "creators": [
+        {
+            "firstName": "Damien",
+            "lastName": "Saucez",
+            "email": "damien.saucez@inria.fr",
+            "phone": null,
+            "position": null,
+            "organization": null,
+            "orcId": null,
+            "website": null
+        }
+    ],
+    "name": "object-name",
+    "description": "object-description",
+    "resourceType": "Dataset",
+    "subjects": [],
+    "keywords": [],
+    "createdAt": "${SLICES_DATASET_DATE}",
+    "version": "69",
+    "metadataProfile": null,
+    "contributors": [],
+    "accessType": "Remote",
+    "accessMode": "Free",
+    "requiredObjects": [],
+    "relatedObjects": [],
+    "primaryLanguages": [],
+    "otherLanguages": [],
+    "contact": null,
+    "publicContact": null,
+    "rights": "rights",
+    "rightsUri": "",
+    "accessRights": "access-rights",
+    "license": "BSD-3-clause",
+    "licenseUri": "https://opensource.org/license/bsd-3-clause/",
+    "copyrightsHolder": "Damien Saucez",
+    "confidentialityDeclaration": "",
+    "specialPermissions": "",
+    "restrictions": "",
+    "citationRequirements": "",
+    "conditions": "",
+    "disclaimer": "",
+    "provenance": "",
+    "paymentModel": "http://my-payment",
+    "pricing": "http://my-princing",
+    "scientificDomains": [
+        "Engineering & Technology"
+    ],
+    "scientificSubdomains": [
+        "Electrical, electronic and information engineering"
+    ],
+    "address": "",
+    "dateTimeStart": "${SLICES_DATETIMESTART}",
+    "dateTimeEnd": "${SLICES_DATETIMEEND}",
+    "locations": [
+        {
+            "locationName": "local-server",
+            "locationAddress": "${SLICES_DATASET_URI}",
+            "postalCode": null,
+            "country": null,
+            "latitude": null,
+            "longitude": null,
+            "altitude": null
+        }
+    ],
+    "byteSize": ${SLICES_DATASET_SIZE},
+    "duration": null,
+    "format": "application/gzip",
+    "medium": "",
+    "compressionFormat": "gzip",
+    "fileMetadata": "file-metadata",
+    "dataStandard": "",
+    "encodingFormat": ""
+}
