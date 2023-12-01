@@ -40,8 +40,8 @@ cd _terraform
 git clone https://github.com/dsaucez/SLICES.git --branch 41-modularize-terraform 
 popd
 ANSIBLE_LOG_PATH=$SLICES_ANSIBLE_LOG_PATH ansible-playbook  -i inventories/blueprint/xp/ provision.yaml --extra-vars "@params.blueprint.xp.yaml" --extra-vars "terraform_project_path=_terraform/SLICES/sopnode/terraform"
-cp _terraform/SLICES/sopnode/terraform/inventory/inventory ${LANDING_DIR}/inventories/blueprint/xp/hosts
-cp _terraform/SLICES/sopnode/terraform/inventoryinventory ${DIR}
+cp _terraform/SLICES/sopnode/terraform/inventory ${LANDING_DIR}/inventories/blueprint/xp/hosts
+cp _terraform/SLICES/sopnode/terraform/inventory ${DIR}
 
 # Prepare the cluster
 ANSIBLE_LOG_PATH=$SLICES_ANSIBLE_LOG_PATH ansible-playbook  -i inventories/blueprint/xp/ k8s-master.yaml --extra-vars "@params.blueprint.xp.yaml"
