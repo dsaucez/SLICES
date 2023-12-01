@@ -135,6 +135,7 @@ Here we are in the case where the private key is stored in the /id_rsa file and 
 Obviously the inventory can be adapted for the specific needs of the infrastructure (e.g., jump host, different credentials for different hosts…). For more details about Ansible inventories, check [^1].
 
 ## Kubernetes Cluster Deployment
+---
 In the blueprint we deploy and operate the 5G network in a cloud native manner, this means that the core and the RAN need a cluster to be deployed. In this part of the tutorial we describe how to deploy a multi-nodes kubernetes (aka k8s) cluster where the 5G functions will be automatically orchestrated. We consider standard kubernetes (in the future and depending on the needs, other flavors of k8s such as OpenShift or Rancher will be considered). Either VM based kubernetes or baremetal kubernetes can be used.
 
 To deploy the blueprint, at least 2 servers are required. They are inter-connected by high speed link (ideally 100 Gbps).
@@ -194,14 +195,15 @@ ansible-playbook  -i inventories/blueprint/ k8s-node.yaml --extra-vars "@params.
 
 At this stage the k8s cluster is up and running with all the nodes from the infrastructure.
 
-### Deploy 5G Core
+## Deploy 5G Core
+---
 In this blueprint, the core is implemented with the 5G Core network by the OpenAirInterface community (see https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed for details).
 
 The 5G Core core runs in the kubernetes cluster setup above. The core deployed in the blueprint is composed of UDR, UDM, AUSF, NRF, AMF, SMF, and UPF. All these functions are connected to a common database
 
 We distinguish two scenarios. The basic option consists is the case where the core and RAN are deployed in the same kubernetes cluster and where only one network is used to interconnect all functions together. In the Advanced scenario the core and the RAN are in different clusters and the control and user planes use different networks.
 
-#### Basic Option
+### Basic Option
 Message exchanges between all 5G functions are carried over by the pod network of the k8s cluster, as depicted in the figure below.
 
 <img src="./images/5g_core.svg">
@@ -222,7 +224,7 @@ ansible-playbook  -i inventories/blueprint/  5g.yaml  --extra-vars "@params.5g.y
 ```
 After running this command, the 5G core is deployed in the blueprint namespace of the kubernetes cluster.
 
-#### Advanced Option
+### Advanced Option
 The deployment above is rather simple and does not segment user traffic from control traffic. In real world scenarios (e.g., core and RAN not in the same cluster), it is required to separate these traffic by exposing multiple interfaces to the functions (i.e., pods). To do so we rely on multus.
 
 More precisely, the AMF and UPF functions have an additional interface connected to a network dedicated to the RAN traffic. These interface are called net1 in the AMF and UPF pods. This network uses the 172.22.10.0/24 subnet as shown below.
@@ -295,12 +297,13 @@ Please refer to OAI documentation for details about how to setup the environment
 
 We recommend to put all the files that corresponds to parameters of the deployment in the custom_values directory and use the custom_files directory to put the static files (i.e., not changing from one deployment to another).
 
-### Deploy 5G RAN
+## Deploy 5G RAN
+---
 In this blueprint, the RAN is implemented with OpenAirInterface (see https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed for details). We assume that the 5G core is already deployed.
 
 We distinguish two scenarios. The basic option consists is the case where the core and RAN are deployed in the same kubernetes cluster and where only one network is used to interconnect all functions together. In the Advanced scenario the core and the RAN are in different clusters and the control and user planes use different networks.
 
-#### UE subscription in 5G Core
+### UE subscription in 5G Core
 The core will allow a user equipment to connect to the network only if its SIM card is registered correctly. In the current version of OAI, subscription information is stored in the Database function that is implemented with MySQL.
 
 We do not provide abstractions for this action yet, instead please update the database directly with the new information. To connect to the MySQL server of the core, run the following command from any node in the cluster hosting the core (default password is linux):
