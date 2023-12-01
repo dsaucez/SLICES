@@ -53,7 +53,7 @@ The following figure presents the installation setup.
 To simplify operations, we containerized the deployment node. Check the following for more details about the installation and configuration of the deployment node.
 
 ### Deployment Node Preparation
-
+---
 The deployment node does not need to be part of the infrastructure on which the blueprint is replicated. But it needs to be able to connect to every host of the infrastructure with SSH using key based authentication.
 
 The blueprint is a collection of deployments proposed by the partners of the project. To simplify the life of operators replicating the blueprint, the deployment details are hidden behind Ansible playbooks.
@@ -85,6 +85,7 @@ At that stage you are in a shell with the deployment environment fully setup.
 The first thing to do is to create the Ansible inventory with the nodes composing the infrastructure. See below for details.
 
 ### Ansible Inventory
+---
 The directory inventories/blueprint/ contains a skeleton of Ansible inventory for deploying the blueprint.
 
 First, adapt the inventories/blueprint/hosts file to reflect your infrastructure.
@@ -135,7 +136,6 @@ Here we are in the case where the private key is stored in the /id_rsa file and 
 Obviously the inventory can be adapted for the specific needs of the infrastructure (e.g., jump host, different credentials for different hosts…). For more details about Ansible inventories, check [^1].
 
 ## Kubernetes Cluster Deployment
----
 In the blueprint we deploy and operate the 5G network in a cloud native manner, this means that the core and the RAN need a cluster to be deployed. In this part of the tutorial we describe how to deploy a multi-nodes kubernetes (aka k8s) cluster where the 5G functions will be automatically orchestrated. We consider standard kubernetes (in the future and depending on the needs, other flavors of k8s such as OpenShift or Rancher will be considered). Either VM based kubernetes or baremetal kubernetes can be used.
 
 To deploy the blueprint, at least 2 servers are required. They are inter-connected by high speed link (ideally 100 Gbps).
@@ -145,6 +145,7 @@ In the simplest scenario the core and the RAN are deployed in the same cluster b
 TODO: Nodes and sites interconnection
 
 ### Deploy K8S
+---
 The creation of the kubernetes cluster and all of its dependencies (e.g., container runtimes) is taken care of by the blueprint instantiation itself.
 
 The blueprint distinguishes 2 types of nodes in the k8s cluster. The masters nodes are nodes that run the cluster control plane and the computes nodes are normal k8s node to which load can be scheduled. Make sure you set your Ansible inventory adequately as described in
@@ -164,7 +165,6 @@ The cluster uses the Calico CNI, it is configured via the k8s.calico variables. 
 In some environments the address of the default interface should not be used for kubernetes API. To configure it to a specific value, the k8s.apiserver_advertise_address variable can be set to the desired IP address to listen on and to advertise.
 
 Below is an example of content of a configuration file to deploy the k8s cluster:
-
 ```
 # k8s config
 k8s:
@@ -179,6 +179,7 @@ k8s:
             - 192.0.2.0/24
         encapsulation: VXLAN
 ```
+
 If this file is called params.blueprint.yaml, to create the cluster run the following command:
 
 ```
@@ -196,7 +197,6 @@ ansible-playbook  -i inventories/blueprint/ k8s-node.yaml --extra-vars "@params.
 At this stage the k8s cluster is up and running with all the nodes from the infrastructure.
 
 ## Deploy 5G Core
----
 In this blueprint, the core is implemented with the 5G Core network by the OpenAirInterface community (see https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed for details).
 
 The 5G Core core runs in the kubernetes cluster setup above. The core deployed in the blueprint is composed of UDR, UDM, AUSF, NRF, AMF, SMF, and UPF. All these functions are connected to a common database
@@ -204,6 +204,7 @@ The 5G Core core runs in the kubernetes cluster setup above. The core deployed i
 We distinguish two scenarios. The basic option consists is the case where the core and RAN are deployed in the same kubernetes cluster and where only one network is used to interconnect all functions together. In the Advanced scenario the core and the RAN are in different clusters and the control and user planes use different networks.
 
 ### Basic Option
+---
 Message exchanges between all 5G functions are carried over by the pod network of the k8s cluster, as depicted in the figure below.
 
 <img src="./images/5g_core.svg">
@@ -225,6 +226,7 @@ ansible-playbook  -i inventories/blueprint/  5g.yaml  --extra-vars "@params.5g.y
 After running this command, the 5G core is deployed in the blueprint namespace of the kubernetes cluster.
 
 ### Advanced Option
+---
 The deployment above is rather simple and does not segment user traffic from control traffic. In real world scenarios (e.g., core and RAN not in the same cluster), it is required to separate these traffic by exposing multiple interfaces to the functions (i.e., pods). To do so we rely on multus.
 
 More precisely, the AMF and UPF functions have an additional interface connected to a network dedicated to the RAN traffic. These interface are called net1 in the AMF and UPF pods. This network uses the 172.22.10.0/24 subnet as shown below.
@@ -298,12 +300,12 @@ Please refer to OAI documentation for details about how to setup the environment
 We recommend to put all the files that corresponds to parameters of the deployment in the custom_values directory and use the custom_files directory to put the static files (i.e., not changing from one deployment to another).
 
 ## Deploy 5G RAN
----
 In this blueprint, the RAN is implemented with OpenAirInterface (see https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed for details). We assume that the 5G core is already deployed.
 
 We distinguish two scenarios. The basic option consists is the case where the core and RAN are deployed in the same kubernetes cluster and where only one network is used to interconnect all functions together. In the Advanced scenario the core and the RAN are in different clusters and the control and user planes use different networks.
 
 ### UE subscription in 5G Core
+---
 The core will allow a user equipment to connect to the network only if its SIM card is registered correctly. In the current version of OAI, subscription information is stored in the Database function that is implemented with MySQL.
 
 We do not provide abstractions for this action yet, instead please update the database directly with the new information. To connect to the MySQL server of the core, run the following command from any node in the cluster hosting the core (default password is linux):
@@ -321,7 +323,8 @@ INSERT INTO `SessionManagementSubscriptionData` (`ueid`, `servingPlmnid`, `singl
 
 Make sure that gNBs and UEs are configured with the proper DNN, MCC, MNC…
 
-#### Basic Option
+### Basic Option
+---
 In this scenario the RAN consists of a gNB that is connected on the pod network of the k8s cluster that also hosts the 5G core, as shown below as well as an optional User Equipment (UE) connected to the gNB.
 
 <img src="./images/5g_ran.svg">
@@ -344,12 +347,13 @@ ansible-playbook  -i inventories/blueprint/  5g.yaml  --extra-vars "@params.5g.y
 
 After running this command, the RAN is deployed in the blueprint namespace of the kubernetes cluster with a gNB and a UE.
 
-#### Advanced Option
+### Advanced Scenario
+---
 In the advanced scenario a dedicated network is used to carry the user plane. We consider three deployment cases. In the first case, the 5G core and the RAN are deployed in the same k8s cluster. In the second case, the RAN is deployed in its own k8s cluster. In the last case, we consider a standalone hardware based RAN remotely connected to the 5G core.
 
 In all cases, it is assumed that the 5G core has been deployed according to the Advanced option of the blueprint.
 
-##### Shared 5G Core and 5G RAN cluster
+#### Shared 5G Core and 5G RAN cluster
 In this scenario the 5G core and the RAN are deployed in the same k8s cluster and a network is dedicated to covey RAN traffic. The RAN must be configured to use this dedicated network and to use addresses in the correct subnet, as shown in the figure below.
 
 <img src="./images/5g_ran_advanced_same_cluster.svg">
@@ -400,7 +404,7 @@ To define where to store your files, please refer to Ansible precedence rules (h
 
 The example provided in the blueprint is used for deployment of the 5G RAN on hosts where the Dedicated network is attached to the ran0 interface.
 
-##### Separate 5G Core and 5G RAN clusters
+#### Separate 5G Core and 5G RAN clusters
 In general, the 5G core and the RAN will be deployed in separate clusters (e.g,. one for the central core and one per RAN region).
 
 This means that the RAN and core are not on the same networks as depicted in the figure below.
@@ -435,12 +439,12 @@ ansible-playbook  -i inventories/blueprint/  5g.yaml  --extra-vars "@params.5g.y
 
 If you look at the files in blueprint/client1/ you will see that the only differences with the scenario where core and RAN use the same cluster are the local addresses used by the gNB and UE that are in the 10.0.10.0/24 prefix and the presence of a route towards the 172.22.10.0/24 subnet in the multus configuration.
 
-##### RAN on a bare-metal server with a USRP platform
+#### RAN on a bare-metal server with a USRP platform
 For the RAN nodes, we consider high-end PCs that are connected with the respective RUs. The RUs tested within this scenario are USRP X310s, and USRP N310.
 
 The PC used as the RAN node is a 11th Gen Intel(R) Core(TM) i7-11700K with 64GB of RAM and 128GB SSD storage.
 
-###### Communication with the USRP
+##### Communication with the USRP
 You need to configure the appropriate communication links with the USRP platform. To do this, please follow the links below for each platform.
 
 USRP B210: https://kb.ettus.com/B200/B210/B200mini/B205mini_Getting_Started_Guides
@@ -453,7 +457,7 @@ USRP N310: https://kb.ettus.com/USRP_N300/N310/N320/N321_Getting_Started_Guide#N
 
 For the USRP N310, use the “XG” FPGA image for using the 10Gbps network interfaces to the host node.
 
-###### RAN
+##### RAN
 In order to deploy the needed components for the RAN, you need to use a separate ansible playbook, and specify the node on which the RAN software should be added.
 
 To do this, update the file inventories/UTH/hosts.yml:
@@ -476,7 +480,7 @@ This will deploy all the needed software on the RAN node on the folder /root/ope
 
 To start the OAI RAN software, you need to update the conf file (depending on your USRP platform, the AMF IP address, and the IP address of the USRP). On the RAN node, do the following:
 
-####### USRP B210
+###### USRP B210
 ```
 cd /root/openairinterface5g
 source oaienv
@@ -490,7 +494,7 @@ To run the OAI RAN:
 sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/gnb.sa.band78.fr1.106PRB.usrpb210.conf --sa -E --continuous-tx
 ```
 
-####### USRP N300:
+###### USRP N300:
 ```
 cd /root/openairinterface5g
 source oaienv
@@ -504,7 +508,7 @@ To run the OAI RAN:
 sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/gnb.sa.band77.fr1.273PRB.2x2.usrpn300.conf --sa --usrp-tx-thread-config 1
 ```
 
-####### USRP X300:
+###### USRP X300:
 ```
 cd /root/openairinterface5g/
 source oaienv
@@ -519,6 +523,7 @@ sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/gnb.sa.band
 ```
 
 ### Testing Deployment
+---
 #### Standard option
 Testing if the blueprint is replicated correctly and corresponds to the parameters can be tedious but is a good exercise to get acquainted with the different technologies and concepts used in the blueprint. Therefore, this section does not pretend to provide exhaustive tests.
 
