@@ -12,7 +12,7 @@ The blueprint is designed in a modular way such that one can either deploy it fu
 ## Architecture
 In this blueprint, the core and RAN are implemented with OpenAirInterface (see https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed for details) that are deployed in kubernetes clusters that can be remotely connected as shown in the figure below.
 
-<img src="./5g_ran_advanced_different_clusters.svg">
+<img src="./images/5g_ran_advanced_different_clusters.svg">
 
 The deployment of the blueprint is split in four main steps:
 1. Kubernetes clusters must be deployed to host the core and/or the RAN.
@@ -23,6 +23,7 @@ The deployment of the blueprint is split in four main steps:
 But the first step is to make sure that you properly setup your deployment environment.
 
 ## Deployment Setup
+
 Functions and services of the blueprint run on hosts with operating systems installed. It is recommended to run the operating system directly on baremetal devices but virtual machines are also possible, unless stated otherwise.
 
 It is assumed that the hosts (or vhost) used in the blueprint have one of the following operating system installed
@@ -47,13 +48,20 @@ The blueprint installation is automated and can be run from any location as long
 
 The following figure presents the installation setup.
 
-<img src="./deploy.svg">
+<img src="./images/deploy.svg">
 
 To simplify operations, we containerized the deployment node. Check the following for more details about the installation and configuration of the deployment node.
 
-# Contact and Support
-The blueprint is a joint effort of SLICES community, please send all questions and comments to slices-blueprint@inria.fr.
+### Deployment Node Preparation
 
-All emails archived at https://sympa.inria.fr/sympa/arc/slices-blueprint.
+The deployment node does not need to be part of the infrastructure on which the blueprint is replicated. But it needs to be able to connect to every host of the infrastructure with SSH using key based authentication.
 
-Please read the archives, maybe your problem as already been addressed in one thread.
+The blueprint is a collection of deployments proposed by the partners of the project. To simplify the life of operators replicating the blueprint, the deployment details are hidden behind Ansible playbooks.
+
+For the sake of reproducibility and the flexibility it offers, we strongly recommend to run all operations of the deployment node in a container. In the following we assume that it is the case. Nevertheless, the working directory is shared between the container and the host so you can prepare your configuration from outside of the container.
+
+First, clone the repository with Ansible playbooks on the deployment node:
+
+> git clone --recurse-submodule https://github.com/dsaucez/SLICES.git
+
+# Contact Blueprint Support [[Blueprint Support](contact.md)]
