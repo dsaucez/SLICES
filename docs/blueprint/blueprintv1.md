@@ -444,7 +444,7 @@ For the RAN nodes, we consider high-end PCs that are connected with the respecti
 
 The PC used as the RAN node is a 11th Gen Intel(R) Core(TM) i7-11700K with 64GB of RAM and 128GB SSD storage.
 
-##### Communication with the USRP
+**##### Communication with the USRP**
 You need to configure the appropriate communication links with the USRP platform. To do this, please follow the links below for each platform.
 
 USRP B210: https://kb.ettus.com/B200/B210/B200mini/B205mini_Getting_Started_Guides
@@ -457,7 +457,7 @@ USRP N310: https://kb.ettus.com/USRP_N300/N310/N320/N321_Getting_Started_Guide#N
 
 For the USRP N310, use the “XG” FPGA image for using the 10Gbps network interfaces to the host node.
 
-##### RAN
+**##### RAN**
 In order to deploy the needed components for the RAN, you need to use a separate ansible playbook, and specify the node on which the RAN software should be added.
 
 To do this, update the file inventories/UTH/hosts.yml:
@@ -480,7 +480,7 @@ This will deploy all the needed software on the RAN node on the folder /root/ope
 
 To start the OAI RAN software, you need to update the conf file (depending on your USRP platform, the AMF IP address, and the IP address of the USRP). On the RAN node, do the following:
 
-###### USRP B210
+**###### USRP B210:**
 ```
 cd /root/openairinterface5g
 source oaienv
@@ -494,7 +494,7 @@ To run the OAI RAN:
 sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/gnb.sa.band78.fr1.106PRB.usrpb210.conf --sa -E --continuous-tx
 ```
 
-###### USRP N300:
+**###### USRP N300:**
 ```
 cd /root/openairinterface5g
 source oaienv
@@ -508,7 +508,7 @@ To run the OAI RAN:
 sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/gnb.sa.band77.fr1.273PRB.2x2.usrpn300.conf --sa --usrp-tx-thread-config 1
 ```
 
-###### USRP X300:
+**###### USRP X300:**
 ```
 cd /root/openairinterface5g/
 source oaienv
