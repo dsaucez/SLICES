@@ -61,7 +61,81 @@ The blueprint is a collection of deployments proposed by the partners of the pro
 For the sake of reproducibility and the flexibility it offers, we strongly recommend to run all operations of the deployment node in a container. In the following we assume that it is the case. Nevertheless, the working directory is shared between the container and the host so you can prepare your configuration from outside of the container.
 
 First, clone the repository with Ansible playbooks on the deployment node:
+```
+git clone --recurse-submodule https://github.com/dsaucez/SLICES.git
+```
 
-> git clone --recurse-submodule https://github.com/dsaucez/SLICES.git
+Then go to the sopnode/ansible directory:
+```
+cd SLICES/sopnode/ansible
+```
+
+Then, from that directory build the container with docker with the following command:
+```
+docker build -t blueprint -f Dockerfile .
+```
+Finally, to use this container, run the following:
+```
+docker run -it -v "$(pwd)":/blueprint -v ${HOME}/.ssh/id_rsa_blueprint:/id_rsa_blueprint blueprint
+```
+This launches the deployment node container where the blueprint is mounted in the /blueprint directory and the private key to use to connect to the infrastructure is mounted in the /id_rsa_blueprint file, assuming the key is actually stored in your home SSH directory and is called id_rsa_blueprint.
+
+At that stage you are in a shell with the deployment environment fully setup.
+
+The first thing to do is to create the Ansible inventory with the nodes composing the infrastructure. See below for details.
+
+### Ansible Inventory
+The directory inventories/blueprint/ contains a skeleton of Ansible inventory for deploying the blueprint.
+
+First, adapt the inventories/blueprint/hosts file to reflect your infrastructure.
+
+It is composed of 3 host groups:
+
+computes lists all the nodes to be used as compute nodes in the cluster,
+aka k8s node.
+
+masters lists all the nodes to be used as k8s control-plane nodes. As of
+know only one is allowed.
+
+openvpn lists all the nodes to be used as openvpn servers.
+For each node in the infrastructure you have to provide the xx-name parameter that is the hostname of the node without its domain. For hosts running in RAM disks, add the xx-ramdisk parameter to the host and set it to true.
+
+The following example shows the case with two compute nodes (node2, node3), one control-plane master (node1) and one openvpn server. Their IP addresses are 192.0.2.2, 192.0.2.3, 192.0.2.1, and 192.0.2.4, respectively.:
+
+```
+all:
+  children:
+    computes:
+      hosts:
+        192.0.2.2:
+          xx-name: node2
+        192.0.2.3:
+          xx-name: node3
+    masters:
+      hosts:
+        192.0.2.1:
+          xx-name: node1
+    openvpn:
+      hosts:
+        192.0.2.4:
+          xx-name: openvpn-1
+```
+
+Configure your inventory to suit your needs. Instead of providing their IP addresses, you can use the FQDNs of the nodes.
+
+You also have to adapt the inventories/blueprint/group_vars/all file to define the username to use to connect to the hosts and the path to the private key to get authenticated:
+
+```
+ansible_ssh_private_key_file: /id_rsa_blueprint
+ansible_user: ubuntu
+```
+
+Here we are in the case where the private key is stored in the /id_rsa file and the user to login to the machine is ubuntu.
+
+Obviously the inventory can be adapted for the specific needs of the infrastructure (e.g., jump host, different credentials for different hosts…). For more details about Ansible inventories, check [^1].
+
 
 # Contact Blueprint Support [[Blueprint Support](contact.md)]
+
+# External References
+[^1]: https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html.
