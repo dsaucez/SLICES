@@ -27,9 +27,6 @@ mkdir -p $DIR
 # Log level
 # ansible
 SLICES_ANSIBLE_LOG_PATH=$DIR/ansible.log
-# terraform
-SLICES_TF_LOG=trace
-SLICES_TF_LOG_PATH=$DIR/terraform.log
 
 ## Install dependencies
 ANSIBLE_LOG_PATH=$SLICES_ANSIBLE_LOG_PATH ansible-galaxy install -r requirements.xp.yml
@@ -37,17 +34,14 @@ ANSIBLE_LOG_PATH=$SLICES_ANSIBLE_LOG_PATH ansible-playbook xp.yaml
 
 
 ## Provision the infrastructure
-mkdir terraform
+mkdir _terraform
 pushd .
-cd terraform
+cd _terraform
 git clone https://github.com/dsaucez/SLICES.git --branch 41-modularize-terraform 
-cd SLICES/sopnode/terraform
-TF_LOG=$SLICES_TF_LOG TF_LOG_PATH=$SLICES_TF_LOG_PATH terraform init
-TF_LOG=$SLICES_TF_LOG TF_LOG_PATH=$SLICES_TF_LOG_PATH terraform apply -auto-approve -var-file="${LANDING_DIR}/xp.tfvars"
-sleep 60
-cp inventory ${LANDING_DIR}/inventories/blueprint/xp/hosts
-cp inventory ${DIR}
 popd
+ANSIBLE_LOG_PATH=$SLICES_ANSIBLE_LOG_PATH ansible-playbook  -i inventories/blueprint/xp/ provision.yaml --extra-vars "@params.blueprint.xp.yaml" --extra-vars "terraform_project_path=_terraform/SLICES/sopnode/terraform"
+cp _terraform/SLICES/sopnode/terraform/inventory/inventory ${LANDING_DIR}/inventories/blueprint/xp/hosts
+cp _terraform/SLICES/sopnode/terraform/inventoryinventory ${DIR}
 
 # Prepare the cluster
 ANSIBLE_LOG_PATH=$SLICES_ANSIBLE_LOG_PATH ansible-playbook  -i inventories/blueprint/xp/ k8s-master.yaml --extra-vars "@params.blueprint.xp.yaml"

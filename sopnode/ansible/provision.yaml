@@ -1,0 +1,18 @@
+---
+- name: Provision the infrastructure
+  hosts: localhost
+  connection: local
+
+  pre_tasks:
+  - name: Install dependencies
+    ansible.builtin.apt:
+      pkg:
+        - curl
+        - gettext-base
+        - rsync
+        - unzip
+        - git
+      state: present
+    become: yes
+  roles:
+    - provision

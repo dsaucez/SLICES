@@ -1,0 +1,9 @@
+- name: Provision infrastrcuture
+  community.general.terraform:
+    project_path: '{{ terraform_project_path }}'
+    state: "present"
+    variables_files:
+      - "{{ playbook_dir }}/xp.tfvars"
+    force_init: true
+  register: terra
+
