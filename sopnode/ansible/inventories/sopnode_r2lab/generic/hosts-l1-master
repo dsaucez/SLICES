@@ -1,0 +1,16 @@
+all:
+  children:
+    computes:
+      hosts:
+WORKER_ITEMS
+        192.168.100.91:
+          xx-name: sopnode-l1-v100
+          xx-local-ip: 192.168.100.91
+    masters:
+      hosts:
+        192.168.100.91:
+          xx-name: sopnode-l1-v100
+          xx-local-ip: 192.168.100.91
+    openvpn:
+      hosts:
+
