@@ -14,11 +14,12 @@ In this blueprint, the core and RAN are implemented with OpenAirInterface (see h
 
 <img src="./images/5g_ran_advanced_different_clusters.svg">
 
-The deployment of the blueprint is split in four main steps:
-1. Kubernetes clusters must be deployed to host the core and/or the RAN.
-2. The core can be deployed in a cluster.
-3. Finally, the RAN can be deployed and connected core.
-4. Nodes and sites interconnection
+The deployment of the blueprint is split in five main steps:
+*1. Setup Deployment Environment.*
+2. Deploy Kubernetes Clusters to host the 5G Core and/or the RAN.
+3. Deploy 5G Core in the Cluster.
+4. Deploy 5G RAN and the connected Core.
+5. Nodes and Sites Interconnection
 
 But the first step is to make sure that you properly setup your deployment environment.
 
