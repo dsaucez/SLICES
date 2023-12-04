@@ -15,7 +15,7 @@ In this blueprint, the core and RAN are implemented with OpenAirInterface (see h
 <img src="./images/5g_ran_advanced_different_clusters.svg">
 
 The deployment of the blueprint is split in five main steps:
-*1. Setup Deployment Environment.*
+1. Setup Deployment Environment.
 2. Deploy Kubernetes Clusters to host the 5G Core and/or the RAN.
 3. Deploy 5G Core in the Cluster.
 4. Deploy 5G RAN and the connected Core.
@@ -143,7 +143,7 @@ To deploy the blueprint, at least 2 servers are required. They are inter-connect
 
 In the simplest scenario the core and the RAN are deployed in the same cluster but we also consider the case where the core and the RAN are deployed in independent clusters. Follow the same deployment procedure for every cluster and adapt the IP addresses and kubernetes parameters accordingly. Instructions on how to intercconnect clustars are provided in
 
-TODO: Nodes and sites interconnection
+[Nodes and sites interconnection](docs/nodesinterconnect.md)
 
 ### Deploy K8S
 ---
@@ -151,7 +151,7 @@ The creation of the kubernetes cluster and all of its dependencies (e.g., contai
 
 The blueprint distinguishes 2 types of nodes in the k8s cluster. The masters nodes are nodes that run the cluster control plane and the computes nodes are normal k8s node to which load can be scheduled. Make sure you set your Ansible inventory adequately as described in
 
-TODO: Deployment node preparation
+[Nodes and sites interconnection](docs/nodesinterconnect.md)
 
 This blueprint only support 1 control plane node.
 
@@ -414,7 +414,7 @@ This means that the RAN and core are not on the same networks as depicted in the
 
 In this scenario, we assume IP connectivity between the dedicated network of the 5G core cluster (172.22.10.0/24) and the dedicated network of the RAN cluster (10.0.10.0/24). This is why we configured multus in the Advanced scenario of 5G core with routes to the prefix 10.0.10.0/24. We will do a similar configuration in the RAN too. However, configuring multus is not sufficient and the infrastructures themselves must be configured to have L3 connectivity between the core and the RAN. Please refer to
 
-TODO: Nodes and sites interconnection
+[Nodes and sites interconnection](docs/nodesinterconnect.md)
 
 to see how to interconnect RAN and Core infrastructures. In substance, if the RAN in a separate infrastructure than the core, the network must be configured such that the RAN is able to reach the N2 address of the AMF and the N3 address of the UPF and that the UPF and AMF are able to reach the N2N3 addresses of the gNB.
 
