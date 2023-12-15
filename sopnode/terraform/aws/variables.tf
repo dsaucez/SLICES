@@ -2,6 +2,10 @@
 # Project: Slices RI
 # Version: 1.0
 # License: None - Opensource
+/* 
+Terraform configurations can include variables to make your configuration more dynamic 
+and flexible. 
+*/
 
 variable "instance_control" {
   description = "Value of the Name tag for the EC2 instance"

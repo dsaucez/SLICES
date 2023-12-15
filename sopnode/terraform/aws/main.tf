@@ -15,8 +15,6 @@ terraform {
 }
 
 locals {
-#   vpc_id  = "vpc-055d42e2066fc756f"
-#   subnet_id = "subnet-045dc13d9dafef815"
     ssh_user  = "ubuntu"
     key_name  = "slices"
     private_key_path  = "~/slices.pem"
