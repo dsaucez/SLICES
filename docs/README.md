@@ -21,3 +21,5 @@ how to inter-connect equipment from both a logical and a physical point of view.
     * Logical interconnections [[logical](interconnect_logical.md)]
     * Management network [[Management](management_network.md)]
 * Sharing a node between two partners [[Sharing](sharing_node.md)]
+
+# SLICES Blueprint [[Blueprint version 1.0](blueprintv1.md)]
