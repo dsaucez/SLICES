@@ -1,0 +1,7 @@
+all:
+  hosts:
+    sopnode-m1:
+  children:
+    mgmt:
+      hosts:
+        sopnode-m1:

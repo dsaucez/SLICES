@@ -1,0 +1,19 @@
+galaxy_info:
+  author: Damien Saucez
+  description: Setup sopnode management servers
+  company: Inria
+
+  # issue_tracker_url: http://example.com/issue/tracker
+
+  license: BSD-3-Clause
+
+  min_ansible_version: 2.13
+
+  platforms:
+  - name: Ubuntu
+    versions:
+    - 22.04
+
+dependencies:
+  - role: common
+  - role: container

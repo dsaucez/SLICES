@@ -1,0 +1,6 @@
+---
+- name: Setup sopnode management server
+  hosts: mgmt
+
+  roles:
+    - mgmt

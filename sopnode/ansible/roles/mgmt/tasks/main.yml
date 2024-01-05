@@ -1,0 +1,10 @@
+---
+- block:
+  - name: Install LLDP
+    ansible.builtin.package:
+      name:
+        - lldpd
+      state: present
+
+  - include_tasks: kvm.yaml
+  become: yes
