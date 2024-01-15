@@ -96,9 +96,9 @@ stages:
         sshEndpoint: 'sopnode-z1'
         runOptions: 'commands'
         commands: |
-          multipass launch --cloud-init azurevm-init.yaml --cpus 4 --disk 40G --mem 16G --name leftclient
-          multipass launch --cloud-init azurevm-init.yaml --cpus 4 --disk 40G --mem 16G --name rightclient
-          multipass launch --cloud-init azurevm-init.yaml --cpus 4 --disk 40G --mem 16G --name leftswitch
+          multipass launch --cloud-init azurevm-init.yaml --cpus 4 --disk 40G --memory 16G --name leftclient
+          multipass launch --cloud-init azurevm-init.yaml --cpus 4 --disk 40G --memory 16G --name rightclient
+          multipass launch --cloud-init azurevm-init.yaml --cpus 4 --disk 40G --memory 16G --name leftswitch
         readyTimeout: '20000'
     # Fetch IP@ of VMs to be used in ansible hosts files
     - task: SSH@0
