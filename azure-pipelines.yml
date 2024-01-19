@@ -93,7 +93,7 @@ stages:
       displayName: 'Launch Multipass VMs'
       continueOnError: true
       inputs:
-        sshEndpoint: 'sopnode-z1'
+        sshEndpoint: 'sopnode-w2-multipass'
         runOptions: 'commands'
         commands: |
           multipass launch --cloud-init azurevm-init.yaml --cpus 4 --disk 40G --memory 16G --name leftclient
@@ -104,7 +104,7 @@ stages:
     - task: SSH@0
       displayName: 'Fetch IP@ of VMs'
       inputs:
-        sshEndpoint: 'sopnode-z1'
+        sshEndpoint: 'sopnode-w2-multipass'
         runOptions: 'commands'
         commands: |
           multipass info leftclient --format json | jq -r '.info.leftclient.ipv4[0]' > vm.txt
