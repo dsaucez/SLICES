@@ -110,7 +110,7 @@ stages:
           multipass info leftclient --format json | jq -r '.info.leftclient.ipv4[0]' > vm.txt
           multipass info rightclient --format json | jq -r '.info.rightclient.ipv4[0]' >> vm.txt
           multipass info leftswitch --format json | jq -r '.info.leftswitch.ipv4[0]' >> vm.txt
-          docker cp /home/ubuntu/vm.txt azureagent:/root/
+          docker cp /home/ubuntu/vm.txt azureagent:/home/agent/
         readyTimeout: '20000'
         
 
@@ -126,28 +126,28 @@ stages:
         echo 'Setting IP@ variables ...'
         
         #Set variables 
-        leftclient=$(sed -n '1p' /root/vm.txt)
-        rightclient=$(sed -n '2p' /root/vm.txt)
-        leftswitch=$(sed -n '3p' /root/vm.txt)
+        leftclient=$(sed -n '1p' /home/agent/vm.txt)
+        rightclient=$(sed -n '2p' /home/agent/vm.txt)
+        leftswitch=$(sed -n '3p' /home/agent/vm.txt)
         
-        export CORE_MASTER=$(sed -n '1p' /root/vm.txt)
-        export CORE_MASTER_IP=$(sed -n '1p' /root/vm.txt)
+        export CORE_MASTER=$(sed -n '1p' /home/agent/vm.txt)
+        export CORE_MASTER_IP=$(sed -n '1p' /home/agent/vm.txt)
         export CORE_MASTER_NAME="leftclient"
 
-        export OPENVPN=$(sed -n '1p' /root/vm.txt)
-        export OPENVPN_IP=$(sed -n '1p' /root/vm.txt)
+        export OPENVPN=$(sed -n '1p' /home/agent/vm.txt)
+        export OPENVPN_IP=$(sed -n '1p' /home/agent/vm.txt)
         export OPENVPN_NAME="leftclient"
 
-        export HAPROXY=$(sed -n '1p' /root/vm.txt)
-        export HAPROXY_IP=$(sed -n '1p' /root/vm.txt)
+        export HAPROXY=$(sed -n '1p' /home/agent/vm.txt)
+        export HAPROXY_IP=$(sed -n '1p' /home/agent/vm.txt)
         export HAPROXY_NAME="leftclient"
         
-        export CORE_COMPUTE=$(sed -n '2p' /root/vm.txt)
-        export CORE_COMPUTE_IP=$(sed -n '2p' /root/vm.txt)
+        export CORE_COMPUTE=$(sed -n '2p' /home/agent/vm.txt)
+        export CORE_COMPUTE_IP=$(sed -n '2p' /home/agent/vm.txt)
         export CORE_COMPUTE_NAME="rightclient"
 
-        export RAN_MASTER=$(sed -n '3p' /root/vm.txt)
-        export RAN_MASTER_IP=$(sed -n '3p' /root/vm.txt)
+        export RAN_MASTER=$(sed -n '3p' /home/agent/vm.txt)
+        export RAN_MASTER_IP=$(sed -n '3p' /home/agent/vm.txt)
         export RAN_MASTER_NAME="leftswitch"
 
         cd sopnode/ansible
