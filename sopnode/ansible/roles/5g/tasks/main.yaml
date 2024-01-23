@@ -3,7 +3,7 @@
   ansible.builtin.git:
     repo: https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed.git
     dest: oai-cn5g-fed
-    version: v1.5.1
+    version: refs/tags/v1.5.1
     force: yes
 
 - name: Synchronize all git submodules
