@@ -48,52 +48,18 @@ stages:
 - stage: Blueprint_Deployment
   displayName: blueprint Deployment
   jobs:
-  - job: BuildAndTestDeployment
-    # Use this as the multi-os matrix to run the pipeline in different versions
-    strategy:
-      matrix:
-        Ubuntu 20.04:
-          os: 'ubuntu-latest'
-          architecture: 'x64'
-        Windows 11:
-          os: 'windows-latest'
-          architecture: 'x64'
-        macOS:
-          os: 'macOS-latest'
-          architecture: 'x64'
-    steps:
-    - script: echo Building and testing on $(os) $(architecture)
-      displayName: 'Build and Test'
   - job: Build
     displayName: Ubuntu 22.04 Deployment
     pool:
       name: Default
 
     steps:
-
-
-    # - script: |
-    #     whoami
-    #     touch ~/.ssh/authorized-keys
-    #     echo $(Z1_PUBLIC_KEY) > ~/.ssh/authorized-keys
-      # - task: SSH@0
-    #   inputs:
-    #     sshEndpoint: 'sopnode-z1'
-    #     runOptions: 'commands'
-    #     commands: |
-    #       echo '##vso[task.setvariable variable=FOO] \$(multipass info dn --format json | jq -r '.info.dn.ipv4[0]')'
-    #     readyTimeout: '20000'
-
-
-
-
-
     #  Create VMs
     - task: SSH@0
       displayName: 'Launch Multipass VMs'
       continueOnError: true
       inputs:
-        sshEndpoint: 'sopnode-z1'
+        sshEndpoint: 'sopnode-w2-multipass'
         runOptions: 'commands'
         commands: |
           multipass launch --cloud-init azurevm-init.yaml --cpus 4 --disk 40G --memory 16G --name leftclient
@@ -104,7 +70,7 @@ stages:
     - task: SSH@0
       displayName: 'Fetch IP@ of VMs'
       inputs:
-        sshEndpoint: 'sopnode-z1'
+        sshEndpoint: 'sopnode-w2-multipass'
         runOptions: 'commands'
         commands: |
           multipass info leftclient --format json | jq -r '.info.leftclient.ipv4[0]' > vm.txt
@@ -196,7 +162,7 @@ stages:
       displayName: 'Setup ran0 interface'
       continueOnError: true
       inputs:
-        sshEndpoint: 'sopnode-z1'
+        sshEndpoint: 'sopnode-w2-multipass'
         runOptions: 'commands'
         commands: |
           multipass exec leftswitch -- /bin/bash -c 'sudo ip link add ran0 type veth peer name ran0_0 && sudo ip link set up ran0 && sudo ip link set up ran0_0 && sudo ip addr add 10.0.10.1/24 dev ran0_0'
@@ -207,7 +173,7 @@ stages:
       displayName: 'Set  OpenVPN client in core'
       continueOnError: true
       inputs:
-        sshEndpoint: 'sopnode-z1'
+        sshEndpoint: 'sopnode-w2-multipass'
         runOptions: 'commands'
         commands: |
            multipass transfer leftclient:/home/ubuntu/core/core.ovpn . 
@@ -219,7 +185,7 @@ stages:
       displayName: 'Set  OpenVPN client in RAN'
       continueOnError: true
       inputs:
-        sshEndpoint: 'sopnode-z1'
+        sshEndpoint: 'sopnode-w2-multipass'
         runOptions: 'commands'
         commands: |
            multipass transfer leftclient:/home/ubuntu/ran/ran.ovpn . 
@@ -251,7 +217,7 @@ stages:
       displayName: 'Interconnection test'
       continueOnError: true
       inputs:
-        sshEndpoint: 'sopnode-z1'
+        sshEndpoint: 'sopnode-w2-multipass'
         runOptions: 'commands'
         commands: |
            multipass exec leftswitch -- ping -c 1 -I 10.0.10.1 172.22.10.1
@@ -259,7 +225,7 @@ stages:
 
     - task: SSH@0
       inputs:
-        sshEndpoint: 'sopnode-z1'
+        sshEndpoint: 'sopnode-w2-multipass'
         runOptions: 'commands'
         commands: |
           multipass delete --purge leftclient
