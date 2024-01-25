@@ -77,10 +77,7 @@ stages:
           multipass info rightclient --format json | jq -r '.info.rightclient.ipv4[0]' >> vm.txt
           multipass info leftswitch --format json | jq -r '.info.leftswitch.ipv4[0]' >> vm.txt
 
-          #Send the vm.txt to the azure VM (already exists before the pipeline)
-          scp -o StrictHostKeyChecking=no $HOME/vm.txt ubuntu@10.92.171.99:/home/ubuntu/
-          #Send the vm.txt to the azure agent container
-          multipass exec azure --  docker cp /home/ubuntu/vm.txt azureagent:/root/
+          docker cp /home/ubuntu/vm.txt azureagent:/home/agent/
         readyTimeout: '20000'
         
 
