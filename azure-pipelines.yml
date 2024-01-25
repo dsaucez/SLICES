@@ -114,7 +114,8 @@ stages:
           #Send the vm.txt to the azure VM (already exists before the pipeline)
           #scp -o StrictHostKeyChecking=no $HOME/vm.txt ubuntu@10.92.171.99:/home/ubuntu/
           #Send the vm.txt to the azure agent container
-          multipass exec azure --  docker cp /home/ubuntu/vm.txt azureagent:/root/
+          #multipass exec azure --  docker cp /home/ubuntu/vm.txt azureagent:/root/
+          docker cp /home/ubuntu/vm.txt azureagent:/root/
         readyTimeout: '20000'
         
 
