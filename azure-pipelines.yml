@@ -59,7 +59,7 @@ stages:
       displayName: 'Launch Multipass VMs'
       continueOnError: true
       inputs:
-        sshEndpoint: 'sopnode-w2-multipass'
+        sshEndpoint: ${{ variables.VM_SERVER }}
         runOptions: 'commands'
         commands: |
           multipass launch --cloud-init azurevm-init.yaml --cpus 4 --disk 40G --memory 16G --name leftclient
@@ -70,7 +70,7 @@ stages:
     - task: SSH@0
       displayName: 'Fetch IP@ of VMs'
       inputs:
-        sshEndpoint: 'sopnode-w2-multipass'
+        sshEndpoint: ${{ variables.VM_SERVER }}
         runOptions: 'commands'
         commands: |
           multipass info leftclient --format json | jq -r '.info.leftclient.ipv4[0]' > vm.txt
@@ -159,7 +159,7 @@ stages:
       displayName: 'Setup ran0 interface'
       continueOnError: true
       inputs:
-        sshEndpoint: 'sopnode-w2-multipass'
+        sshEndpoint: ${{ variables.VM_SERVER }}
         runOptions: 'commands'
         commands: |
           multipass exec leftswitch -- /bin/bash -c 'sudo ip link add ran0 type veth peer name ran0_0 && sudo ip link set up ran0 && sudo ip link set up ran0_0 && sudo ip addr add 10.0.10.1/24 dev ran0_0'
@@ -170,7 +170,7 @@ stages:
       displayName: 'Set  OpenVPN client in core'
       continueOnError: true
       inputs:
-        sshEndpoint: 'sopnode-w2-multipass'
+        sshEndpoint: ${{ variables.VM_SERVER }}
         runOptions: 'commands'
         commands: |
            multipass transfer leftclient:/home/ubuntu/core/core.ovpn . 
@@ -182,7 +182,7 @@ stages:
       displayName: 'Set  OpenVPN client in RAN'
       continueOnError: true
       inputs:
-        sshEndpoint: 'sopnode-w2-multipass'
+        sshEndpoint: ${{ variables.VM_SERVER }}
         runOptions: 'commands'
         commands: |
            multipass transfer leftclient:/home/ubuntu/ran/ran.ovpn . 
@@ -214,7 +214,7 @@ stages:
       displayName: 'Interconnection test'
       continueOnError: true
       inputs:
-        sshEndpoint: 'sopnode-w2-multipass'
+        sshEndpoint: ${{ variables.VM_SERVER }}
         runOptions: 'commands'
         commands: |
            multipass exec leftswitch -- ping -c 1 -I 10.0.10.1 172.22.10.1
@@ -222,7 +222,7 @@ stages:
 
     - task: SSH@0
       inputs:
-        sshEndpoint: 'sopnode-w2-multipass'
+        sshEndpoint: ${{ variables.VM_SERVER }}
         runOptions: 'commands'
         commands: |
           multipass delete --purge leftclient
