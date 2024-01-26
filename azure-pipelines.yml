@@ -1,23 +1,12 @@
 #variables:
 #- name: VM_SERVER
 #  value: 'sopnode-w2-multipass'
-  
+
 # trigger:
 # - main
 
 # pool:
 #   vmImage: ubuntu-latest
-
-# steps:
-# - script: echo Hello, world!
-#   displayName: 'Run a one-line script'
-
-# - script: |
-#     echo Add other tasks to build, test, and deploy your project.
-#     echo See https://aka.ms/yaml
-#   displayName: 'Run a multi-line script'
-
-
 
 # Build a Docker image
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
@@ -41,8 +30,6 @@ pool:
 resources:
 - repo: self
 
-
-
 stages:
 - stage: Blueprint_Deployment
   displayName: blueprint Deployment
@@ -53,6 +40,7 @@ stages:
       name: Default
 
     steps:
+
     #  Create VMs
     - task: SSH@0
       displayName: 'Launch Multipass VMs'
@@ -83,7 +71,6 @@ stages:
           docker cp /home/ubuntu/vm.txt azureagent:/root/
         readyTimeout: '20000'
         
-
   
     - script: |
  
@@ -233,31 +220,3 @@ stages:
           multipass delete --purge leftswitch
         readyTimeout: '20000'
       displayName: Destroy VMs
-    
-
-
-
-      ## You can use this for parallel execution
-      # cat <<'EOF' > run_master_playbooks.sh
-      # #!/bin/bash
-
-      # playbook1="ansible-playbook -i inventories/blueprint/ran/ k8s-master.yaml --extra-vars '@params.blueprint.ran.yaml'"
-      # playbook2="ansible-playbook -i inventories/blueprint/core/ k8s-master.yaml --extra-vars '@params.blueprint.core.yaml'"
-
-      # parallel --halt now,fail=1 ::: "$playbook1" "$playbook2"
-      # EOF
-      # chmod +x run_master_playbooks.sh
-      # ./run_master_playbooks.sh
-
-    ##Use this for docker builds  
-    # - task: DockerInstaller@0
-    #   inputs:
-    #     dockerVersion: '17.09.0-ce'
-    #   displayName: Install docker
-    #     # Docker
-    # - task: Docker@2
-    #   inputs:
-    #     containerRegistry: 'dockeregistry'
-    #     repository: 'anassdahchour/blueprint'
-    #     command: 'buildAndPush'
-    #     Dockerfile: 'sopnode/ansible/Dockerfile'
