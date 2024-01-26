@@ -1,5 +1,5 @@
-variables:
-- name: VM_SERVER
+#variables:
+#- name: VM_SERVER
 #  value: 'sopnode-w2-multipass'
   
 # trigger:
