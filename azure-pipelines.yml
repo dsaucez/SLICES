@@ -1,3 +1,7 @@
+#variables:
+#- name: VM_SERVER
+#  value: 'sopnode-w2-multipass'
+
 # trigger:
 # - main
 
@@ -30,41 +34,12 @@ stages:
 - stage: Blueprint_Deployment
   displayName: blueprint Deployment
   jobs:
-  - job: BuildAndTestDeployment
-    # Use this as the multi-os matrix to run the pipeline in different versions
-    strategy:
-      matrix:
-        Ubuntu 20.04:
-          os: 'ubuntu-latest'
-          architecture: 'x64'
-        Windows 11:
-          os: 'windows-latest'
-          architecture: 'x64'
-        macOS:
-          os: 'macOS-latest'
-          architecture: 'x64'
-    steps:
-    - script: echo Building and testing on $(os) $(architecture)
-      displayName: 'Build and Test'
   - job: Build
     displayName: Ubuntu 22.04 Deployment
     pool:
       name: Default
 
     steps:
-
-
-    # - script: |
-    #     whoami
-    #     touch ~/.ssh/authorized-keys
-    #     echo $(Z1_PUBLIC_KEY) > ~/.ssh/authorized-keys
-      # - task: SSH@0
-    #   inputs:
-    #     sshEndpoint: $(VM_SERVER)
-    #     runOptions: 'commands'
-    #     commands: |
-    #       echo '##vso[task.setvariable variable=FOO] \$(multipass info dn --format json | jq -r '.info.dn.ipv4[0]')'
-    #     readyTimeout: '20000'
 
     #  Create VMs
     - task: SSH@0
