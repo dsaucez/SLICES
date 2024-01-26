@@ -1,8 +1,7 @@
-# # Starter pipeline
-# # Start with a minimal pipeline that you can customize to build and deploy your code.
-# # Add steps that build, run tests, deploy, and more:
-# # https://aka.ms/yaml
-
+#variables:
+#- name: VM_SERVER
+#  value: 'sopnode-w2-multipass'
+  
 # trigger:
 # - main
 
@@ -77,7 +76,11 @@ stages:
           multipass info rightclient --format json | jq -r '.info.rightclient.ipv4[0]' >> vm.txt
           multipass info leftswitch --format json | jq -r '.info.leftswitch.ipv4[0]' >> vm.txt
 
-          docker cp /home/ubuntu/vm.txt azureagent:/home/agent/
+          #Send the vm.txt to the azure VM (already exists before the pipeline)
+          #scp -o StrictHostKeyChecking=no $HOME/vm.txt ubuntu@10.92.171.99:/home/ubuntu/
+          #Send the vm.txt to the azure agent container
+          #multipass exec azure --  docker cp /home/ubuntu/vm.txt azureagent:/root/
+          docker cp /home/ubuntu/vm.txt azureagent:/root/
         readyTimeout: '20000'
         
 
@@ -93,28 +96,28 @@ stages:
         echo 'Setting IP@ variables ...'
         
         #Set variables 
-        leftclient=$(sed -n '1p' /home/agent/vm.txt)
-        rightclient=$(sed -n '2p' /home/agent/vm.txt)
-        leftswitch=$(sed -n '3p' /home/agent/vm.txt)
+        leftclient=$(sed -n '1p' /root/vm.txt)
+        rightclient=$(sed -n '2p' /root/vm.txt)
+        leftswitch=$(sed -n '3p' /root/vm.txt)
         
-        export CORE_MASTER=$(sed -n '1p' /home/agent/vm.txt)
-        export CORE_MASTER_IP=$(sed -n '1p' /home/agent/vm.txt)
+        export CORE_MASTER=$(sed -n '1p' /root/vm.txt)
+        export CORE_MASTER_IP=$(sed -n '1p' /root/vm.txt)
         export CORE_MASTER_NAME="leftclient"
 
-        export OPENVPN=$(sed -n '1p' /home/agent/vm.txt)
-        export OPENVPN_IP=$(sed -n '1p' /home/agent/vm.txt)
+        export OPENVPN=$(sed -n '1p' /root/vm.txt)
+        export OPENVPN_IP=$(sed -n '1p' /root/vm.txt)
         export OPENVPN_NAME="leftclient"
 
-        export HAPROXY=$(sed -n '1p' /home/agent/vm.txt)
-        export HAPROXY_IP=$(sed -n '1p' /home/agent/vm.txt)
+        export HAPROXY=$(sed -n '1p' /root/vm.txt)
+        export HAPROXY_IP=$(sed -n '1p' /root/vm.txt)
         export HAPROXY_NAME="leftclient"
         
-        export CORE_COMPUTE=$(sed -n '2p' /home/agent/vm.txt)
-        export CORE_COMPUTE_IP=$(sed -n '2p' /home/agent/vm.txt)
+        export CORE_COMPUTE=$(sed -n '2p' /root/vm.txt)
+        export CORE_COMPUTE_IP=$(sed -n '2p' /root/vm.txt)
         export CORE_COMPUTE_NAME="rightclient"
 
-        export RAN_MASTER=$(sed -n '3p' /home/agent/vm.txt)
-        export RAN_MASTER_IP=$(sed -n '3p' /home/agent/vm.txt)
+        export RAN_MASTER=$(sed -n '3p' /root/vm.txt)
+        export RAN_MASTER_IP=$(sed -n '3p' /root/vm.txt)
         export RAN_MASTER_NAME="leftswitch"
 
         cd sopnode/ansible
