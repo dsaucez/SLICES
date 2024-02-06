@@ -133,13 +133,12 @@ stages:
       displayName: 'K8S Clusters Setup'
 
     - script: |
-       sleep 45
        leftclient=$(sed -n '1p' /root/vm.txt)
        rightclient=$(sed -n '2p' /root/vm.txt)
        leftswitch=$(sed -n '3p' /root/vm.txt)
         
-       ssh -o StrictHostKeyChecking=no $leftswitch 'sudo ip link add ran0 type veth peer name ran0_0 && sudo ip link set up ran0 && sudo ip link set up ran0_0 && sudo ip addr add 10.0.10.1/24 dev ran0_0'
-       ssh -o StrictHostKeyChecking=no $rightclient 'sudo ip link add ran0 type veth peer name ran0_0 && sudo ip link set up ran0 && sudo ip link set up ran0_0 && sudo ip addr add 172.22.10.1/24 dev ran0_0'
+       ssh -o StrictHostKeyChecking=no ubuntu@$leftswitch 'sudo ip link add ran0 type veth peer name ran0_0 && sudo ip link set up ran0 && sudo ip link set up ran0_0 && sudo ip addr add 10.0.10.1/24 dev ran0_0'
+       ssh -o StrictHostKeyChecking=no ubuntu@$rightclient 'sudo ip link add ran0 type veth peer name ran0_0 && sudo ip link set up ran0 && sudo ip link set up ran0_0 && sudo ip addr add 172.22.10.1/24 dev ran0_0'
       displayName: 'Setup ran0 interface'
 
     # Set  OpenVPN client in RAN
@@ -148,9 +147,9 @@ stages:
        rightclient=$(sed -n '2p' /root/vm.txt)
        leftswitch=$(sed -n '3p' /root/vm.txt)
        
-       scp -o StrictHostKeyChecking=no $leftclient:/home/ubuntu/core/core.ovpn . 
-       scp -o StrictHostKeyChecking=no core.ovpn $rightclient:/home/ubuntu/
-       ssh -o StrictHostKeyChecking=no $rightclient 'nohup sudo openvpn core.ovpn </dev/null >nohup.log 2>&1 &'
+       scp -o StrictHostKeyChecking=no ubuntu@$leftclient:/home/ubuntu/core/core.ovpn . 
+       scp -o StrictHostKeyChecking=no core.ovpn  ubuntu@$rightclient:/home/ubuntu/
+       ssh -o StrictHostKeyChecking=no  ubuntu@$rightclient 'nohup sudo openvpn core.ovpn </dev/null >nohup.log 2>&1 &'
       displayName: 'Set  OpenVPN client in core'
 
     - script: | 
@@ -177,7 +176,7 @@ stages:
        rightclient=$(sed -n '2p' /root/vm.txt)
        leftswitch=$(sed -n '3p' /root/vm.txt)
        
-       ssh -o StrictHostKeyChecking=no $leftswitch 'ping -c 1 -I 10.0.10.1 172.22.10.1'
+       ssh -o StrictHostKeyChecking=no ubuntu@$leftswitch 'ping -c 1 -I 10.0.10.1 172.22.10.1'
       displayName: 'Interconnection test'
 
     - task: SSH@0
