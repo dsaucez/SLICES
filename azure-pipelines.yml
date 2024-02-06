@@ -43,15 +43,15 @@ stages:
 
     #  Create VMs
     - task: SSH@0
-      displayName: 'Launch Multipass VMs'
+      displayName: 'Creates KVM instances'
       continueOnError: true
       inputs:
         sshEndpoint: $(VM_SERVER)
         runOptions: 'commands'
         commands: |
-          multipass launch --cloud-init azurevm-init.yaml --cpus 4 --disk 40G --memory 16G --name leftclient
-          multipass launch --cloud-init azurevm-init.yaml --cpus 4 --disk 40G --memory 16G --name rightclient
-          multipass launch --cloud-init azurevm-init.yaml --cpus 4 --disk 40G --memory 16G --name leftswitch
+           git clone -b pipeline-kvm https://github.com/dsaucez/SLICES.git
+           terraform -chdir=SLICES/pipeline init
+           terraform -chdir=SLICES/pipeline apply -auto-approve
         readyTimeout: '20000'
     # Fetch IP@ of VMs to be used in ansible hosts files
     - task: SSH@0
