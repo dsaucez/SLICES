@@ -1,3 +1,8 @@
 {
+{% if docker.insecure_registries is defined %} 
   "insecure-registries": {{ docker.insecure_registries | tojson }}
+{% endif %}
+{% if docker.registry_mirrors is defined %} 
+  "registry-mirrors" : {{ docker.registry_mirrors | tojson }}
+{% endif %}
 }
