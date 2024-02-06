@@ -99,37 +99,28 @@ stages:
 
         # Update ansbile RAN hosts
         envsubst < inventories/blueprint/templates/ran/hosts.tpl > inventories/blueprint/ran/hosts
-        #        sed -i "s/172\.16\.2\.2/$leftswitch/g" inventories/blueprint/ran/hosts
         sed -i 's/root/ubuntu/g' inventories/blueprint/ran/group_vars/all
-        #        sed -i "s/172\.16\.2\.27/$leftswitch/g; s/172\.16\.0\.0\/12/10\.92\.171\.0\/24/g" params.blueprint.ran.yaml 
         cat inventories/blueprint/ran/hosts
-        #ansible-playbook -i inventories/blueprint/ran/ k8s-master.yaml --extra-vars "@params.blueprint.ran.yaml"
-        #ansible-playbook -i inventories/blueprint/ran/ k8s-node.yaml --extra-vars "@params.blueprint.ran.yaml"
-
 
         # Update ansible core hosts
         envsubst < inventories/blueprint/templates/core/hosts.tpl > inventories/blueprint/core/hosts
         sed -i 's/root/ubuntu/g' inventories/blueprint/core/group_vars/all
-        #        sed -i "s/172\.16\.2\.26/$leftclient/g; s/172\.16\.0\.0\/12/10\.92\.171\.0\/24/g" params.blueprint.core.yaml
-        #        sed -i "s/172\.16\.2\.5/$leftclient/g; s/172\.16\.2\.6/$rightclient/g" inventories/blueprint/core/hosts
         cat inventories/blueprint/core/hosts
-        #        #ansible-playbook -i inventories/blueprint/core/ k8s-master.yaml --extra-vars "@params.blueprint.core.yaml"
-        #        #ansible-playbook -i inventories/blueprint/core/ k8s-node.yaml --extra-vars "@params.blueprint.core.yaml"
 
         #Create clusters
         echo 'Creating RAN & core cluster ...'
-        ansible-playbook -i inventories/blueprint/core/ k8s-master.yaml --extra-vars "@params.blueprint.core.yaml" &
-        ansible-playbook -i inventories/blueprint/ran/ k8s-master.yaml --extra-vars "@params.blueprint.ran.yaml" 
+        ansible-playbook -i inventories/blueprint/core/ k8s-master.yaml --extra-vars "@params.blueprint.core.yaml" --extra-vars "@params.pipeline.yaml" &
+        ansible-playbook -i inventories/blueprint/ran/ k8s-master.yaml --extra-vars "@params.blueprint.ran.yaml" --extra-vars "@params.pipeline.yaml" 
         wait
-        ansible-playbook -i inventories/blueprint/ran/ k8s-node.yaml --extra-vars "@params.blueprint.ran.yaml" &
-        ansible-playbook -i inventories/blueprint/core/ k8s-node.yaml --extra-vars "@params.blueprint.core.yaml" 
+        ansible-playbook -i inventories/blueprint/ran/ k8s-node.yaml --extra-vars "@params.blueprint.ran.yaml" --extra-vars "@params.pipeline.yaml" &
+        ansible-playbook -i inventories/blueprint/core/ k8s-node.yaml --extra-vars "@params.blueprint.core.yaml" --extra-vars "@params.pipeline.yaml"
         echo 'Cluster interconnection ...'
         #Cluster interconection
         #Set up openvpn server 192.0.2.1
 
         sed -i "s/192\.0\.2\.1/${OPENVPN_IP}/g" roles/openvpn/vars/main.yaml
 
-        ansible-playbook  -i inventories/blueprint/core/ openvpn.yaml --extra-vars "@params.blueprint.core.yaml"        
+        ansible-playbook  -i inventories/blueprint/core/ openvpn.yaml --extra-vars "@params.blueprint.core.yaml" --extra-vars "@params.pipeline.yaml"       
       displayName: 'K8S Clusters Setup'
 
     - script: |
