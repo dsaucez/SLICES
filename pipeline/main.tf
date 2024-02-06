@@ -139,5 +139,5 @@ output "instances" {
 }
 
 output "instance_ips" {
-  value = libvirt_domain.domain.*.network_interface.0.addresses.0
+  value = libvirt_domain.domain.*.network_interface.0.addresses
 }
