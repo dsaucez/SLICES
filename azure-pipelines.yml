@@ -47,25 +47,18 @@ stages:
       env:
          LIBVIRT_DEFAULT_URI: "qemu+ssh://ubuntu@sopnode-w2/system"
          TF_VAR_instances:    '["leftclient","rightclient","leftswitch"]'
-    # Fetch IP@ of VMs to be used in ansible hosts files
-    - task: SSH@0
-      displayName: 'Fetch IP@ of VMs'
-      inputs:
-        sshEndpoint: $(VM_SERVER)
-        runOptions: 'commands'
-        commands: |
-          multipass info leftclient --format json | jq -r '.info.leftclient.ipv4[0]' > vm.txt
-          multipass info rightclient --format json | jq -r '.info.rightclient.ipv4[0]' >> vm.txt
-          multipass info leftswitch --format json | jq -r '.info.leftswitch.ipv4[0]' >> vm.txt
 
-          #Send the vm.txt to the azure VM (already exists before the pipeline)
-          #scp -o StrictHostKeyChecking=no $HOME/vm.txt ubuntu@10.92.171.99:/home/ubuntu/
-          #Send the vm.txt to the azure agent container
-          #multipass exec azure --  docker cp /home/ubuntu/vm.txt azureagent:/root/
-          docker cp /home/ubuntu/vm.txt azureagent:/root/
-        readyTimeout: '20000'
-        
-  
+    # Fetch IP@ of VMs to be used in ansible hosts files
+    - script: |
+       sleep 45
+       terraform -chdir=pipeline refresh
+       terraform -chdir=pipeline output -json | jq '.instance_ips.value[0][0]' | tr -d \" > /root/vm.txt
+       terraform -chdir=pipeline output -json | jq '.instance_ips.value[1][0]' | tr -d \" >> /root/vm.txt
+       terraform -chdir=pipeline output -json | jq '.instance_ips.value[2][0]' | tr -d \" >> /root/vm.txt
+      env:
+         LIBVIRT_DEFAULT_URI: "qemu+ssh://ubuntu@sopnode-w2/system"
+         TF_VAR_instances:    '["leftclient","rightclient","leftswitch"]'
+
     - script: |
  
 
