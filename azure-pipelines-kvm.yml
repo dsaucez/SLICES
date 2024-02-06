@@ -1,0 +1,189 @@
+#variables:
+#- name: VM_SERVER
+#  value: 'sopnode-w2-multipass'
+
+# trigger:
+# - main
+
+# pool:
+#   vmImage: ubuntu-latest
+
+# Build a Docker image
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+# trigger:
+# - develop
+## Use this for scheduled runs; you can also do it from the interface with triggers, click on the":" next to save
+# schedules:
+# - cron: '0 0 * * *'
+#   displayName: Daily midnight build
+#   branches:
+#     include:
+#     - main
+trigger:
+- none
+
+pool:
+ name: Default
+ #name: Azure Pipelines
+ 
+resources:
+- repo: self
+
+stages:
+- stage: Blueprint_Deployment
+  displayName: blueprint Deployment
+  jobs:
+  - job: Build
+    displayName: Ubuntu 22.04 Deployment
+    pool:
+      name: Default
+
+    steps:
+    # Prepare terrafrom
+    - script: terraform -chdir=pipeline init
+      displayName: 'Prepare terraform'
+    
+    # Create VMs
+    - script: terraform -chdir=pipeline apply -auto-approve
+      env:
+         LIBVIRT_DEFAULT_URI: "qemu+ssh://ubuntu@sopnode-w2/system"
+         TF_VAR_instances:    '["leftclient","rightclient","leftswitch"]'
+      displayName: 'Create VMs'
+
+    # Fetch IP@ of VMs to be used in ansible hosts files
+    - script: |
+       sleep 45
+       terraform -chdir=pipeline refresh
+       terraform -chdir=pipeline output -json | jq '.instance_ips.value[0][0]' | tr -d \" > /root/vm.txt
+       terraform -chdir=pipeline output -json | jq '.instance_ips.value[1][0]' | tr -d \" >> /root/vm.txt
+       terraform -chdir=pipeline output -json | jq '.instance_ips.value[2][0]' | tr -d \" >> /root/vm.txt
+      env:
+         LIBVIRT_DEFAULT_URI: "qemu+ssh://ubuntu@sopnode-w2/system"
+         TF_VAR_instances:    '["leftclient","rightclient","leftswitch"]'
+      displayName: 'Fetch IP@ of VMs to be used in ansible hosts files'
+
+    - script: |
+        # Setup Environment
+        export PATH="$HOME/.local/bin:$PATH"
+        . ~/.bashrc
+        #git checkout 2nd-summer-school-stable
+        echo 'Setting IP@ variables ...'
+        
+        #Set variables 
+        leftclient=$(sed -n '1p' /root/vm.txt)
+        rightclient=$(sed -n '2p' /root/vm.txt)
+        leftswitch=$(sed -n '3p' /root/vm.txt)
+        
+        export CORE_MASTER=$(sed -n '1p' /root/vm.txt)
+        export CORE_MASTER_IP=$(sed -n '1p' /root/vm.txt)
+        export CORE_MASTER_NAME="leftclient"
+
+        export OPENVPN=$(sed -n '1p' /root/vm.txt)
+        export OPENVPN_IP=$(sed -n '1p' /root/vm.txt)
+        export OPENVPN_NAME="leftclient"
+
+        export HAPROXY=$(sed -n '1p' /root/vm.txt)
+        export HAPROXY_IP=$(sed -n '1p' /root/vm.txt)
+        export HAPROXY_NAME="leftclient"
+        
+        export CORE_COMPUTE=$(sed -n '2p' /root/vm.txt)
+        export CORE_COMPUTE_IP=$(sed -n '2p' /root/vm.txt)
+        export CORE_COMPUTE_NAME="rightclient"
+
+        export RAN_MASTER=$(sed -n '3p' /root/vm.txt)
+        export RAN_MASTER_IP=$(sed -n '3p' /root/vm.txt)
+        export RAN_MASTER_NAME="leftswitch"
+
+        cd sopnode/ansible
+
+        # Update ansbile RAN hosts
+        envsubst < inventories/blueprint/templates/ran/hosts.tpl > inventories/blueprint/ran/hosts
+        sed -i 's/root/ubuntu/g' inventories/blueprint/ran/group_vars/all
+        cat inventories/blueprint/ran/hosts
+
+        # Update ansible core hosts
+        envsubst < inventories/blueprint/templates/core/hosts.tpl > inventories/blueprint/core/hosts
+        sed -i 's/root/ubuntu/g' inventories/blueprint/core/group_vars/all
+        cat inventories/blueprint/core/hosts
+
+        #Create clusters
+        echo 'Creating RAN & core cluster ...'
+        ansible-playbook -i inventories/blueprint/core/ k8s-master.yaml --extra-vars "@params.blueprint.core.yaml" --extra-vars "@params.pipeline.yaml" &
+        ansible-playbook -i inventories/blueprint/ran/ k8s-master.yaml --extra-vars "@params.blueprint.ran.yaml" --extra-vars "@params.pipeline.yaml" 
+        wait
+        ansible-playbook -i inventories/blueprint/ran/ k8s-node.yaml --extra-vars "@params.blueprint.ran.yaml" --extra-vars "@params.pipeline.yaml" &
+        ansible-playbook -i inventories/blueprint/core/ k8s-node.yaml --extra-vars "@params.blueprint.core.yaml" --extra-vars "@params.pipeline.yaml"
+        echo 'Cluster interconnection ...'
+        #Cluster interconection
+        #Set up openvpn server 192.0.2.1
+
+        sed -i "s/192\.0\.2\.1/${OPENVPN_IP}/g" roles/openvpn/vars/main.yaml
+
+        ansible-playbook  -i inventories/blueprint/core/ openvpn.yaml --extra-vars "@params.blueprint.core.yaml" --extra-vars "@params.pipeline.yaml"       
+      displayName: 'K8S Clusters Setup'
+
+    - script: |
+       leftclient=$(sed -n '1p' /root/vm.txt)
+       rightclient=$(sed -n '2p' /root/vm.txt)
+       leftswitch=$(sed -n '3p' /root/vm.txt)
+        
+       ssh -o StrictHostKeyChecking=no ubuntu@$leftswitch 'sudo ip link add ran0 type veth peer name ran0_0 && sudo ip link set up ran0 && sudo ip link set up ran0_0 && sudo ip addr add 10.0.10.1/24 dev ran0_0'
+       ssh -o StrictHostKeyChecking=no ubuntu@$rightclient 'sudo ip link add ran0 type veth peer name ran0_0 && sudo ip link set up ran0 && sudo ip link set up ran0_0 && sudo ip addr add 172.22.10.1/24 dev ran0_0'
+      displayName: 'Setup ran0 interface'
+
+    # Connect OpenVPN client in Core
+    - script: |
+       leftclient=$(sed -n '1p' /root/vm.txt)
+       rightclient=$(sed -n '2p' /root/vm.txt)
+       leftswitch=$(sed -n '3p' /root/vm.txt)
+       
+       scp -o StrictHostKeyChecking=no ubuntu@$leftclient:/home/ubuntu/core/core.ovpn . 
+       scp -o StrictHostKeyChecking=no core.ovpn  ubuntu@$rightclient:/home/ubuntu/
+       ssh -o StrictHostKeyChecking=no  ubuntu@$rightclient 'nohup sudo openvpn core.ovpn </dev/null >nohup.log 2>&1 &'
+      displayName: 'Conect Core to VPN'
+
+    # Connect OpenVPN client in RAN
+    - script: |
+       leftclient=$(sed -n '1p' /root/vm.txt)
+       rightclient=$(sed -n '2p' /root/vm.txt)
+       leftswitch=$(sed -n '3p' /root/vm.txt)
+       
+       scp -o StrictHostKeyChecking=no ubuntu@$leftclient:/home/ubuntu/ran/ran.ovpn . 
+       scp -o StrictHostKeyChecking=no ran.ovpn  ubuntu@$leftswitch:/home/ubuntu/
+       ssh -o StrictHostKeyChecking=no  ubuntu@$leftswitch 'nohup sudo openvpn ran.ovpn </dev/null >nohup.log 2>&1 &'
+      displayName: 'Connect RAN to VPN'
+
+    - script: | 
+        #Setup Environment
+        export PATH="$HOME/.local/bin:$PATH"
+        . ~/.bashrc
+        cd sopnode/ansible
+        #Core deployment
+        echo 'deploying 5G core ...'
+        ansible-playbook  -i inventories/blueprint/core/  5g.yaml  --extra-vars "@params.blueprint.core.yaml"
+      displayName: '5G core deployment'
+      
+    - script: |
+        # Setup Environment
+        export PATH="$HOME/.local/bin:$PATH"
+        . ~/.bashrc
+        cd sopnode/ansible
+        ansible-playbook  -i inventories/blueprint/ran/  5g.yaml  --extra-vars "@params.blueprint.ran.yaml"
+      displayName: 'RAN deployment'
+        
+    # Set  OpenVPN client in RAN
+    - script: |
+       leftclient=$(sed -n '1p' /root/vm.txt)
+       rightclient=$(sed -n '2p' /root/vm.txt)
+       leftswitch=$(sed -n '3p' /root/vm.txt)
+       
+       ssh -o StrictHostKeyChecking=no ubuntu@$leftswitch 'ping -c 1 -I 10.0.10.1 172.22.10.1'
+      displayName: 'Interconnection test'
+
+    # Destroy VMs
+    - script: terraform -chdir=pipeline destroy -auto-approve
+      env:
+         LIBVIRT_DEFAULT_URI: "qemu+ssh://ubuntu@sopnode-w2/system"
+         TF_VAR_instances:    '["leftclient","rightclient","leftswitch"]'
+      displayName: 'Destroy VMs'

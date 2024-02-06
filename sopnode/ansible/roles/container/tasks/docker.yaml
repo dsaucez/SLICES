@@ -11,17 +11,17 @@
       dest: '/etc/systemd/system/docker.service.d/10-ramdisk.conf'
   when: (hostvars[inventory_hostname]['xx-ramdisk'] is defined) and (hostvars[inventory_hostname]['xx-ramdisk'])
 
-- name: Allow insecure registries
+- name: Custom docker systemd parameters
   block:
   - name: Create docker systemd directory
     ansible.builtin.file:
       path: '/etc/docker/'
       state: directory
-  - name: Add insecure registries
+  - name: Set content
     ansible.builtin.template:
       src: daemon.json.j2
       dest: '/etc/docker/daemon.json'
-  when: (docker.insecure_registries is defined)
+  when: (docker is defined)
 
 - include_tasks: "{{ 'docker_' + (ansible_distribution | lower) + '.yaml' }}"
 

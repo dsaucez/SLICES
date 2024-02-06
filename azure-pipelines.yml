@@ -130,18 +130,18 @@ stages:
 
         #Create clusters
         echo 'Creating RAN & core cluster ...'
-        ansible-playbook -i inventories/blueprint/core/ k8s-master.yaml --extra-vars "@params.blueprint.core.yaml" &
-        ansible-playbook -i inventories/blueprint/ran/ k8s-master.yaml --extra-vars "@params.blueprint.ran.yaml" 
+        ansible-playbook -i inventories/blueprint/core/ k8s-master.yaml --extra-vars "@params.blueprint.core.yaml"  --extra-vars "@params.pipeline.yaml"&
+        ansible-playbook -i inventories/blueprint/ran/ k8s-master.yaml --extra-vars "@params.blueprint.ran.yaml"  --extra-vars "@params.pipeline.yaml"
         wait
-        ansible-playbook -i inventories/blueprint/ran/ k8s-node.yaml --extra-vars "@params.blueprint.ran.yaml" &
-        ansible-playbook -i inventories/blueprint/core/ k8s-node.yaml --extra-vars "@params.blueprint.core.yaml" 
+        ansible-playbook -i inventories/blueprint/ran/ k8s-node.yaml --extra-vars "@params.blueprint.ran.yaml"  --extra-vars "@params.pipeline.yaml" &
+        ansible-playbook -i inventories/blueprint/core/ k8s-node.yaml --extra-vars "@params.blueprint.core.yaml"  --extra-vars "@params.pipeline.yaml"
         echo 'Cluster interconnection ...'
         #Cluster interconection
         #Set up openvpn server 192.0.2.1
 
         sed -i "s/192\.0\.2\.1/${OPENVPN_IP}/g" roles/openvpn/vars/main.yaml
 
-        ansible-playbook  -i inventories/blueprint/core/ openvpn.yaml --extra-vars "@params.blueprint.core.yaml"
+        ansible-playbook  -i inventories/blueprint/core/ openvpn.yaml --extra-vars "@params.blueprint.core.yaml"  --extra-vars "@params.pipeline.yaml"
         
       displayName: 'K8S Clusters Setup'
   
