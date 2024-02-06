@@ -49,6 +49,8 @@ stages:
         sshEndpoint: $(VM_SERVER)
         runOptions: 'commands'
         commands: |
+           export LIBVIRT_DEFAULT_URI="qemu:///system"
+           export TF_VAR_instances='["leftclient","rightclient","leftswitch"]'
            git clone -b pipeline-kvm https://github.com/dsaucez/SLICES.git
            terraform -chdir=SLICES/pipeline init
            terraform -chdir=SLICES/pipeline apply -auto-approve
