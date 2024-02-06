@@ -40,21 +40,13 @@ stages:
       name: Default
 
     steps:
-
-    #  Create VMs
-    - task: SSH@0
-      displayName: 'Creates KVM instances'
-      continueOnError: true
-      inputs:
-        sshEndpoint: $(VM_SERVER)
-        runOptions: 'commands'
-        commands: |
-           export LIBVIRT_DEFAULT_URI="qemu:///system"
-           export TF_VAR_instances='["leftclient","rightclient","leftswitch"]'
-           git clone -b pipeline-kvm https://github.com/dsaucez/SLICES.git
-           terraform -chdir=SLICES/pipeline init
-           terraform -chdir=SLICES/pipeline apply -auto-approve
-        readyTimeout: '20000'
+    # Prepare terrafrom
+    - script: terraform -chdir=pipeline init
+    # Create VMs
+    - script: terraform -chdir=pipeline apply -auto-approve
+      env:
+         LIBVIRT_DEFAULT_URI: "qemu+ssh://ubuntu@sopnode-w2/system"
+         TF_VAR_instances:    '["leftclient","rightclient","leftswitch"]'
     # Fetch IP@ of VMs to be used in ansible hosts files
     - task: SSH@0
       displayName: 'Fetch IP@ of VMs'
