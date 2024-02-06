@@ -113,7 +113,7 @@ resource "libvirt_domain" "domain" {
   }
 
   network_interface {
-    network_name = "vlan-20-net"
+    network_name = "default"
   }
 
   cloudinit = libvirt_cloudinit_disk.commoninit[count.index].id
