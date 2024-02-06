@@ -32,9 +32,9 @@ provider "libvirt" {
 }
 
 // variables 
-variable "memory" { default = 4 * 1024 } // memory in MB
-variable "cpu" { default = 2 } // number of cores
-variable "disk" { default = 4 * 1024 * 1024 * 1024 } // disk size in Bytes
+variable "memory" { default = 16 * 1024 } // memory in MB
+variable "cpu" { default = 4 } // number of cores
+variable "disk" { default = 40 * 1024 * 1024 * 1024 } // disk size in Bytes
 variable "image_source" { default = "https://cloud-images.ubuntu.com/releases/jammy/release/ubuntu-22.04-server-cloudimg-amd64.img" } // cloud-init qcow2 image
 variable "pool" { default = "blueprint" }
 variable "pool_path" { default = "/tmp/pools" }
