@@ -40,31 +40,43 @@ stages:
       name: Default
 
     steps:
-    # Prepare terrafrom
-    - script: terraform -chdir=pipeline init
-      displayName: 'Prepare terraform'
-    
-    # Create VMs
-    - script: terraform -chdir=pipeline apply -auto-approve
-      env:
-         LIBVIRT_DEFAULT_URI: "qemu+ssh://ubuntu@sopnode-w2/system"
-         TF_VAR_instances:    '["leftclient","rightclient","leftswitch"]'
-      displayName: 'Create VMs'
 
+    #  Create VMs
+    - task: SSH@0
+      displayName: 'Launch Multipass VMs'
+      continueOnError: true
+      inputs:
+        sshEndpoint: $(VM_SERVER)
+        runOptions: 'commands'
+        commands: |
+          multipass launch --cloud-init azurevm-init.yaml --cpus 4 --disk 40G --memory 16G --name leftclient
+          multipass launch --cloud-init azurevm-init.yaml --cpus 4 --disk 40G --memory 16G --name rightclient
+          multipass launch --cloud-init azurevm-init.yaml --cpus 4 --disk 40G --memory 16G --name leftswitch
+        readyTimeout: '20000'
     # Fetch IP@ of VMs to be used in ansible hosts files
-    - script: |
-       sleep 45
-       terraform -chdir=pipeline refresh
-       terraform -chdir=pipeline output -json | jq '.instance_ips.value[0][0]' | tr -d \" > /root/vm.txt
-       terraform -chdir=pipeline output -json | jq '.instance_ips.value[1][0]' | tr -d \" >> /root/vm.txt
-       terraform -chdir=pipeline output -json | jq '.instance_ips.value[2][0]' | tr -d \" >> /root/vm.txt
-      env:
-         LIBVIRT_DEFAULT_URI: "qemu+ssh://ubuntu@sopnode-w2/system"
-         TF_VAR_instances:    '["leftclient","rightclient","leftswitch"]'
-      displayName: 'Fetch IP@ of VMs to be used in ansible hosts files'
+    - task: SSH@0
+      displayName: 'Fetch IP@ of VMs'
+      inputs:
+        sshEndpoint: $(VM_SERVER)
+        runOptions: 'commands'
+        commands: |
+          multipass info leftclient --format json | jq -r '.info.leftclient.ipv4[0]' > vm.txt
+          multipass info rightclient --format json | jq -r '.info.rightclient.ipv4[0]' >> vm.txt
+          multipass info leftswitch --format json | jq -r '.info.leftswitch.ipv4[0]' >> vm.txt
 
+          #Send the vm.txt to the azure VM (already exists before the pipeline)
+          #scp -o StrictHostKeyChecking=no $HOME/vm.txt ubuntu@10.92.171.99:/home/ubuntu/
+          #Send the vm.txt to the azure agent container
+          #multipass exec azure --  docker cp /home/ubuntu/vm.txt azureagent:/root/
+          docker cp /home/ubuntu/vm.txt azureagent:/root/
+        readyTimeout: '20000'
+        
+  
     - script: |
+ 
+
         # Setup Environment
+
         export PATH="$HOME/.local/bin:$PATH"
         . ~/.bashrc
         #git checkout 2nd-summer-school-stable
@@ -99,62 +111,77 @@ stages:
 
         # Update ansbile RAN hosts
         envsubst < inventories/blueprint/templates/ran/hosts.tpl > inventories/blueprint/ran/hosts
+        #        sed -i "s/172\.16\.2\.2/$leftswitch/g" inventories/blueprint/ran/hosts
         sed -i 's/root/ubuntu/g' inventories/blueprint/ran/group_vars/all
+        #        sed -i "s/172\.16\.2\.27/$leftswitch/g; s/172\.16\.0\.0\/12/10\.92\.171\.0\/24/g" params.blueprint.ran.yaml 
         cat inventories/blueprint/ran/hosts
+        #ansible-playbook -i inventories/blueprint/ran/ k8s-master.yaml --extra-vars "@params.blueprint.ran.yaml"
+        #ansible-playbook -i inventories/blueprint/ran/ k8s-node.yaml --extra-vars "@params.blueprint.ran.yaml"
+
 
         # Update ansible core hosts
         envsubst < inventories/blueprint/templates/core/hosts.tpl > inventories/blueprint/core/hosts
         sed -i 's/root/ubuntu/g' inventories/blueprint/core/group_vars/all
+        #        sed -i "s/172\.16\.2\.26/$leftclient/g; s/172\.16\.0\.0\/12/10\.92\.171\.0\/24/g" params.blueprint.core.yaml
+        #        sed -i "s/172\.16\.2\.5/$leftclient/g; s/172\.16\.2\.6/$rightclient/g" inventories/blueprint/core/hosts
         cat inventories/blueprint/core/hosts
+        #        #ansible-playbook -i inventories/blueprint/core/ k8s-master.yaml --extra-vars "@params.blueprint.core.yaml"
+        #        #ansible-playbook -i inventories/blueprint/core/ k8s-node.yaml --extra-vars "@params.blueprint.core.yaml"
 
         #Create clusters
         echo 'Creating RAN & core cluster ...'
-        ansible-playbook -i inventories/blueprint/core/ k8s-master.yaml --extra-vars "@params.blueprint.core.yaml" --extra-vars "@params.pipeline.yaml" &
-        ansible-playbook -i inventories/blueprint/ran/ k8s-master.yaml --extra-vars "@params.blueprint.ran.yaml" --extra-vars "@params.pipeline.yaml" 
+        ansible-playbook -i inventories/blueprint/core/ k8s-master.yaml --extra-vars "@params.blueprint.core.yaml"  --extra-vars "@params.pipeline.yaml"&
+        ansible-playbook -i inventories/blueprint/ran/ k8s-master.yaml --extra-vars "@params.blueprint.ran.yaml"  --extra-vars "@params.pipeline.yaml"
         wait
-        ansible-playbook -i inventories/blueprint/ran/ k8s-node.yaml --extra-vars "@params.blueprint.ran.yaml" --extra-vars "@params.pipeline.yaml" &
-        ansible-playbook -i inventories/blueprint/core/ k8s-node.yaml --extra-vars "@params.blueprint.core.yaml" --extra-vars "@params.pipeline.yaml"
+        ansible-playbook -i inventories/blueprint/ran/ k8s-node.yaml --extra-vars "@params.blueprint.ran.yaml"  --extra-vars "@params.pipeline.yaml" &
+        ansible-playbook -i inventories/blueprint/core/ k8s-node.yaml --extra-vars "@params.blueprint.core.yaml"  --extra-vars "@params.pipeline.yaml"
         echo 'Cluster interconnection ...'
         #Cluster interconection
         #Set up openvpn server 192.0.2.1
 
         sed -i "s/192\.0\.2\.1/${OPENVPN_IP}/g" roles/openvpn/vars/main.yaml
 
-        ansible-playbook  -i inventories/blueprint/core/ openvpn.yaml --extra-vars "@params.blueprint.core.yaml" --extra-vars "@params.pipeline.yaml"       
-      displayName: 'K8S Clusters Setup'
-
-    - script: |
-       leftclient=$(sed -n '1p' /root/vm.txt)
-       rightclient=$(sed -n '2p' /root/vm.txt)
-       leftswitch=$(sed -n '3p' /root/vm.txt)
+        ansible-playbook  -i inventories/blueprint/core/ openvpn.yaml --extra-vars "@params.blueprint.core.yaml"  --extra-vars "@params.pipeline.yaml"
         
-       ssh -o StrictHostKeyChecking=no ubuntu@$leftswitch 'sudo ip link add ran0 type veth peer name ran0_0 && sudo ip link set up ran0 && sudo ip link set up ran0_0 && sudo ip addr add 10.0.10.1/24 dev ran0_0'
-       ssh -o StrictHostKeyChecking=no ubuntu@$rightclient 'sudo ip link add ran0 type veth peer name ran0_0 && sudo ip link set up ran0 && sudo ip link set up ran0_0 && sudo ip addr add 172.22.10.1/24 dev ran0_0'
+      displayName: 'K8S Clusters Setup'
+  
+    - task: SSH@0
       displayName: 'Setup ran0 interface'
+      continueOnError: true
+      inputs:
+        sshEndpoint: $(VM_SERVER)
+        runOptions: 'commands'
+        commands: |
+          multipass exec leftswitch -- /bin/bash -c 'sudo ip link add ran0 type veth peer name ran0_0 && sudo ip link set up ran0 && sudo ip link set up ran0_0 && sudo ip addr add 10.0.10.1/24 dev ran0_0'
+          multipass exec rightclient -- /bin/bash -c 'sudo ip link add ran0 type veth peer name ran0_0 && sudo ip link set up ran0 && sudo ip link set up ran0_0 && sudo ip addr add 172.22.10.1/24 dev ran0_0'
+        readyTimeout: '20000'
 
-    # Connect OpenVPN client in Core
+    - task: SSH@0
+      displayName: 'Set  OpenVPN client in core'
+      continueOnError: true
+      inputs:
+        sshEndpoint: $(VM_SERVER)
+        runOptions: 'commands'
+        commands: |
+           multipass transfer leftclient:/home/ubuntu/core/core.ovpn . 
+           multipass transfer core.ovpn rightclient:/home/ubuntu/
+           multipass exec rightclient -- nohup sudo openvpn core.ovpn </dev/null >nohup.log 2>&1 &
+        readyTimeout: '2000'
+
+    - task: SSH@0
+      displayName: 'Set  OpenVPN client in RAN'
+      continueOnError: true
+      inputs:
+        sshEndpoint: $(VM_SERVER)
+        runOptions: 'commands'
+        commands: |
+           multipass transfer leftclient:/home/ubuntu/ran/ran.ovpn . 
+           multipass transfer ran.ovpn leftswitch:/home/ubuntu/
+           multipass exec leftswitch -- nohup sudo openvpn ran.ovpn </dev/null >nohup.log 2>&1 &
+        readyTimeout: '2000'
+
     - script: |
-       leftclient=$(sed -n '1p' /root/vm.txt)
-       rightclient=$(sed -n '2p' /root/vm.txt)
-       leftswitch=$(sed -n '3p' /root/vm.txt)
-       
-       scp -o StrictHostKeyChecking=no ubuntu@$leftclient:/home/ubuntu/core/core.ovpn . 
-       scp -o StrictHostKeyChecking=no core.ovpn  ubuntu@$rightclient:/home/ubuntu/
-       ssh -o StrictHostKeyChecking=no  ubuntu@$rightclient 'nohup sudo openvpn core.ovpn </dev/null >nohup.log 2>&1 &'
-      displayName: 'Conect Core to VPN'
-
-    # Connect OpenVPN client in RAN
-    - script: |
-       leftclient=$(sed -n '1p' /root/vm.txt)
-       rightclient=$(sed -n '2p' /root/vm.txt)
-       leftswitch=$(sed -n '3p' /root/vm.txt)
-       
-       scp -o StrictHostKeyChecking=no ubuntu@$leftclient:/home/ubuntu/ran/ran.ovpn . 
-       scp -o StrictHostKeyChecking=no ran.ovpn  ubuntu@$leftswitch:/home/ubuntu/
-       ssh -o StrictHostKeyChecking=no  ubuntu@$leftswitch 'nohup sudo openvpn ran.ovpn </dev/null >nohup.log 2>&1 &'
-      displayName: 'Connect RAN to VPN'
-
-    - script: | 
+ 
         #Setup Environment
         export PATH="$HOME/.local/bin:$PATH"
         . ~/.bashrc
@@ -162,24 +189,26 @@ stages:
         #Core deployment
         echo 'deploying 5G core ...'
         ansible-playbook  -i inventories/blueprint/core/  5g.yaml  --extra-vars "@params.blueprint.core.yaml"
+
       displayName: '5G core deployment'
-      
     - script: |
+ 
         # Setup Environment
         export PATH="$HOME/.local/bin:$PATH"
         . ~/.bashrc
         cd sopnode/ansible
         ansible-playbook  -i inventories/blueprint/ran/  5g.yaml  --extra-vars "@params.blueprint.ran.yaml"
       displayName: 'RAN deployment'
-        
-    # Set  OpenVPN client in RAN
-    - script: |
-       leftclient=$(sed -n '1p' /root/vm.txt)
-       rightclient=$(sed -n '2p' /root/vm.txt)
-       leftswitch=$(sed -n '3p' /root/vm.txt)
-       
-       ssh -o StrictHostKeyChecking=no ubuntu@$leftswitch 'ping -c 1 -I 10.0.10.1 172.22.10.1'
+      continueOnError: true
+    - task: SSH@0
       displayName: 'Interconnection test'
+      continueOnError: true
+      inputs:
+        sshEndpoint: $(VM_SERVER)
+        runOptions: 'commands'
+        commands: |
+           multipass exec leftswitch -- ping -c 1 -I 10.0.10.1 172.22.10.1
+        readyTimeout: '20000'
 
     - task: SSH@0
       inputs:
