@@ -3,7 +3,7 @@
   ansible.builtin.git:
     repo: https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed.git
     dest: oai-cn5g-fed
-    version: v1.5.1
+    version: v2.0.1
     force: yes
 
 - name: Synchronize all git submodules
@@ -11,12 +11,12 @@
   args:
     chdir: oai-cn5g-fed
 
-- name: Install Helm spray plugin
-  kubernetes.core.helm_plugin:
-    plugin_path: https://github.com/ThalesGroup/helm-spray
-    plugin_version: v4.0.10
-    state: present
-
+#- name: Install Helm spray plugin
+#  kubernetes.core.helm_plugin:
+#    plugin_path: https://github.com/ThalesGroup/helm-spray
+#    plugin_version: v4.0.10
+#    state: present
+#
 - name: Create blueprint namespace 
   kubernetes.core.k8s:
     name: '{{ GCN.namespace }}'

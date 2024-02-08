@@ -17,6 +17,6 @@
     chdir: oai-cn5g-fed/charts/oai-5g-core/oai-5g-basic
 
 - name: Deploy 5G core
-  ansible.builtin.shell: 'helm spray --namespace {{ GCN.namespace }} .'
+  ansible.builtin.shell: 'helm install basic --namespace {{ GCN.namespace }} oai-5g-basic/'
   args:
-    chdir: oai-cn5g-fed/charts/oai-5g-core/oai-5g-basic
+    chdir: oai-cn5g-fed/charts/oai-5g-core/
