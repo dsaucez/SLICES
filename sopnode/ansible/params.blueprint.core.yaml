@@ -19,13 +19,13 @@ GCN:
     present: true
     custom_values: blueprint/v2.0.1/oai-5g-core
   RAN:
-    present: false
+    present: true
     custom_values: blueprint/v2.0.1/oai-5g-ran
     split:
       f1: false
       e1: false
   UE:
-    present: false
+    present: true
     tests:
       landmark_ping:
-          landmark: 172.22.10.1
+        landmark: 12.1.1.1
