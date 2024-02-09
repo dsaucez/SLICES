@@ -11,9 +11,23 @@
     dest: oai-cn5g-fed/charts/oai-5g-ran/
   when: GCN.RAN.custom_values is defined
 
-- name: Deploy gNB
+# - name: Deploy gNB
+#   kubernetes.core.helm:
+#     name: oai-gnb
+#     chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-gnb
+#     release_namespace: '{{ GCN.namespace }}'
+#     wait: true
+
+- name: Deploy gNB-CU
   kubernetes.core.helm:
-    name: oai-gnb
-    chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-gnb
+    name: cu
+    chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-cu
+    release_namespace: '{{ GCN.namespace }}'
+    wait: true
+
+- name: Deploy gNB-DU
+  kubernetes.core.helm:
+    name: du
+    chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-du
     release_namespace: '{{ GCN.namespace }}'
     wait: true
