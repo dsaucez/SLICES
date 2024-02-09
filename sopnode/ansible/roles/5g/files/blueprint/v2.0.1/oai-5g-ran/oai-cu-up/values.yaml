@@ -68,7 +68,7 @@ config:
   mnc: "01"    # check the information with AMF, SMF, UPF
   tac: "1"     # check the information with AMF
   sst: "1"     #currently only 4 standard values are allowed 1,2,3,4
-  cuCpHost: "oai-cu" # 
+  cuCpHost: "172.22.10.41" # 
   n2IfName: "n3"    # if multus.n2Interface.create is true then use n2
   n3IfName: "n3"   #if multus.n3Interface.create is true then use n3 or you can only use 1 interface n2 or eth0 
   f1IfName: "f1"   #if multus.f1uInterface.create is true then use f1
