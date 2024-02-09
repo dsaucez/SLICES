@@ -17,5 +17,12 @@ GCN:
   namespace: blueprint
   core:
     present: true
-    custom_files:  blueprint/v1.5.1/files
-    custom_values: blueprint/oai-cn5g-fed__v1.5.1/charts/oai-5g-core
+    custom_values: blueprint/v2.0.1/oai-5g-core
+  RAN:
+    present: false
+    custom_values: blueprint/v2.0.1/oai-5g-ran
+  UE:
+    present: false
+    tests:
+      landmark_ping:
+          landmark: 172.22.10.1
