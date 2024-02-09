@@ -99,7 +99,7 @@ config:
   mnc: "01"    # check the information with AMF, SMF, UPF
   tac: "1"     # check the information with AMF
   sst: "1"  #currently only 4 standard values are allowed 1,2,3,4
-  amfhost: "10.0.10.12"  # amf ip-address or service-name oai-amf-svc or 172.21.6.94
+  amfhost: "172.22.10.12"  # amf ip-address or service-name oai-amf-svc or 172.21.6.94
   n2IfName: "n2"    # if multus.n2Interface.create is true then use n2
   n3IfName: "n2"   #if multus.n3Interface.create is true then use n3 or you can only use 1 interface n2 or eth0 
   f1IfName: "f1"   #if multus.f1Interface.create is true then use f1
