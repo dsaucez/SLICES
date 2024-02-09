@@ -188,7 +188,7 @@ stages:
         cd sopnode/ansible
         #Core deployment
         echo 'deploying 5G core ...'
-        ansible-playbook  -i inventories/blueprint/core/  5g.yaml  --extra-vars "@params.blueprint.core.yaml"
+        ansible-playbook  -i inventories/blueprint/core/  5g.yaml  --extra-vars "@params.blueprint.core.yaml" --extra-vars "@params.pipeline.yaml"
 
       displayName: '5G core deployment'
     - script: |
@@ -197,7 +197,7 @@ stages:
         export PATH="$HOME/.local/bin:$PATH"
         . ~/.bashrc
         cd sopnode/ansible
-        ansible-playbook  -i inventories/blueprint/ran/  5g.yaml  --extra-vars "@params.blueprint.ran.yaml"
+        ansible-playbook  -i inventories/blueprint/ran/  5g.yaml  --extra-vars "@params.blueprint.ran.yaml" --extra-vars "@params.pipeline.yaml"
       displayName: 'RAN deployment'
       continueOnError: true
     - task: SSH@0
