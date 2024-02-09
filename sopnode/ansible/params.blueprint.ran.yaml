@@ -16,13 +16,13 @@ k8s:
 GCN:
   namespace: blueprint
   RAN:
-    present: false
+    present: true
     custom_values: blueprint/v2.0.1/oai-5g-ran
     split:
       f1: true
       e1: true
   UE:
-    present: false
+    present: true
     tests:
       landmark_ping:
         landmark: 12.1.1.1
