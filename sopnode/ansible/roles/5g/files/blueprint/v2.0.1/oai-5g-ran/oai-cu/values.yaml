@@ -30,7 +30,7 @@ multus:
   # if default gatway is empty then it will be removed
   defaultGateway: ""
   f1Interface:
-    create: false
+    create: true
     IPadd: "172.22.10.31"
     Netmask: "24"
     # #name inside the pod is hardcoded right now
@@ -76,7 +76,7 @@ config:
   amfhost: "oai-amf"  # amf ip-address or service-name oai-amf-svc or 172.21.6.94
   n2IfName: "n2"    # if multus.n2Interface.create is true then use n2
   n3IfName: "n3"   #if multus.n3Interface.create is true then use n3 or you can only use 1 interface n2 or eth0 
-  f1IfName: "eth0"   #if multus.f1Interface.create is true then use multus.f1Interface.Ipadd
+  f1IfName: "f1"   #if multus.f1Interface.create is true then use multus.f1Interface.Ipadd
   f1cuPort: "2153"   #2153 if using same interface for f1 and n3 else standard port 2152 should be use if f1 and n3 interface are different
   f1duPort: "2153"   #2153 if using same interface for f1 and n3 else standard port 2152 should be use if f1 and n3 interface are different
 
