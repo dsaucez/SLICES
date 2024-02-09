@@ -37,7 +37,7 @@ multus:
   # if default gatway is empty then it will be removed
   defaultGateway: ""
   n2Interface:
-    create: false
+    create: true 
     # #name inside the pod is hardcoded right now
     # name: "n2"
     IPadd: "172.22.10.22"
@@ -60,7 +60,7 @@ multus:
         ]
     hostInterface: "ran0"      # Interface of the host machine on which this pod will be scheduled
   n3Interface:
-    create: false
+    create: true
     IPadd: "172.22.10.23"
     # #name inside the pod is hardcoded right now
     # name: "n3"
@@ -106,7 +106,7 @@ config:
   tac: "1"     # check the information with AMF
   sst: "1"  #currently only 4 standard values are allowed 1,2,3,4
   usrp: rfsim   #allowed values rfsim, b2xx, n3xx or x3xx
-  amfhost: "172.22.10.11"  # amf ip-address or service-name oai-amf-svc or 172.21.6.94
+  amfhost: "172.22.10.12"  # amf ip-address or service-name oai-amf-svc or 172.21.6.94
   n2IfName: "n2"    # if multus.n2Interface.create is true then use n2
   n3IfName: "n3"   #if multus.n3Interface.create is true then use n3 or you can only use 1 interface n2 or eth0 
 
