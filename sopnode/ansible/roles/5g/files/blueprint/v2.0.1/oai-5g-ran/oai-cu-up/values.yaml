@@ -28,35 +28,35 @@ multus:
   #if defaultGateway is empty then it will be removed
   defaultGateway: ""
   e1Interface:
-    create: false
-    IPadd: "192.168.18.13"
+    create: true
+    IPadd: "172.22.10.42"
     Netmask: "24"
     # #name inside the pod is hardcoded right now
     # name: "e1"
     # if gatway is empty then it will be removed
     #Gateway: ""
     #routes: [{'dst': '10.8.0.0/24','gw': '172.21.7.254'}, {'dst': '10.9.0.0/24','gw': '172.21.7.254'}]
-    hostInterface: "bond0"      # Interface of the host machine on which this pod will be scheduled
+    hostInterface: "ran0"      # Interface of the host machine on which this pod will be scheduled
   n3Interface:
-    create: false
-    IPadd: "172.21.8.97"
-    Netmask: "22"
+    create: true
+    IPadd: "172.22.10.23"
+    Netmask: "24"
     # #name inside the pod is hardcoded right now
     # name: "n3"
     # if gatway is empty then it will be removed
     #Gateway: ""
     #routes: []
-    hostInterface: "bond0"      # Interface of the host machine on which this pod will be scheduled
+    hostInterface: "ran0"      # Interface of the host machine on which this pod will be scheduled
   f1uInterface:
-    create: false
-    IPadd: "172.21.16.93"
-    Netmask: "22"
+    create: true
+    IPadd: "172.22.10.32"
+    Netmask: "24"
     # #name inside the pod is hardcoded right now
     # name: "f1u"
     # if gatway is empty then it will be removed
     #Gateway: ""
     #routes: []
-    hostInterface: "bond0"      # Interface of the host machine on which this pod will be scheduled
+    hostInterface: "ran0"      # Interface of the host machine on which this pod will be scheduled
 
 ## configuration file is in template/config.yaml 
 ## It is taken from https://gitlab.eurecom.fr/oai/openairinterface5g/-/blob/develop/ci-scripts/conf_files/gnb-cuup.sa.f1.conf
@@ -69,10 +69,10 @@ config:
   tac: "1"     # check the information with AMF
   sst: "1"     #currently only 4 standard values are allowed 1,2,3,4
   cuCpHost: "oai-cu" # 
-  n2IfName: "eth0"    # if multus.n2Interface.create is true then use n2
-  n3IfName: "eth0"   #if multus.n3Interface.create is true then use n3 or you can only use 1 interface n2 or eth0 
-  f1IfName: "eth0"   #if multus.f1uInterface.create is true then use f1
-  e1IfName: "eth0"   #if multus.e1Interface.create is true then use e1
+  n2IfName: "n3"    # if multus.n2Interface.create is true then use n2
+  n3IfName: "n3"   #if multus.n3Interface.create is true then use n3 or you can only use 1 interface n2 or eth0 
+  f1IfName: "f1"   #if multus.f1uInterface.create is true then use f1
+  e1IfName: "e1"   #if multus.e1Interface.create is true then use e1
   f1cuPort: "2153"   #2153 if using same interface for f1 and n3 else standard port 2152 should be use if f1 and n3 interface are different
   f1duPort: "2153"   #2153 if using same interface for f1 and n3 else standard port 2152 should be use if f1 and n3 interface are different
 

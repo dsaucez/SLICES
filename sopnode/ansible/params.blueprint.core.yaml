@@ -21,6 +21,9 @@ GCN:
   RAN:
     present: false
     custom_values: blueprint/v2.0.1/oai-5g-ran
+    split:
+      f1: false
+      e1: false
   UE:
     present: false
     tests:
