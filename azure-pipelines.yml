@@ -214,6 +214,8 @@ stages:
         export PATH="$HOME/.local/bin:$PATH"
         . ~/.bashrc
         cd sopnode/ansible
+        kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=oai-nr-ue --timeout=3m --namespace blueprint
+        sleep 60
         ansible-playbook  -i inventories/blueprint/ran/  5g_test.yaml  --extra-vars "@params.blueprint.ran.yaml" --extra-vars "@params.pipeline.yaml"
       displayName: 'Test UE connectivity'
       continueOnError: true
