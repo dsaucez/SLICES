@@ -19,7 +19,7 @@ GCN:
     present: true
     custom_values: blueprint/v2.0.1/oai-5g-ran
     split:
-      f1: true
+      f1: false
       e1: false
   UE:
     present: true
