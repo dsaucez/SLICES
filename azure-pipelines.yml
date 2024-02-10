@@ -220,13 +220,13 @@ stages:
       displayName: 'Test UE connectivity'
       continueOnError: true
 
-    # - task: SSH@0
-    #   inputs:
-    #     sshEndpoint: $(VM_SERVER)
-    #     runOptions: 'commands'
-    #     commands: |
-    #       multipass delete --purge leftclient
-    #       multipass delete --purge rightclient
-    #       multipass delete --purge leftswitch
-    #     readyTimeout: '20000'
-    #   displayName: Destroy VMs
+     - task: SSH@0
+       inputs:
+         sshEndpoint: $(VM_SERVER)
+         runOptions: 'commands'
+         commands: |
+           multipass delete --purge leftclient
+           multipass delete --purge rightclient
+           multipass delete --purge leftswitch
+         readyTimeout: '20000'
+       displayName: Destroy VMs
