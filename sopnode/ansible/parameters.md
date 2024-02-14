@@ -23,12 +23,18 @@
 |---|---|---|---|
 |`GCN.namespace` | string | | name of the blueprint where GCN is deployed |
 |`GCN.core.present` | boolean | | deploy NG Core|
-|`GCN.core.custom_values` | path | x | |
+|`GCN.core.custom_values` | path | x | directory where to get custom charts* |
 |`GCN.RAN.present`| boolean | | deploy RAN |
-|`GCN.RAN.custom_values:`| path | | |
+|`GCN.RAN.custom_values:`| path | | directory where to get custom charts* |
 |`GCN.RAN.split.f1` |boolean| x| split RAN with F1 interface [default=`false`] |
 |`GCN.RAN..split.e1`|boolean| x| split RAN with E1 interface [default=`false`] |
 |`GCN.UE.present`| boolean |  | deploy user equipement |
 |`GCN.UE.tests.landmark_ping.landmark` | ip address | | IP address to test|
 
+The 5G core and RAN are implemented with OpenAirInterface and deployed with
+helm charts. `GCN.core.custom_values` and `GCN.RAN.custom_values` allow to
+overwrite the charts and values with custom ones. They correspond to the
+`charts/oai-5g-core` diretory and the `chats/oai-5g-ran` directory of *oai-cn5g-fed* repository (see https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed.git).
 
+## Notes
+Parameters overwrite Ansible inventories variables and defaults.
