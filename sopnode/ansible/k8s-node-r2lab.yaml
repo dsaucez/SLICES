@@ -1,0 +1,66 @@
+- name: Get cluster infos
+  hosts: masters
+  run_once: true
+  become: yes
+  roles:
+    - role: k8s-infos
+
+- name: Prepare k8s nodes
+  hosts: computes:!masters
+  become: yes
+  vars:
+    token: "{{ hostvars['ansible_dummy_host']['_token'] }}"
+    ca_cert_hash: "{{ hostvars['ansible_dummy_host']['_ca_cert_hash'] }}"
+    kube_config_local_path: "{{ hostvars['ansible_dummy_host']['_kube_config'] }}"
+    master: "{{ k8s['apiserver_advertise_address'] | default(hostvars['ansible_dummy_host']['_master']) }}"
+  environment:
+    PATH: '{{ansible_env.PATH }}:/usr/local/bin/'
+  tasks:
+
+  # Prepare k8s
+  - name: Create ~/.kube
+    ansible.builtin.file:
+      path: ~/.kube/
+      state: directory
+
+  - name: Enable and start kubelet service
+    ansible.builtin.systemd:
+      name: kubelet
+      state: started
+      enabled: yes
+
+  - name: Reset k8s
+    shell: "kubeadm reset -f --cri-socket unix:///var/run/cri-dockerd.sock --force"
+
+  - name: Copy Kube config
+    ansible.builtin.copy:
+      src: '{{ kube_config_local_path }}'
+      dest: ~/.kube/config
+      mode: 0600
+
+  - name: Disable swap
+    shell: swapoff -a
+
+  - name: Create kubeadm configuration
+    ansible.builtin.template:
+      src: kubeadm_config.yaml.j2
+      dest: ./kubeadm_config.yaml
+
+  - name: Join k8s cluster
+    ansible.builtin.shell: 'kubeadm join --config ./kubeadm_config.yaml'
+
+  - name: Wait for the node to be ready
+    ansible.builtin.shell: 'kubectl wait --timeout=300s --all-namespaces --for=condition=Ready nodes {{ hostvars[inventory_hostname]["xx-name"] }}'
+    register: node_wait
+    retries: 10
+    until: node_wait is succeeded
+
+  - name: Wait for the pods to be ready
+    ansible.builtin.shell: 'kubectl wait --timeout=300s --all-namespaces --for=condition=Ready pods --field-selector spec.nodeName={{ hostvars[inventory_hostname]["xx-name"] }}'
+
+- name: Allow scheduling on FIT worker nodes only for oai-gnb pods
+  hosts: computes:!masters
+  become: yes
+  tasks:
+  - name: Add NoSchedule
+    shell: 'kubectl taint nodes {{ hostvars[inventory_hostname]["xx-name"] }} app.kubernetes.io/name=oai-gnb:NoSchedule --overwrite'

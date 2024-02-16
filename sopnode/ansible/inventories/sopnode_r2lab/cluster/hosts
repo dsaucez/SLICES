@@ -1,0 +1,20 @@
+all:
+  children:
+    computes:
+      hosts:
+        192.168.100.102:
+          xx-name: fit02-v100
+          xx-local-ip: 192.168.100.102
+          xx-docker-root-home: true  
+        192.168.100.92:
+          xx-name: sopnode-w1-v100
+          xx-local-ip: 192.168.100.92
+          xx-docker-root-home: true  
+    masters:
+      hosts:
+        192.168.100.92:
+          xx-name: sopnode-w1-v100
+          xx-local-ip: 192.168.100.92
+          xx-docker-root-home: true  
+    openvpn:
+      hosts:
