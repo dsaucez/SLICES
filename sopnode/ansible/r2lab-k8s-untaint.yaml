@@ -1,0 +1,6 @@
+---
+# Task to untaint a master node
+#
+
+- name: Remove the NoSchedule taint on the master node
+  ansible.builtin.shell: 'kubectl taint nodes {{ hostvars[inventory_hostname]["xx-name"] }} node-role.kubernetes.io/control-plane:NoSchedule- '

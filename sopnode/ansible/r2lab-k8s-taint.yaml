@@ -1,0 +1,10 @@
+---
+# Task to taint R2lab nodes in order they only run oai-gnb pods
+#
+
+- name: Taint worker nodes with oai-gnb:NoSchedule
+  hosts: computes:!masters
+  become: yes
+  tasks:
+  - name: Add NoSchedule
+    shell: 'kubectl taint nodes {{ hostvars[inventory_hostname]["xx-name"] }} app.kubernetes.io/name=oai-gnb:NoSchedule --overwrite'

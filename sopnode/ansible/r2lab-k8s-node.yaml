@@ -1,3 +1,8 @@
+---
+# To use on R2lab nodes only
+# based on k8s-node.yaml but faster
+# as R2lab nodes use an OS image that already includes some steps
+
 - name: Get cluster infos
   hosts: masters
   run_once: true
@@ -50,17 +55,7 @@
     ansible.builtin.shell: 'kubeadm join --config ./kubeadm_config.yaml'
 
   - name: Wait for the node to be ready
-    ansible.builtin.shell: 'kubectl wait --timeout=300s --all-namespaces --for=condition=Ready nodes {{ hostvars[inventory_hostname]["xx-name"] }}'
-    register: node_wait
-    retries: 10
-    until: node_wait is succeeded
+    ansible.builtin.include_tasks: k8s-ready.yaml
 
-  - name: Wait for the pods to be ready
-    ansible.builtin.shell: 'kubectl wait --timeout=300s --all-namespaces --for=condition=Ready pods --field-selector spec.nodeName={{ hostvars[inventory_hostname]["xx-name"] }}'
-
-- name: Allow scheduling on FIT worker nodes only for oai-gnb pods
-  hosts: computes:!masters
-  become: yes
-  tasks:
-  - name: Add NoSchedule
-    shell: 'kubectl taint nodes {{ hostvars[inventory_hostname]["xx-name"] }} app.kubernetes.io/name=oai-gnb:NoSchedule --overwrite'
+  - name: Wait for the node to be ready
+    ansible.builtin.include_tasks: r2lab-k8s-taint.yaml
