@@ -2,6 +2,8 @@
 # To use on R2lab nodes only
 # based on k8s-node.yaml but faster
 # as R2lab nodes use an OS image that already includes some steps
+# IMPORTANT: This playbook can only run if it is renamed k8s-node.yaml
+#    (in order to retrieve parameters for the kubeadm_config.yaml.j2 template)
 
 - name: Get cluster infos
   hosts: masters
