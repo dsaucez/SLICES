@@ -34,6 +34,3 @@
   post_tasks:
     - name: Wait for the node to be ready
       ansible.builtin.include_tasks: k8s-ready.yaml
-
-    - name: Remove the NoSchedule taint on the master node
-      shell: 'kubectl taint nodes {{ hostvars[inventory_hostname]["xx-name"] }} node-role.kubernetes.io/control-plane:NoSchedule- '    
