@@ -46,7 +46,7 @@
       mode: 0600
 
   - name: Disable swap
-    shell: swapoff -a
+    shell: "swapoff -a"
 
   - name: Test k8s msg
     msg:
