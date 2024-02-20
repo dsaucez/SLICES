@@ -61,6 +61,18 @@
   - name: Wait for the node to be ready
     ansible.builtin.include_tasks: k8s-ready.yaml
 
-  - name: Taint worker nodes with oai-gnb:NoSchedule
+- name: Allow scheduling on masters that are also computes
+  hosts: masters:&computes
+  become: yes
+  tasks:
+  - name: Remove NoSchedule
+    shell: "kubectl taint nodes {{ ansible_hostname }} node-role.kubernetes.io/control-plane:NoSchedule-"
+
+- name: Taint worker FIT nodes with oai-gnb:NoSchedule
+  hosts: computes:&!masters
+  become: yes
+  tasks:
+  - name: Remove NoSchedule
     shell: 'kubectl taint nodes {{ hostvars[inventory_hostname]["xx-name"] }} app.kubernetes.io/name=oai-gnb:NoSchedule --overwrite'
+
 
