@@ -12,3 +12,13 @@ k8s:
         - 192.168.100.0/24
   encapsulation: VXLAN
 
+# runtime config (from roles/container/vars/main.yaml)
+runtime:
+  docker:
+    cri:
+      socket: unix:///var/run/cri-dockerd.sock
+  cri-o:
+    cri:
+      socket: unix:///var/run/crio/crio.sock
+
+
