@@ -48,6 +48,9 @@
   - name: Disable swap
     shell: "swapoff -a"
 
+  - name: Test swap
+    shell: "echo test done"
+
   - name: Test k8s msg
     msg:
       - "This works fine"
