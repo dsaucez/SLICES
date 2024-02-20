@@ -49,6 +49,9 @@
     shell: swapoff -a
 
   - name: Create kubeadm configuration
+    msg:
+      - "This works fine"
+      - '{{ k8s }}'
     ansible.builtin.template:
       src: kubeadm_config.yaml.j2
       dest: ./kubeadm_config.yaml
