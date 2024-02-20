@@ -48,14 +48,14 @@
   - name: Disable swap
     shell: "swapoff -a"
 
-  - name: Display k8s info
-    debug:
-      var: runtime
-    tags: debug_info
+#  - name: Display k8s info
+#    debug:
+#      var: runtime
+#    tags: debug_info
 
   - name: Create kubeadm configuration
     ansible.builtin.template:
-      src: kubeadm_config.yaml.j2
+      src: ./roles/k8s-node/templates/kubeadm_config.yaml.j2
       dest: ./kubeadm_config.yaml
 
   - name: Join k8s cluster
