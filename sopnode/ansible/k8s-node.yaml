@@ -58,6 +58,8 @@
     ansible.builtin.template:
       src: kubeadm_config.yaml.j2
       dest: ./kubeadm_config.yaml
+    dependencies:
+      -role: container
 
   - name: Join k8s cluster
     ansible.builtin.shell: 'kubeadm join --config ./kubeadm_config.yaml'
