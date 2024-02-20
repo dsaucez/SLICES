@@ -48,10 +48,12 @@
   - name: Disable swap
     shell: swapoff -a
 
-  - name: Create kubeadm configuration
+  - name: Test k8s msg
     msg:
       - "This works fine"
       - '{{ k8s }}'
+
+  - name: Create kubeadm configuration
     ansible.builtin.template:
       src: kubeadm_config.yaml.j2
       dest: ./kubeadm_config.yaml
