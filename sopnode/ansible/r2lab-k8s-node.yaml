@@ -66,13 +66,13 @@
   become: yes
   tasks:
   - name: Remove NoSchedule
-    shell: 'kubectl taint nodes {{ hostvars[inventory_hostname]["xx-name"] }} node-role.kubernetes.io/control-plane:NoSchedule-'
+    shell: 'kubectl taint nodes {{ hostvars[inventory_hostname]["xx-name"] }} node-role.kubernetes.io/control-plane:NoSchedule- --overwrite'
 
 - name: Taint worker FIT nodes with oai-gnb:NoSchedule
-  hosts: computes:&!masters
+  hosts: computes:!masters
   become: yes
   tasks:
-  - name: Remove NoSchedule
+  - name: Add oai-gnb:NoSchedule
     shell: 'kubectl taint nodes {{ hostvars[inventory_hostname]["xx-name"] }} app.kubernetes.io/name=oai-gnb:NoSchedule --overwrite'
 
 
