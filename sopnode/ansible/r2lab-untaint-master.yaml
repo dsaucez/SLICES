@@ -1,0 +1,12 @@
+---
+# Task to untaint the master node
+#
+
+- name: Initialize k8s cluster
+  hosts: masters[0]
+  become: yes
+  environment:
+    PATH: '{{ansible_env.PATH }}:/usr/local/bin/'
+  tasks:
+  - name: Remove the NoSchedule taint on the master node
+    shell: 'kubectl taint nodes {{ hostvars[inventory_hostname]["xx-name"] }} node-role.kubernetes.io/control-plane:NoSchedule- '
