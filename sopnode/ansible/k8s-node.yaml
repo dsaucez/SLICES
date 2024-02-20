@@ -48,13 +48,11 @@
   - name: Disable swap
     shell: "swapoff -a"
 
-  - name: Test swap
-    shell: "echo test done"
+  - name: Display k8s info
+    debug:
+      var: k8s
+    tags: debug_info
 
-  - name: Test k8s msg
-    msg:
-      - "This works fine"
-      - '{{ k8s }}'
 
   - name: Create kubeadm configuration
     ansible.builtin.template:
