@@ -1,2 +1,2 @@
-echo 'ansible-playbook  -i inventories/sopnode_r2lab/cluster k8s-master.yaml --extra-vars "@params.blueprint.core.yaml"'
-ansible-playbook  -i inventories/sopnode_r2lab/cluster k8s-master.yaml --extra-vars "@params.blueprint.core.yaml"
+echo 'ansible-playbook  -i inventories/sopnode_r2lab/cluster k8s-master.yaml --extra-vars "@params.sopnode_r2lab.yaml"'
+ansible-playbook  -i inventories/sopnode_r2lab/cluster k8s-master.yaml --extra-vars "@params.sopnode_r2lab.yaml"
