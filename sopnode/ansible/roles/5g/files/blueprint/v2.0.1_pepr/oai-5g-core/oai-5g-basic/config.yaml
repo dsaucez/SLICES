@@ -171,7 +171,7 @@ smf:
 upf:
   support_features:
     enable_bpf_datapath: no    # If "on": BPF is used as datapath else simpleswitch is used, DEFAULT= off
-    enable_snat: yes           # If "on": Source natting is done for UE, DEFAULT= off
+    enable_snat: off            # If "on": Source natting is done for UE, DEFAULT= off
   remote_n6_gw: 127.0.0.1      # Dummy host since simple-switch does not use N6 GW
   upf_info:
     sNssaiUpfInfoList:
@@ -184,10 +184,9 @@ upf:
 
 ## DNN configuration
 dnns:
-  - dnn: "oai"
+  - dnn: "oai.ipv4"
     pdu_session_type: "IPV4"
     ipv4_subnet: "12.1.1.0/24"
   - dnn: "ims"
     pdu_session_type: "IPV4V6"
     ipv4_subnet: "14.1.1.0/24"
-    

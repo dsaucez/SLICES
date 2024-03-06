@@ -94,10 +94,10 @@ oai-amf:
       routes: [
                 {
                         "dst": "192.168.128.0/24",
-                        "gw": "192.168.128.193"
+                        "gw": "192.168.128.208"
                 }
         ]
-      hostInterface: "enp2s0" # Interface of the host machine on which this pod will be scheduled
+      hostInterface: "ran0" # Interface of the host machine on which this pod will be scheduled
   nodeSelector: {}
 oai-upf:
   enabled: true
@@ -107,7 +107,7 @@ oai-upf:
     version: v2.0.1                                    ## The branch to be used to pull from dockerhub
     # pullPolicy: IfNotPresent or Never or Always
     pullPolicy: IfNotPresent
-  includeTcpDumpContainer: false #only for taking pcaps inside network function pod
+  includeTcpDumpContainer: true #only for taking pcaps inside network function pod
   imagePullSecrets:
     - name: "regcred"
   # create an extra interface for N3 incase the gNB is outside the cluster network or there is a need to have dedicated interface for N3
@@ -128,10 +128,10 @@ oai-upf:
       routes: [
                 {
                         "dst": "192.168.128.0/24",
-                        "gw": "192.168.128.193"
+                        "gw": "192.168.128.208"
                 }
         ]
-      hostInterface: "enp2s0"
+      hostInterface: "ran0"
     ## For n4 it is better to re-use eth0 interface inside the pod (primary CNI of Kubernetes)
     n4Interface:
       create: true
@@ -145,21 +145,26 @@ oai-upf:
       routes: [
                 {
                         "dst": "192.168.128.0/24",
-                        "gw": "192.168.128.193"
+                        "gw": "192.168.128.208"
                 }
         ]
-      hostInterface: "enp2s0"
+      hostInterface: "ran0"
     n6Interface:
-      create: false
-      Ipadd: "192.168.22.2"
+      create: true
+      Ipadd: "192.168.128.200"
       # #name inside the pod is hardcoded right now
       # name: "n6"
       Netmask: "27"
       ## If you do not have a gateway leave the field empty
       Gateway: ""
       ## If you do not want to add any routes in your pod then leave this field empty
-      routes: ""
-      hostInterface: "bond0"
+      routes: [
+                {
+                        "dst": "0.0.0.0/0",
+                        "gw": "192.168.128.208"
+                }
+        ]
+      hostInterface: "ran0"
   #NOTE: If the interface you selected for n6If is wrong then traffic will not be routed towards internet
   nodeSelector: {}
 # oai-traffic-server:
@@ -204,11 +209,11 @@ oai-smf:
       routes: [
                 {
                         "dst": "192.168.128.0/24",
-                        "gw": "192.168.128.193"
+                        "gw": "192.168.128.208"
                 }
         ]
       #routes: [{'dst': '10.8.0.0/24','gw': '172.21.7.254'}, {'dst': '10.9.0.0/24','gw': '172.21.7.254'}]
-      hostInterface: "enp2s0"
+      hostInterface: "ran0"
   nodeSelector: {}
   imagePullSecrets:
     - name: "regcred"
