@@ -160,7 +160,7 @@ oai-upf:
       ## If you do not want to add any routes in your pod then leave this field empty
       routes: [
                 {
-                        "dst": "0.0.0.0/0",
+                        "dst": "138.96.245.55/32",
                         "gw": "192.168.128.208"
                 }
         ]
