@@ -38,7 +38,7 @@ nfs:
       api_version: v1
       interface_name: eth0
     n4:
-      interface_name: eth0
+      interface_name: n4
       port: 8805
   upf:
     host: oai-upf
@@ -50,10 +50,10 @@ nfs:
       interface_name: n3
       port: 2152
     n4:
-      interface_name: eth0
+      interface_name: n4
       port: 8805
     n6:
-      interface_name: eth0
+      interface_name: n6
     n9:
       interface_name: eth0
       port: 2152
@@ -190,3 +190,6 @@ dnns:
   - dnn: "ims"
     pdu_session_type: "IPV4V6"
     ipv4_subnet: "14.1.1.0/24"
+  - dnn: "oai"
+    pdu_session_type: "IPV4"
+    ipv4_subnet: "16.1.1.0/24"
