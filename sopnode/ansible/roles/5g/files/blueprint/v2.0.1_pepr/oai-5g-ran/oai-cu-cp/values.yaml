@@ -30,8 +30,8 @@ multus:
   defaultGateway: ""
   e1Interface:
     create: true
-    IPadd: "10.0.10.41"
-    Netmask: "24"
+    IPadd: "192.168.128.67"
+    Netmask: "27"
     # #name inside the pod is hardcoded right now
     # name: "e1"
     # if gatway is empty then it will be removed
@@ -39,19 +39,15 @@ multus:
     #routes: [{'dst': '10.8.0.0/24','gw': '172.21.7.254'}, {'dst': '10.9.0.0/24','gw': '172.21.7.254'}]
     routes: [
                 {
-                        "dst": "10.8.0.0/24",
-                        "gw": "10.0.10.1"
-                },
-                {
-                        "dst": "172.22.10.0/24",
-                        "gw": "10.0.10.1"
+                        "dst": "192.168.128.0/24",
+                        "gw": "192.168.128.80"
                 }
-        ]
+        ] 
     hostInterface: "ran0"      # Interface of the host machine on which this pod will be scheduled
   n2Interface:
     create: true
-    IPadd: "10.0.10.22"
-    Netmask: "24"
+    IPadd: "192.168.128.68"
+    Netmask: "27"
     # #name inside the pod is hardcoded right now
     # name: "n2"
     # if gatway is empty then it will be removed
@@ -59,19 +55,15 @@ multus:
     #routes:
     routes: [
                 {
-                        "dst": "10.8.0.0/24",
-                        "gw": "10.0.10.1"
-                },
-                {
-                        "dst": "172.22.10.0/24",
-                        "gw": "10.0.10.1"
+                        "dst": "192.168.128.0/24",
+                        "gw": "192.168.128.80"
                 }
-        ]
+        ] 
     hostInterface: "ran0"      # Interface of the host machine on which this pod will be scheduled
   f1cInterface:
     create: true
-    IPadd: "10.0.10.31"
-    Netmask: "24"
+    IPadd: "192.168.128.69"
+    Netmask: "27"
     # #name inside the pod is hardcoded right now
     # name: "f1c"
     # if gatway is empty then it will be removed
@@ -79,12 +71,8 @@ multus:
     #routes: 
     routes: [
                 {
-                        "dst": "10.8.0.0/24",
-                        "gw": "10.0.10.1"
-                },
-                {
-                        "dst": "172.22.10.0/24",
-                        "gw": "10.0.10.1"
+                        "dst": "192.168.128.0/24",
+                        "gw": "192.168.128.80"
                 }
         ]
     hostInterface: "ran0"      # Interface of the host machine on which this pod will be scheduled
@@ -99,7 +87,7 @@ config:
   mnc: "01"    # check the information with AMF, SMF, UPF
   tac: "1"     # check the information with AMF
   sst: "1"  #currently only 4 standard values are allowed 1,2,3,4
-  amfhost: "172.22.10.12"  # amf ip-address or service-name oai-amf-svc or 172.21.6.94
+  amfhost: "192.168.128.195"  # amf ip-address or service-name oai-amf-svc or 172.21.6.94
   n2IfName: "n2"    # if multus.n2Interface.create is true then use n2
   n3IfName: "n2"   #if multus.n3Interface.create is true then use n3 or you can only use 1 interface n2 or eth0 
   f1IfName: "f1"   #if multus.f1Interface.create is true then use f1

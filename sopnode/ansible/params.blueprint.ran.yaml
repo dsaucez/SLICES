@@ -3,7 +3,7 @@
 k8s:
   runtime: docker
   podSubnet: 10.244.0.0/16
-  serviceSubnet: 10.96.0.0/16
+  serviceSubnet: 10.97.0.0/16
   dnsDomain: cluster.local
   #apiserver_advertise_address: 172.16.2.27
   calico:
@@ -17,7 +17,7 @@ GCN:
   namespace: blueprint
   RAN:
     present: true
-    custom_values: blueprint/v2.0.1/oai-5g-ran
+    custom_values: blueprint/v2.0.1_pepr/oai-5g-ran
     split:
       f1: true
       e1: true
@@ -25,4 +25,4 @@ GCN:
     present: true
     tests:
       landmark_ping:
-        landmark: 12.1.1.1
+        landmark: 1.1.1.1
