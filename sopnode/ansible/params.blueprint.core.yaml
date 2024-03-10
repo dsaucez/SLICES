@@ -17,4 +17,4 @@ GCN:
   namespace: blueprint
   core:
     present: true
-    custom_values: blueprint/v2.0.1/oai-5g-core
+    custom_values: blueprint/v2.0.1_pepr/oai-5g-core

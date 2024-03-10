@@ -1,34 +1,15 @@
 all:
   hosts:
-    192.0.2.2:
-      xx-name: node2
-      xx-local-ip: 192.0.2.2
-    192.0.2.3:
-      xx-name: node3
-      xx-local-ip: 192.0.2.3
-    192.0.2.1:
-      xx-name: node1
-      xx-local-ip: 192.0.2.1
-    192.0.2.42:
-      xx-name: openvpn
-      xx-local-ip: 192.0.2.42
-    192.0.2.42:
-      xx-name: haproxy
-      xx-local-ip: 192.0.2.42
-      xx-port: 6443
+    192.168.122.146:
+      xx-name: core
+      xx-local-ip: 192.168.122.146
+    192.168.122.8:
+      xx-name: node 
+      xx-local-ip: 192.168.122.8
   children:
     computes:
       hosts:
-        192.0.2.2:
-        192.0.2.3:
+        192.168.122.146:
     masters:
       hosts:
-        192.0.2.1:
-    switches:
-      hosts:
-    openvpn:
-      hosts:
-        192.0.2.42:
-    HAproxy:
-      hosts:
-        192.0.2.42:
+        192.168.122.146:

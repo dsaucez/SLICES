@@ -2,15 +2,16 @@
 - name: Add k8s repo
   shell:
     cmd: |
-      cat <<EOF | tee /etc/yum.repos.d/kubernetes.repo
+      cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
       [kubernetes]
       name=Kubernetes
-      baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-\$basearch
+      baseurl=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/
       enabled=1
       gpgcheck=1
-      gpgkey=https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-      exclude=kubelet kubeadm kubectl
+      gpgkey=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/repodata/repomd.xml.key
+      exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
       EOF
 
+
 - name: Install k8s tools
-  shell: yum install -y kubelet-1.25.4-0 kubeadm-1.25.4-0 kubectl-1.25.4-0 --disableexcludes=kubernetes
+  shell: yum install -y kubelet-1.29.2-0 kubeadm-1.29.2-0 kubectl-1.29.2-0 --disableexcludes=kubernetes

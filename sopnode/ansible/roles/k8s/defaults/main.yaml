@@ -1,6 +1,6 @@
 ---
 helm_spray: v4.0.10
 k8s_tools:
-  - kubectl=1.25.2-00
-  - kubeadm=1.25.2-00
-  - kubelet=1.25.2-00
+  - kubectl=1.29.2-1.1
+  - kubeadm=1.29.2-1.1
+  - kubelet=1.29.2-1.1

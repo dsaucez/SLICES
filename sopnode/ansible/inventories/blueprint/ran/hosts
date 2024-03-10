@@ -1,10 +1,12 @@
 all:
+  hosts:
+    192.168.128.99:
+      xx-name: ran1 
+      xx-local-ip: 192.168.128.99
   children:
     computes:
       hosts:
-        172.16.2.2:
-          xx-name: leftswitch
+        192.168.128.99:
     masters:
       hosts:
-        172.16.2.2:
-          xx-name: leftswitch
+        192.168.128.99:
