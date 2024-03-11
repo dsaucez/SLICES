@@ -3,7 +3,7 @@ all:
     computes:
       hosts:
         192.168.100.91:
-          xx-name: sopnode-11-v100
+          xx-name: sopnode-l1-v100
           xx-local-ip: 192.168.100.91
           xx-docker-root-home: true  
     masters:
