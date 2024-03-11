@@ -1,0 +1,2 @@
+echo 'ansible-playbook  -i inventories/sopnode_r2lab/sopnode-l1 k8s-master.yaml --extra-vars "@params.sopnode_r2lab.yaml"'
+ansible-playbook  -i inventories/sopnode_r2lab/sopnode-l1 k8s-master.yaml --extra-vars "@params.sopnode_r2lab.yaml"
