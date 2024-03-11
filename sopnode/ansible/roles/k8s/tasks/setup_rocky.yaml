@@ -1,3 +1,14 @@
 ---
 - name: Remove zram
   shell: dnf remove -y zram-generator-defaults
+
+- name: Create /run/systemd/resolve/ directory
+  ansible.builtin.file:
+    path: /run/systemd/resolve/
+    state: directory
+
+- name: Create a symbolic link /run/systemd/resolve/resolv.conf -> /usr/lib/systemd/resolv.conf
+  ansible.builtin.file:
+    src: /usr/lib/systemd/resolv.conf
+    dest: /run/systemd/resolve/resolv.conf
+    state: link
