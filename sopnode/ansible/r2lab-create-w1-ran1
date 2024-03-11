@@ -1,0 +1,3 @@
+echo 'ansible-playbook  -i inventories/blueprint/ran k8s-node.yaml --extra-vars "@params.blueprint.ran.yaml"'
+ansible-playbook  -i inventories/blueprint/ran k8s-node.yaml --extra-vars "@params.blueprint.ran.yaml"
+
