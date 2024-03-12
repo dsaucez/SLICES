@@ -86,4 +86,4 @@ terminationGracePeriodSeconds: 0
 
 nodeSelector: {}
 
-nodeName:
+nodeName:  "192.168.100.142"
