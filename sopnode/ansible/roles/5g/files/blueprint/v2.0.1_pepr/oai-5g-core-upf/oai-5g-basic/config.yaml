@@ -23,7 +23,7 @@ snssais:
 ### Each NF takes its local SBI interfaces and remote interfaces from here, unless it gets them using NRF discovery mechanisms
 nfs:
   amf:
-    host: 172.20.195.154 # oai-amf
+    host: 172.20.98.100 # oai-amf.blueprint
     sbi:
       port: 80
       api_version: v1
@@ -32,7 +32,7 @@ nfs:
       interface_name: n2
       port: 38412
   smf:
-    host: 172.20.109.12 # oai-smf.blueprint
+    host: 172.20.235.202 # oai-smf.blueprint
     sbi:
       port: 80
       api_version: v1
@@ -58,115 +58,124 @@ nfs:
       interface_name: eth0
       port: 2152
   udm:
-    host: 172.20.245.47 # oai-udm
+    host: 172.20.199.22 # oai-udm.blueprint
     sbi:
       port: 80
       api_version: v1
       interface_name: eth0
   udr:
-    host: 172.20.12.185  #oai-udr
+    host: 172.20.24.111  #oai-udr.blueprint
     sbi:
       port: 80
       api_version: v1
       interface_name: eth0
   ausf:
-    host: 172.20.102.175 # oai-ausf
+    host: 172.20.122.116 # oai-ausf.blueprint
     sbi:
       port: 80
       api_version: v1
       interface_name: eth0
   nrf:
-    host: 172.20.146.10 # oai-nrf
+    host: 172.20.103.222 # oai-nrf.blueprint
     sbi:
       port: 80
       api_version: v1
       interface_name: eth0
 
-#### Common for UDR and AMF
-database:
-  host: mysql
-  user: test
-  type: mysql
-  password: test
-  database_name: oai_db
-  generate_random: true
-  connection_timeout: 300 # seconds
-
-############## NF-specific configuration
-amf:
-  amf_name: "OAI-AMF"
-  # This really depends on if we want to keep the "mini" version or not
-  support_features_options:
-    enable_simple_scenario: no # "no" by default with the normal deployment scenarios with AMF/SMF/UPF/AUSF/UDM/UDR/NRF.
-                               # set it to "yes" to use with the minimalist deployment scenario (including only AMF/SMF/UPF) by using the internal AUSF/UDM implemented inside AMF.
-                               # There's no NRF in this scenario, SMF info is taken from "nfs" section.
-    enable_nssf: no
-    enable_smf_selection: yes
-  relative_capacity: 30
-  statistics_timer_interval: 20  # in seconds
-  emergency_support: false
-  served_guami_list:
-    - mcc: 001
-      mnc: 01
-      amf_region_id: 01
-      amf_set_id: 001
-      amf_pointer: 01
-  plmn_support_list:
-    - mcc: 001
-      mnc: 01
-      tac: 0x0001
-      nssai:
-        - *embb_slice1
-        - *embb_slice2
-  supported_integrity_algorithms:
-    - "NIA1"
-    - "NIA2"
-  supported_encryption_algorithms:
-    - "NEA0"
-    - "NEA1"
-    - "NEA2"
-
-smf:
-  ue_mtu: 1500
-  support_features:
-    use_local_subscription_info: no # Use infos from local_subscription_info or from UDM
-    use_local_pcc_rules: yes # Use infos from local_pcc_rules or from PCF
-  # we resolve from NRF, this is just to configure usage_reporting
-  upfs:
-    - host: oai-upf
-      config:
-        enable_usage_reporting: no
-  ue_dns:
-    primary_ipv4: "10.3.2.200"
-    primary_ipv6: "2001:4860:4860::8888"
-    secondary_ipv4: "8.8.8.8"
-    secondary_ipv6: "2001:4860:4860::8888"
-  ims:
-    pcscf_ipv4: "192.168.70.139"
-    pcscf_ipv6: "fe80::7915:f408:1787:db8b"
-  # the DNN you configure here should be configured in "dnns"
-  # follows the SmfInfo datatype from 3GPP TS 29.510
-  smf_info:
-    sNssaiSmfInfoList:
-      - sNssai: *embb_slice1
-        dnnSmfInfoList:
-          - dnn: "oai"
-      - sNssai: *embb_slice2
-        dnnSmfInfoList:
-          - dnn: "ims"
-  local_subscription_infos:
-    - single_nssai: *embb_slice1
-      dnn: "oai"
-      qos_profile:
-        5qi: 5
-        session_ambr_ul: "200Mbps"
-        session_ambr_dl: "400Mbps"
-    - single_nssai: *embb_slice2
-      dnn: "ims"
-      qos_profile:
-        5qi: 2
-        session_ambr_ul: "100Mbps"
-        session_ambr_dl: "200Mbps"
+##DSA##### Common for UDR and AMF
+##DSA#database:
+##DSA#  host: mysql
+##DSA#  user: test
+##DSA#  type: mysql
+##DSA#  password: test
+##DSA#  database_name: oai_db
+##DSA#  generate_random: true
+##DSA#  connection_timeout: 300 # seconds
+##DSA#
+##DSA############### NF-specific configuration
+##DSA#amf:
+##DSA#  amf_name: "OAI-AMF"
+##DSA#  # This really depends on if we want to keep the "mini" version or not
+##DSA#  support_features_options:
+##DSA#    enable_simple_scenario: no # "no" by default with the normal deployment scenarios with AMF/SMF/UPF/AUSF/UDM/UDR/NRF.
+##DSA#                               # set it to "yes" to use with the minimalist deployment scenario (including only AMF/SMF/UPF) by using the internal AUSF/UDM implemented inside AMF.
+##DSA#                               # There's no NRF in this scenario, SMF info is taken from "nfs" section.
+##DSA#    enable_nssf: no
+##DSA#    enable_smf_selection: yes
+##DSA#  relative_capacity: 30
+##DSA#  statistics_timer_interval: 20  # in seconds
+##DSA#  emergency_support: false
+##DSA#  served_guami_list:
+##DSA#    - mcc: 001
+##DSA#      mnc: 01
+##DSA#      amf_region_id: 01
+##DSA#      amf_set_id: 001
+##DSA#      amf_pointer: 01
+##DSA#  plmn_support_list:
+##DSA#    - mcc: 001
+##DSA#      mnc: 01
+##DSA#      tac: 0x0001
+##DSA#      nssai:
+##DSA#        - *embb_slice1
+##DSA#        - *embb_slice2
+##DSA#  supported_integrity_algorithms:
+##DSA#    - "NIA1"
+##DSA#    - "NIA2"
+##DSA#  supported_encryption_algorithms:
+##DSA#    - "NEA0"
+##DSA#    - "NEA1"
+##DSA#    - "NEA2"
+##DSA#
+##DSA#smf:
+##DSA#  ue_mtu: 1500
+##DSA#  support_features:
+##DSA#    use_local_subscription_info: no # Use infos from local_subscription_info or from UDM
+##DSA#    use_local_pcc_rules: yes # Use infos from local_pcc_rules or from PCF
+##DSA#  # we resolve from NRF, this is just to configure usage_reporting
+##DSA#  upfs:
+##DSA#    - host: oai-upf
+##DSA#      config:
+##DSA#        enable_usage_reporting: no
+##DSA#  ue_dns:
+##DSA#    primary_ipv4: "10.3.2.200"
+##DSA#    primary_ipv6: "2001:4860:4860::8888"
+##DSA#    secondary_ipv4: "8.8.8.8"
+##DSA#    secondary_ipv6: "2001:4860:4860::8888"
+##DSA#  ims:
+##DSA#    pcscf_ipv4: "192.168.70.139"
+##DSA#    pcscf_ipv6: "fe80::7915:f408:1787:db8b"
+##DSA#  # the DNN you configure here should be configured in "dnns"
+##DSA#  # follows the SmfInfo datatype from 3GPP TS 29.510
+##DSA#  smf_info:
+##DSA#    sNssaiSmfInfoList:
+##DSA#      - sNssai: *embb_slice1
+##DSA#        dnnSmfInfoList:
+##DSA#          - dnn: "oai"
+##DSA#      - sNssai: *embb_slice2
+##DSA#        dnnSmfInfoList:
+##DSA#          - dnn: "ims"
+##DSA#      - sNssai: *embb_slice3
+##DSA#        dnnSmfInfoList:
+##DSA#          - dnn: "pepr"
+##DSA#  local_subscription_infos:
+##DSA#    - single_nssai: *embb_slice1
+##DSA#      dnn: "oai"
+##DSA#      qos_profile:
+##DSA#        5qi: 5
+##DSA#        session_ambr_ul: "200Mbps"
+##DSA#        session_ambr_dl: "400Mbps"
+##DSA#    - single_nssai: *embb_slice2
+##DSA#      dnn: "ims"
+##DSA#      qos_profile:
+##DSA#        5qi: 2
+##DSA#        session_ambr_ul: "100Mbps"
+##DSA#        session_ambr_dl: "200Mbps"
+##DSA#    - single_nssai: *embb_slice3
+##DSA#      dnn: "pepr"
+##DSA#      qos_profile:
+##DSA#        5qi: 5
+##DSA#        session_ambr_ul: "200Mbps"
+##DSA#        session_ambr_dl: "400Mbps"
 
 upf:
   support_features:
@@ -184,12 +193,9 @@ upf:
 
 ## DNN configuration
 dnns:
-  - dnn: "oai.ipv4"
+  - dnn: "oai"
     pdu_session_type: "IPV4"
     ipv4_subnet: "12.1.1.0/24"
   - dnn: "ims"
     pdu_session_type: "IPV4V6"
     ipv4_subnet: "14.1.1.0/24"
-  - dnn: "oai"
-    pdu_session_type: "IPV4"
-    ipv4_subnet: "16.1.1.0/24"

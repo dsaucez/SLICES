@@ -14,7 +14,7 @@ k8s:
   encapsulation: VXLAN
 # 5G config
 GCN:
-  namespace: pepr-core
+  namespace: dsa
   core:
     present: true
-    custom_values: blueprint/v2.0.1_pepr/oai-5g-core
+    custom_values: blueprint/v2.0.1_pepr/oai-5g-core.dsa

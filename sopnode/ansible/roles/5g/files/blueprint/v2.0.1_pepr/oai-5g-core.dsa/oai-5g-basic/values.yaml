@@ -54,7 +54,7 @@ oai-udm:
     - name: "regcred"
   config:
     logLevel: "debug"   #allowed info/error/debug
-  nodeName:
+  nodeName: 
 oai-ausf:
   enabled: true
   kubernetesType: Vanilla #Openshift/Vanilla Vanilla for Upstream Kubernetes
@@ -85,7 +85,7 @@ oai-amf:
     defaultGateway: ""
     n2Interface:
       create: true
-      Ipadd: "192.168.128.195"
+      Ipadd: "192.168.128.35"
       Netmask: "27"
       # #name inside the pod is hardcoded right now
       # name: "n2"
@@ -95,10 +95,10 @@ oai-amf:
       routes: [
                 {
                         "dst": "192.168.128.0/24",
-                        "gw": "192.168.128.208"
+                        "gw": "192.168.128.48"
                 }
         ]
-      hostInterface: "ran0" # Interface of the host machine on which this pod will be scheduled
+      hostInterface: "ran1" # Interface of the host machine on which this pod will be scheduled
   nodeName:
 oai-upf:
   enabled: false
@@ -129,10 +129,10 @@ oai-upf:
       routes: [
                 {
                         "dst": "192.168.128.0/24",
-                        "gw": "192.168.128.208"
+                        "gw": "192.168.128.48"
                 }
         ]
-      hostInterface: "ran0"
+      hostInterface: "ran1"
     ## For n4 it is better to re-use eth0 interface inside the pod (primary CNI of Kubernetes)
     n4Interface:
       create: true
@@ -146,10 +146,10 @@ oai-upf:
       routes: [
                 {
                         "dst": "192.168.128.0/24",
-                        "gw": "192.168.128.208"
+                        "gw": "192.168.128.48"
                 }
         ]
-      hostInterface: "ran0"
+      hostInterface: "ran1"
     n6Interface:
       create: true
       Ipadd: "192.168.128.200"
@@ -162,10 +162,10 @@ oai-upf:
       routes: [
                 {
                         "dst": "0.0.0.0/0",
-                        "gw": "192.168.128.208"
+                        "gw": "192.168.128.48"
                 }
         ]
-      hostInterface: "ran0"
+      hostInterface: "ran1"
   #NOTE: If the interface you selected for n6If is wrong then traffic will not be routed towards internet
   nodeName:
 # oai-traffic-server:
@@ -202,7 +202,7 @@ oai-smf:
     defaultGateway: ""
     n4Interface:
       create: true
-      Ipadd: "192.168.128.196"
+      Ipadd: "192.168.128.36"
       Netmask: "27"
       ## If you do not have a gateway leave the field empty
       Gateway: ""
@@ -210,12 +210,12 @@ oai-smf:
       routes: [
                 {
                         "dst": "192.168.128.0/24",
-                        "gw": "192.168.128.208"
+                        "gw": "192.168.128.48"
                 }
         ]
       #routes: [{'dst': '10.8.0.0/24','gw': '172.21.7.254'}, {'dst': '10.9.0.0/24','gw': '172.21.7.254'}]
-      hostInterface: "ran0"
-  nodeName:
+      hostInterface: "ran1"
+  nodeName: 
   imagePullSecrets:
     - name: "regcred"
   nodeName:

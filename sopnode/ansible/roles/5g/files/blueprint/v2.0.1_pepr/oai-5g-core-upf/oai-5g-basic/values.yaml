@@ -5,7 +5,7 @@ global:
   http2Param: "--http2-prior-knowledge"  # if waitForNRF is true and http2 is used for all NF then this param is needed
   timeout: 1
 mysql:
-  enabled: true
+  enabled: false
   imagePullPolicy: IfNotPresent
   oai5gdatabase: basic
   imagePullSecrets:
@@ -13,7 +13,7 @@ mysql:
   persistence:
     enabled: false
 oai-nrf:
-  enabled: true
+  enabled: false
   kubernetesType: Vanilla #Openshift/Vanilla Vanilla for Upstream Kubernetes
   nfimage:  # image name either locally present or in a public/private repository
     repository: docker.io/oaisoftwarealliance/oai-nrf          ## The image will be pulled from dockerhub
@@ -84,7 +84,7 @@ oai-amf:
     defaultGateway: ""
     n2Interface:
       create: true
-      Ipadd: "192.168.128.195"
+      Ipadd: "192.168.128.35"
       Netmask: "27"
       # #name inside the pod is hardcoded right now
       # name: "n2"
@@ -205,7 +205,7 @@ oai-smf:
     defaultGateway: ""
     n4Interface:
       create: true
-      Ipadd: "192.168.128.196"
+      Ipadd: "192.168.128.36"
       Netmask: "27"
       ## If you do not have a gateway leave the field empty
       Gateway: ""
