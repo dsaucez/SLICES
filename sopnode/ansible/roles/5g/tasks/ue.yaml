@@ -1,4 +1,10 @@
 ---
+- name: Custom chart values
+  ansible.builtin.copy:
+    src: '{{ GCN.UE.custom_values }}/'
+    dest: oai-cn5g-fed/charts/oai-5g-ran/
+  when: GCN.UE.custom_values is defined
+
 - name: Deploy UE
   kubernetes.core.helm:
     name: nrue
