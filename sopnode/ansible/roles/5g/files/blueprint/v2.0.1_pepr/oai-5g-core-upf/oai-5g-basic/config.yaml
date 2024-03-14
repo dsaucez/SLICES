@@ -23,7 +23,7 @@ snssais:
 ### Each NF takes its local SBI interfaces and remote interfaces from here, unless it gets them using NRF discovery mechanisms
 nfs:
   amf:
-    host: 172.20.98.100 # oai-amf.blueprint
+    host: 172.20.120.194 # oai-amf.blueprint
     sbi:
       port: 80
       api_version: v1
@@ -32,7 +32,7 @@ nfs:
       interface_name: n2
       port: 38412
   smf:
-    host: 172.20.235.202 # oai-smf.blueprint
+    host: 172.20.35.73 # oai-smf.blueprint
     sbi:
       port: 80
       api_version: v1
@@ -58,25 +58,25 @@ nfs:
       interface_name: eth0
       port: 2152
   udm:
-    host: 172.20.199.22 # oai-udm.blueprint
+    host: 172.20.246.249 # oai-udm.blueprint
     sbi:
       port: 80
       api_version: v1
       interface_name: eth0
   udr:
-    host: 172.20.24.111  #oai-udr.blueprint
+    host: 172.20.225.90  #oai-udr.blueprint
     sbi:
       port: 80
       api_version: v1
       interface_name: eth0
   ausf:
-    host: 172.20.122.116 # oai-ausf.blueprint
+    host: 172.20.153.194 # oai-ausf.blueprint
     sbi:
       port: 80
       api_version: v1
       interface_name: eth0
   nrf:
-    host: 172.20.103.222 # oai-nrf.blueprint
+    host: 172.20.234.85 # oai-nrf.blueprint
     sbi:
       port: 80
       api_version: v1
