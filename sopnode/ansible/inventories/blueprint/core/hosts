@@ -1,15 +1,12 @@
 all:
   hosts:
-    192.168.122.146:
-      xx-name: core
-      xx-local-ip: 192.168.122.146
-    192.168.122.8:
-      xx-name: node 
-      xx-local-ip: 192.168.122.8
+    192.168.100.93:
+      xx-name: 192.168.100.93
+      xx-local-ip: 192.168.100.93
   children:
     computes:
       hosts:
-        192.168.122.146:
+        192.168.100.93:
     masters:
       hosts:
-        192.168.122.146:
+        192.168.100.93:

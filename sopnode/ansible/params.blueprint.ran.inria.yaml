@@ -16,13 +16,13 @@ k8s:
 GCN:
   namespace: pepr-ran-inria
   RAN:
-    present: false
+    present: true
     custom_values: blueprint/v2.0.1_pepr/oai-5g-ran-inria
     split:
       f1: true
       e1: true
   UE:
-    present: true
+    present: false
     custom_values: blueprint/v2.0.1_pepr/oai-5g-ran-inria
     tests:
       landmark_ping:
