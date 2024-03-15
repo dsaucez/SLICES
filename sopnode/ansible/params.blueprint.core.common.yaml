@@ -1,0 +1,20 @@
+---
+# k8s config
+k8s:
+  runtime: docker
+  podSubnet: 10.244.0.0/16
+  serviceSubnet: 172.23.0.0/24
+  dnsDomain: cluster.local
+  #controlPlaneEndpoint: 10.0.1.4:6443
+  #apiserver_advertise_address: 192.0.2.1
+  calico:
+    # nodeAddressAutodetectionV4:
+    #   cidrs:
+    #     - 192.0.2.0/24
+  encapsulation: VXLAN
+# 5G config
+GCN:
+  namespace: pepr-core-common
+  core:
+    present: true
+    custom_values: blueprint/v2.0.1_pepr/oai-5g-core.common
