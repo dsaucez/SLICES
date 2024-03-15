@@ -1,0 +1,200 @@
+############# Common configuration
+
+# Log level for all the NFs
+log_level:
+  general: info
+
+# If you enable registration, the other NFs will use the NRF discovery mechanism
+register_nf:
+  general: yes
+
+http_version: 2
+
+## general single_nssai configuration
+## Defines YAML anchors, which are reused in the config file
+snssais:
+  - &slice_inria
+    sst: 1
+  - &slice_r2lab
+    sst: 1
+    sd: 000084 # in hex
+  - &slice_tp
+    sst: 1
+    sd: 000082 # in hex
+############## SBI Interfaces
+### Each NF takes its local SBI interfaces and remote interfaces from here, unless it gets them using NRF discovery mechanisms
+nfs:
+  amf:
+    host: oai-amf.blueprint
+    sbi:
+      port: 80
+      api_version: v1
+      interface_name: eth0
+    n2:
+      interface_name: n2
+      port: 38412
+  smf:
+    host: oai-smf.blueprint
+    sbi:
+      port: 80
+      api_version: v1
+      interface_name: eth0
+    n4:
+      interface_name: n4
+      port: 8805
+  upf:
+    host: oai-upf
+    sbi:
+      port: 80
+      api_version: v1
+      interface_name: eth0
+    n3:
+      interface_name: n3
+      port: 2152
+    n4:
+      interface_name: n4
+      port: 8805
+    n6:
+      interface_name: n6
+    n9:
+      interface_name: eth0
+      port: 2152
+  udm:
+    host: oai-udm.blueprint
+    sbi:
+      port: 80
+      api_version: v1
+      interface_name: eth0
+  udr:
+    host: oai-udr.blueprint
+    sbi:
+      port: 80
+      api_version: v1
+      interface_name: eth0
+  ausf:
+    host: oai-ausf.blueprint
+    sbi:
+      port: 80
+      api_version: v1
+      interface_name: eth0
+  nrf:
+    host: 172.21.10.14 # oai-nrf.blueprint
+    sbi:
+      port: 80
+      api_version: v1
+      interface_name: eth0
+
+##DSA##### Common for UDR and AMF
+##DSA#database:
+##DSA#  host: mysql
+##DSA#  user: test
+##DSA#  type: mysql
+##DSA#  password: test
+##DSA#  database_name: oai_db
+##DSA#  generate_random: true
+##DSA#  connection_timeout: 300 # seconds
+##DSA#
+##DSA############### NF-specific configuration
+##DSA#amf:
+##DSA#  amf_name: "OAI-AMF"
+##DSA#  # This really depends on if we want to keep the "mini" version or not
+##DSA#  support_features_options:
+##DSA#    enable_simple_scenario: no # "no" by default with the normal deployment scenarios with AMF/SMF/UPF/AUSF/UDM/UDR/NRF.
+##DSA#                               # set it to "yes" to use with the minimalist deployment scenario (including only AMF/SMF/UPF) by using the internal AUSF/UDM implemented inside AMF.
+##DSA#                               # There's no NRF in this scenario, SMF info is taken from "nfs" section.
+##DSA#    enable_nssf: no
+##DSA#    enable_smf_selection: yes
+##DSA#  relative_capacity: 30
+##DSA#  statistics_timer_interval: 20  # in seconds
+##DSA#  emergency_support: false
+##DSA#  served_guami_list:
+##DSA#    - mcc: 001
+##DSA#      mnc: 01
+##DSA#      amf_region_id: 01
+##DSA#      amf_set_id: 001
+##DSA#      amf_pointer: 01
+##DSA#  plmn_support_list:
+##DSA#    - mcc: 001
+##DSA#      mnc: 01
+##DSA#      tac: 0x0001
+##DSA#      nssai:
+##DSA#        - *embb_slice1
+##DSA#        - *embb_slice2
+##DSA#  supported_integrity_algorithms:
+##DSA#    - "NIA1"
+##DSA#    - "NIA2"
+##DSA#  supported_encryption_algorithms:
+##DSA#    - "NEA0"
+##DSA#    - "NEA1"
+##DSA#    - "NEA2"
+##DSA#
+##DSA#smf:
+##DSA#  ue_mtu: 1500
+##DSA#  support_features:
+##DSA#    use_local_subscription_info: no # Use infos from local_subscription_info or from UDM
+##DSA#    use_local_pcc_rules: yes # Use infos from local_pcc_rules or from PCF
+##DSA#  # we resolve from NRF, this is just to configure usage_reporting
+##DSA#  upfs:
+##DSA#    - host: oai-upf
+##DSA#      config:
+##DSA#        enable_usage_reporting: no
+##DSA#  ue_dns:
+##DSA#    primary_ipv4: "10.3.2.200"
+##DSA#    primary_ipv6: "2001:4860:4860::8888"
+##DSA#    secondary_ipv4: "8.8.8.8"
+##DSA#    secondary_ipv6: "2001:4860:4860::8888"
+##DSA#  ims:
+##DSA#    pcscf_ipv4: "192.168.70.139"
+##DSA#    pcscf_ipv6: "fe80::7915:f408:1787:db8b"
+##DSA#  # the DNN you configure here should be configured in "dnns"
+##DSA#  # follows the SmfInfo datatype from 3GPP TS 29.510
+##DSA#  smf_info:
+##DSA#    sNssaiSmfInfoList:
+##DSA#      - sNssai: *embb_slice1
+##DSA#        dnnSmfInfoList:
+##DSA#          - dnn: "oai"
+##DSA#      - sNssai: *embb_slice2
+##DSA#        dnnSmfInfoList:
+##DSA#          - dnn: "ims"
+##DSA#      - sNssai: *embb_slice3
+##DSA#        dnnSmfInfoList:
+##DSA#          - dnn: "pepr"
+##DSA#  local_subscription_infos:
+##DSA#    - single_nssai: *embb_slice1
+##DSA#      dnn: "oai"
+##DSA#      qos_profile:
+##DSA#        5qi: 5
+##DSA#        session_ambr_ul: "200Mbps"
+##DSA#        session_ambr_dl: "400Mbps"
+##DSA#    - single_nssai: *embb_slice2
+##DSA#      dnn: "ims"
+##DSA#      qos_profile:
+##DSA#        5qi: 2
+##DSA#        session_ambr_ul: "100Mbps"
+##DSA#        session_ambr_dl: "200Mbps"
+##DSA#    - single_nssai: *embb_slice3
+##DSA#      dnn: "pepr"
+##DSA#      qos_profile:
+##DSA#        5qi: 5
+##DSA#        session_ambr_ul: "200Mbps"
+##DSA#        session_ambr_dl: "400Mbps"
+
+upf:
+  support_features:
+    enable_bpf_datapath: no    # If "on": BPF is used as datapath else simpleswitch is used, DEFAULT= off
+    enable_snat: off            # If "on": Source natting is done for UE, DEFAULT= off
+  remote_n6_gw: 127.0.0.1      # Dummy host since simple-switch does not use N6 GW
+  upf_info:
+    sNssaiUpfInfoList:
+    - sNssai: *slice_inria
+      dnnUpfInfoList:
+        - dnn: oai
+
+## DNN configuration
+dnns:
+  - dnn: "oai"
+    pdu_session_type: "IPV4"
+    ipv4_subnet: "12.1.1.0/24"
+  - dnn: "ims"
+    pdu_session_type: "IPV4V6"
+    ipv4_subnet: "14.1.1.0/24"
