@@ -1,0 +1,101 @@
+############# Common configuration
+
+# Log level for all the NFs
+log_level:
+  general: info
+
+# If you enable registration, the other NFs will use the NRF discovery mechanism
+register_nf:
+  general: yes
+
+http_version: 2
+
+## general single_nssai configuration
+## Defines YAML anchors, which are reused in the config file
+snssais:
+  - &slice_inria
+    sst: 1
+  - &slice_r2lab
+    sst: 1
+    sd: 000002 # in hex
+  - &slice_eurecom
+    sst: 1
+    sd: 000003 # in hex
+  - &slice_tp
+    sst: 1
+    sd: 000004 # in hex
+############## SBI Interfaces
+### Each NF takes its local SBI interfaces and remote interfaces from here, unless it gets them using NRF discovery mechanisms
+nfs:
+  amf:
+    host: oai-amf.blueprint
+    sbi:
+      port: 80
+      api_version: v1
+      interface_name: eth0
+    n2:
+      interface_name: n2
+      port: 38412
+  smf:
+    host: oai-smf.blueprint
+    sbi:
+      port: 80
+      api_version: v1
+      interface_name: eth0
+    n4:
+      interface_name: n4
+      port: 8805
+  upf:
+    host: oai-upf
+    sbi:
+      port: 80
+      api_version: v1
+      interface_name: eth0
+    n3:
+      interface_name: n3
+      port: 2152
+    n4:
+      interface_name: n3
+      port: 8805
+    n6:
+      interface_name: n3
+    n9:
+      interface_name: eth0
+      port: 2152
+  udm:
+    host: oai-udm.blueprint
+    sbi:
+      port: 80
+      api_version: v1
+      interface_name: eth0
+  udr:
+    host: oai-udr.blueprint
+    sbi:
+      port: 80
+      api_version: v1
+      interface_name: eth0
+  ausf:
+    host: oai-ausf.blueprint
+    sbi:
+      port: 80
+      api_version: v1
+      interface_name: eth0
+  nrf:
+    host: 172.21.10.203 # oai-nrf.blueprint
+    sbi:
+      port: 80
+      api_version: v1
+      interface_name: eth0
+
+upf:
+  support_features:
+    enable_bpf_datapath: no    # If "on": BPF is used as datapath else simpleswitch is used, DEFAULT= off
+    enable_snat: off            # If "on": Source natting is done for UE, DEFAULT= off
+  remote_n6_gw: 127.0.0.1      # Dummy host since simple-switch does not use N6 GW
+  upf_info:
+    sNssaiUpfInfoList:
+    - sNssai: *slice_inria
+      dnnUpfInfoList:
+        - dnn: oai
+        - dnn: internet
+

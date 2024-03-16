@@ -1,0 +1,7 @@
+---
+# 5G config
+GCN:
+  namespace: pepr-core-common
+  core:
+    present: true
+    custom_values: blueprint/pepr/oai-5g-core/
