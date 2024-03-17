@@ -3,50 +3,31 @@ kind: Deployment
 metadata:
   name: {{ .Chart.Name }}
   labels:
-    {{- include "oai-upf.labels" . | nindent 4 }}
+    {{- include "oai-amf.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "oai-upf.selectorLabels" . | nindent 6 }}
+      {{- include "oai-amf.selectorLabels" . | nindent 6 }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        {{- include "oai-upf.selectorLabels" . | nindent 8 }}
-    {{- if .Values.multus.n3Interface.create }}
+        {{- include "oai-amf.selectorLabels" . | nindent 8 }}
+    {{- if .Values.multus.n2Interface.create }}
       annotations:
         k8s.v1.cni.cncf.io/networks: >-
           [{
-                 "name": "{{ .Chart.Name }}-n3",
-                 "interface": "n3"
+                 "name": "{{ .Chart.Name }}-n2",
+                 "interface": "n2"
                 {{- if .Values.multus.defaultGateway }}
                  ,"default-route": ["{{ .Values.multus.defaultGateway }}"]
                 {{- end }}
-                {{- if .Values.multus.n3Interface.Gateway }}
-                ,"gateway": "{{ .Values.multus.n3Interface.Gateway }}"
+                {{- if .Values.multus.n2Interface.Gateway }}
+                ,"gateway": "{{ .Values.multus.n2Interface.Gateway }}"
                 {{- end }}
-          }
-          {{- if .Values.multus.n4Interface.create }}
-          ,{
-                 "name": "{{ .Chart.Name }}-n4",
-                 "interface": "n4"
-                {{- if .Values.multus.n4Interface.Gateway }}
-                ,"gateway": "{{ .Values.multus.n4Interface.Gateway }}"
-                {{- end }}
-          }
-          {{- end }}
-          {{- if .Values.multus.n6Interface.create }}
-          ,{
-                 "name": "{{ .Chart.Name }}-n6",
-                 "interface": "n6"
-                {{- if .Values.multus.n6Interface.Gateway }}
-                ,"gateway": "{{ .Values.multus.n6Interface.Gateway }}"
-                {{- end }}
-          }
-          {{- end }}
-          ]
+          }]
     {{- end }}
     spec:
       securityContext:
@@ -57,13 +38,20 @@ spec:
     {{- end }}
     {{- if .Values.global }}{{ if .Values.global.waitForNRF }}
       initContainers:
-        - name: init
+        - name: init-nrf
           image: docker.io/alpine/curl:3.14
           imagePullPolicy: IfNotPresent
           command: 
             - /bin/sh
             - -c
             - until curl --connect-timeout {{ .Values.global.timeout }} --head -X GET http://oai-nrf/nnrf-nfm/v1/nf-instances?nf-type='NRF' {{ .Values.global.http2Param }}; do echo waiting for oai-nrf; sleep 1; done
+        - name: init-mysql
+          image: docker.io/mysql:oraclelinux8
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - until mysql -utest -ptest -h mysql -e 'select * from oai_db.AuthenticationSubscription where ueid=208990200000001;';do echo waiting for udr to be setup; sleep 1; done
     {{- end }}{{ end }}
       containers:
     {{- if .Values.includeTcpDumpContainer }}
@@ -80,7 +68,12 @@ spec:
             cpu: {{ .Values.resources.limits.tcpdump.cpu | quote }}
         {{- end}}
         securityContext:
-          {{- toYaml .Values.securityContext | nindent 12 }}
+           privileged: true
+           capabilities:
+              add:
+               - NET_ADMIN
+              drop:
+               - ALL
         {{- if .Values.start.tcpdump}}
         command:
           - /bin/sh
@@ -99,47 +92,12 @@ spec:
         {{- end}}
         {{- end}}
     {{- end }}
-      - name: upf
+      - name: amf
         image: "{{ .Values.nfimage.repository }}:{{ .Values.nfimage.version }}"
         imagePullPolicy: {{ .Values.nfimage.pullPolicy }}
         volumeMounts:
-          - mountPath: /openair-upf/etc
+          - mountPath: /openair-amf/etc
             name: configuration
-        securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-        {{- if .Values.readinessProbe}}
-        readinessProbe:
-          exec:
-            command:
-            - /bin/bash
-            - /openair-upf/bin/healthcheck.sh
-          initialDelaySeconds: 2
-          periodSeconds: 3
-        {{- end}}
-        lifecycle:
-          postStart:
-            exec:
-              command: ["/sbin/sysctl", "-w", "net.ipv4.ip_forward=1"]
-        {{- if .Values.livenessProbe}}
-        livenessProbe:
-          exec:
-            command:
-            - /bin/bash
-            - /openair-upf/bin/healthcheck.sh
-          initialDelaySeconds: 10
-          periodSeconds: 5
-        {{- end}}
-        ports:
-        - containerPort: 8805
-          name: pfcp
-        - containerPort: 2152
-          name: s1u
-        {{- if .Values.start.spgwu}}
-        {{- else}}
-        command:
-          - /bin/sleep
-          - infinity
-        {{- end}}
         {{- if .Values.resources.define}}
         resources:
           requests:
@@ -149,14 +107,38 @@ spec:
             memory: {{ .Values.resources.limits.nf.memory | quote }}
             cpu: {{ .Values.resources.limits.nf.cpu | quote }}
         {{- end}}
+        {{- if .Values.readinessProbe}}
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - /openair-amf/bin/healthcheck.sh
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        {{- end}}
+        {{- if .Values.livenessProbe}}
+        livenessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - /openair-amf/bin/healthcheck.sh
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        {{- end}}
+        ports:
+        - containerPort: {{ .Values.exposedPorts.sctp }}
+          name: oai-amf
+          protocol: SCTP
+        - containerPort: {{ .Values.exposedPorts.sbi }}
+          name: http
+          protocol: TCP
+        {{- if .Values.start.amf}}
+        {{- else}}
+        command:
+          - /bin/sleep
+          - infinity
+        {{- end}}
       volumes:
-      - configMap:
-      {{- if .Values.global }}
-          name: {{ .Values.global.nfConfigurationConfigMap }}
-      {{- else }}
-          name: {{ .Chart.Name }}-configmap
-      {{- end }}
-        name: configuration
       {{- if .Values.includeTcpDumpContainer}}
       {{- if .Values.persistent.sharedvolume}}
       - name: cn5g-pvc
@@ -164,10 +146,16 @@ spec:
           claimName: cn5g-pvc
       {{- end }}
       {{- end }}
+      - configMap:
+      {{- if .Values.global.amfConfigurationConfigMap }}
+          name: {{ .Values.global.amfConfigurationConfigMap }}
+      {{- else }}
+          name: {{ .Chart.Name }}
+      {{- end }}
+        name: configuration
       dnsPolicy: ClusterFirst
       restartPolicy: Always
-      schedulerName: default-scheduler
-      serviceAccountName: {{ .Values.serviceAccount.name }}
+      serviceAccountName: {{ .Chart.Name }}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       {{- if .Values.nodeSelector}}
       nodeSelector: 

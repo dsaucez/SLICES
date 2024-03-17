@@ -15,6 +15,7 @@ http_version: 2
 snssais:
   - &slice_inria
     sst: 1
+    sd: 000001 # in hex
   - &slice_r2lab
     sst: 1
     sd: 000002 # in hex
@@ -99,40 +100,6 @@ database:
   connection_timeout: 300 # seconds
 
 ############## NF-specific configuration
-amf:
-  amf_name: "OAI-AMF"
-  # This really depends on if we want to keep the "mini" version or not
-  support_features_options:
-    enable_simple_scenario: no # "no" by default with the normal deployment scenarios with AMF/SMF/UPF/AUSF/UDM/UDR/NRF.
-                               # set it to "yes" to use with the minimalist deployment scenario (including only AMF/SMF/UPF) by using the internal AUSF/UDM implemented inside AMF.
-                               # There's no NRF in this scenario, SMF info is taken from "nfs" section.
-    enable_nssf: no
-    enable_smf_selection: yes
-  relative_capacity: 30
-  statistics_timer_interval: 20  # in seconds
-  emergency_support: false
-  served_guami_list:
-    - mcc: 001
-      mnc: 01
-      amf_region_id: 01
-      amf_set_id: 001
-      amf_pointer: 01
-  plmn_support_list:
-    - mcc: 001
-      mnc: 01
-      tac: 0x0001
-      nssai:
-        - *slice_inria
-        - *slice_r2lab
-        - *slice_tp
-  supported_integrity_algorithms:
-    - "NIA1"
-    - "NIA2"
-  supported_encryption_algorithms:
-    - "NEA0"
-    - "NEA1"
-    - "NEA2"
-
 smf:
   ue_mtu: 1500
   support_features:
@@ -167,41 +134,45 @@ smf:
         dnnSmfInfoList:
           - dnn: "oai"
           - dnn: "internet"
+      - sNssai: *slice_eurecom
+        dnnSmfInfoList:
+          - dnn: "oai"
+          - dnn: "internet"
   local_subscription_infos:
     - single_nssai: *slice_inria
       dnn: "oai"
       qos_profile:
-        5qi: 5
+        5qi: 1
         session_ambr_ul: "200Mbps"
         session_ambr_dl: "400Mbps"
     - single_nssai: *slice_inria
       dnn: "internet"
       qos_profile:
-        5qi: 5
+        5qi: 1
         session_ambr_ul: "200Mbps"
         session_ambr_dl: "400Mbps"
     - single_nssai: *slice_r2lab
       dnn: "oai"
       qos_profile:
-        5qi: 5
+        5qi: 1
         session_ambr_ul: "200Mbps"
         session_ambr_dl: "400Mbps"
     - single_nssai: *slice_r2lab
       dnn: "internet"
       qos_profile:
-        5qi: 5
+        5qi: 1
         session_ambr_ul: "200Mbps"
         session_ambr_dl: "400Mbps"
     - single_nssai: *slice_tp
       dnn: "oai"
       qos_profile:
-        5qi: 5
+        5qi: 1
         session_ambr_ul: "200Mbps"
         session_ambr_dl: "400Mbps"
     - single_nssai: *slice_tp
       dnn: "internet"
       qos_profile:
-        5qi: 5
+        5qi: 1
         session_ambr_ul: "200Mbps"
         session_ambr_dl: "400Mbps"
     - single_nssai: *slice_eurecom
@@ -217,28 +188,28 @@ smf:
         session_ambr_ul: "200Mbps"
         session_ambr_dl: "400Mbps"
 
-upf:
-  support_features:
-    enable_bpf_datapath: no    # If "on": BPF is used as datapath else simpleswitch is used, DEFAULT= off
-    enable_snat: off            # If "on": Source natting is done for UE, DEFAULT= off
-  remote_n6_gw: 127.0.0.1      # Dummy host since simple-switch does not use N6 GW
-  upf_info:
-    sNssaiUpfInfoList:
-    - sNssai: *slice_inria
-      dnnUpfInfoList:
-        - dnn: oai
-    - sNssai: *slice_r2lab
-      dnnUpfInfoList:
-        - dnn: oai
-    - sNssai: *slice_tp
-      dnnUpfInfoList:
-        - dnn: oai
-
+##DSA#upf:
+##DSA#  support_features:
+##DSA#    enable_bpf_datapath: no    # If "on": BPF is used as datapath else simpleswitch is used, DEFAULT= off
+##DSA#    enable_snat: off            # If "on": Source natting is done for UE, DEFAULT= off
+##DSA#  remote_n6_gw: 127.0.0.1      # Dummy host since simple-switch does not use N6 GW
+##DSA#  upf_info:
+##DSA#    sNssaiUpfInfoList:
+##DSA#    - sNssai: *slice_inria
+##DSA#      dnnUpfInfoList:
+##DSA#        - dnn: oai
+##DSA#    - sNssai: *slice_r2lab
+##DSA#      dnnUpfInfoList:
+##DSA#        - dnn: oai
+##DSA#    - sNssai: *slice_tp
+##DSA#      dnnUpfInfoList:
+##DSA#        - dnn: oai
+##DSA#
 ## DNN configuration
 dnns:
-  - dnn: "oai"
-    pdu_session_type: "IPV4"
-    ipv4_subnet: "12.1.1.0/24"
-  - dnn: "internet"
-    pdu_session_type: "IPV4"
-    ipv4_subnet: "12.1.1.0/24"
+- dnn: "oai"
+  pdu_session_type: "IPV4"
+  ipv4_subnet: "12.1.1.0/24"
+- dnn: "internet"
+  pdu_session_type: "IPV4"
+  ipv4_subnet: "12.1.1.0/24"

@@ -65,6 +65,7 @@ config:
   mnc: "01"    # check the information with AMF, SMF, UPF
   tac: "1"     # check the information with AMF
   sst: "1"  #currently only 4 standard values are allowed 1,2,3,4
+  sd: "1"
   usrp: rfsim   #allowed values rfsim, b2xx, n3xx or x3xx
   f1IfName: "f1"   #if multus.f1Interface.create is true then use f1
   cuHost: "172.21.10.208" ## Ip-address or hostname
