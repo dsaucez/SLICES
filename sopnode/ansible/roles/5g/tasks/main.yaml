@@ -1,4 +1,9 @@
 ---
+- name: Cleanup git
+  ansible.builtin.file:
+    path: oai-cn5g-fed
+    state: absent
+
 - name: Retrieve OAI
   ansible.builtin.git:
     repo: https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed.git
