@@ -13,7 +13,7 @@ data:
       (
        {
           ////////// Identification parameters:
-          gNB_ID = 0xe00;
+          gNB_ID = {{ .Values.config.gnbid}}; #0xe00;
           gNB_CU_UP_ID = 0xe00;
 
       #     cell_type =  "CELL_MACRO_GNB";

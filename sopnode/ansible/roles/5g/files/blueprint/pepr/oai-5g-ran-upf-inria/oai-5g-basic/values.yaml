@@ -18,7 +18,7 @@ oai-nrf:
   kubernetesType: Vanilla #Openshift/Vanilla Vanilla for Upstream Kubernetes
   nfimage:  # image name either locally present or in a public/private repository
     repository: docker.io/oaisoftwarealliance/oai-nrf          ## The image will be pulled from dockerhub
-    version: v2.0.1                          ## The branch to be used to pull from dockerhub
+    version: develop                          ## The branch to be used to pull from dockerhub
     # pullPolicy: IfNotPresent or Never or Always
     pullPolicy: IfNotPresent
   includeTcpDumpContainer: false #only for taking pcaps inside network function pod
@@ -32,7 +32,7 @@ oai-udr:
   kubernetesType: Vanilla #Openshift/Vanilla Vanilla for Upstream Kubernetes
   nfimage:  # image name either locally present or in a public/private repository
     repository: docker.io/oaisoftwarealliance/oai-udr           ## The image will be pulled from dockerhub
-    version: v2.0.1                                    ## The branch to be used to pull from dockerhub
+    version: develop                                    ## The branch to be used to pull from dockerhub
     # pullPolicy: IfNotPresent or Never or Always
     pullPolicy: IfNotPresent
   includeTcpDumpContainer: false #only for taking pcaps inside network function pod
@@ -46,7 +46,7 @@ oai-udm:
   kubernetesType: Vanilla #Openshift/Vanilla Vanilla for Upstream Kubernetes
   nfimage:  # image name either locally present or in a public/private repository
     repository: docker.io/oaisoftwarealliance/oai-udm           ## The image will be pulled from dockerhub
-    version: v2.0.1                                    ## The branch to be used to pull from dockerhub
+    version: develop                                    ## The branch to be used to pull from dockerhub
     # pullPolicy: IfNotPresent or Never or Always
     pullPolicy: IfNotPresent
   includeTcpDumpContainer: false #only for taking pcaps inside network function pod
@@ -60,7 +60,7 @@ oai-ausf:
   kubernetesType: Vanilla #Openshift/Vanilla Vanilla for Upstream Kubernetes
   nfimage:  # image name either locally present or in a public/private repository
     repository: docker.io/oaisoftwarealliance/oai-ausf           ## The image will be pulled from dockerhub
-    version: v2.0.1                                    ## The branch to be used to pull from dockerhub
+    version: develop                                    ## The branch to be used to pull from dockerhub
     # pullPolicy: IfNotPresent or Never or Always
     pullPolicy: IfNotPresent
   includeTcpDumpContainer: false #only for taking pcaps inside network function pod
@@ -74,7 +74,7 @@ oai-amf:
   kubernetesType: Vanilla #Openshift/Vanilla Vanilla for Upstream Kubernetes
   nfimage:  # image name either locally present or in a public/private repository
     repository: docker.io/oaisoftwarealliance/oai-amf           ## The image will be pulled from dockerhub
-    version: v2.0.1                                    ## The branch to be used to pull from dockerhub
+    version: develop                                    ## The branch to be used to pull from dockerhub
     # pullPolicy: IfNotPresent or Never or Always
     pullPolicy: IfNotPresent
   includeTcpDumpContainer: false #only for taking pcaps inside network function pod
@@ -109,7 +109,7 @@ oai-upf:
   kubernetesType: Vanilla #Openshift/Vanilla Vanilla for Upstream Kubernetes
   nfimage:  # image name either locally present or in a public/private repository
     repository: docker.io/oaisoftwarealliance/oai-upf    ## The image will be pulled from dockerhub
-    version: v2.0.1                                    ## The branch to be used to pull from dockerhub
+    version: develop                                    ## The branch to be used to pull from dockerhub
     # pullPolicy: IfNotPresent or Never or Always
     pullPolicy: IfNotPresent
   includeTcpDumpContainer: true #only for taking pcaps inside network function pod
@@ -130,7 +130,10 @@ oai-upf:
       ## If you do not have a gateway leave the field empty
       Gateway: ""
       ## If you don't want to add a default route in your pod then replace this field with ""
-      routes: [
+      routes: [ {
+                  "dst": "0.0.0.0/0",
+                  "gw": "172.21.11.254"
+                 }
         ]
       hostInterface: "breurecom"
     ## For n4 it is better to re-use eth0 interface inside the pod (primary CNI of Kubernetes)
@@ -143,8 +146,7 @@ oai-upf:
       ## If you do not have a gateway leave the field empty
       Gateway: ""
       ## If you do not want to add any routes in your pod then leave this field empty
-      routes: [
-        ]
+      routes: []
       hostInterface: "breurecom"
     n6Interface:
       create: false
@@ -189,7 +191,7 @@ oai-smf:
   kubernetesType: Vanilla #Openshift/Vanilla Vanilla for Upstream Kubernetes
   nfimage:  # image name either locally present or in a public/private repository
     repository: docker.io/oaisoftwarealliance/oai-smf           ## The image will be pulled from dockerhub
-    version: v2.0.1                         ## The branch to be used to pull from dockerhub
+    version: develop                         ## The branch to be used to pull from dockerhub
     # pullPolicy: IfNotPresent or Never or Always
     pullPolicy: IfNotPresent
   includeTcpDumpContainer: false #only for taking pcaps inside network function pod

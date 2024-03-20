@@ -70,6 +70,7 @@ config:
   timeZone: "Europe/Paris"
   useAdditionalOptions: "--sa"
   cuupName: "oai-cuup"
+  gnbid: 0xe01
   mcc: "001"   # check the information with AMF, SMF, UPF
   mnc: "01"    # check the information with AMF, SMF, UPF
   tac: "1"     # check the information with AMF

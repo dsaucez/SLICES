@@ -61,6 +61,8 @@ config:
   timeZone: "Europe/Paris"
   useAdditionalOptions: "--sa --rfsim --log_config.global_log_options level,nocolor,time"
   duName: "oai-du-rfsim"
+  gnbid: 0xe01
+  gnbduid: 0xe01
   mcc: "001"   # check the information with AMF, SMF, UPF
   mnc: "01"    # check the information with AMF, SMF, UPF
   tac: "1"     # check the information with AMF
