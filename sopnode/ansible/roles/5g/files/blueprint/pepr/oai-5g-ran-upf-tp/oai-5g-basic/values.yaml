@@ -131,6 +131,14 @@ oai-upf:
       Gateway: ""
       ## If you don't want to add a default route in your pod then replace this field with ""
       routes: [
+                {
+                        "dst": "137.194.194.0/23",
+                        "gw": "172.21.11.254"
+                },
+                {
+                        "dst": "172.21.0.0/22",
+                        "gw": "172.21.11.254"
+                }
         ]
       hostInterface: "breurecom"
     ## For n4 it is better to re-use eth0 interface inside the pod (primary CNI of Kubernetes)

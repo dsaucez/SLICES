@@ -93,7 +93,10 @@ oai-amf-00101:
       ## If you do not have a gateway leave the field empty
       Gateway:
       ## If you do not want to add any routes in your pod then leave this field empty
-      routes: [
+      routes: [{
+                        "dst": "137.194.194.0/23",
+                        "gw": "172.21.11.254"
+                },
                 {
                         "dst": "172.21.16.0/22",
                         "gw": "172.21.11.254"
@@ -264,7 +267,10 @@ oai-smf:
       ## If you do not have a gateway leave the field empty
       Gateway: ""
       ## If you do not want to add any routes in your pod then leave this field empty
-      routes: [
+      routes: [{
+                        "dst": "137.194.194.0/23",
+                        "gw": "172.21.11.254"
+                },
                 {
                         "dst": "172.21.16.0/22",
                         "gw": "172.21.11.254"
