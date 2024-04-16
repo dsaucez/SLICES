@@ -1,0 +1,19 @@
+- name: Retrieve metallb
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/metallb/metallb/v0.14.4/config/manifests/metallb-native.yaml
+    dest: ./metallb-native.yaml
+
+- name: Install metallb
+  shell: 'kubectl create -f metallb-native.yaml'
+
+- name: Create metallb configuration
+  ansible.builtin.template:
+    src: metallb.yaml.j2
+    dest: ./metallb.yaml
+
+- name: Wait for metallb to be ready
+  ansible.builtin.shell: 'kubectl wait --timeout=300s -n metallb-system --for=condition=Ready  $(kubectl get pod -o name -n metallb-system)' 
+
+- name: Setup metallb pool
+  shell: 'kubectl create -f metallb.yaml'
+  

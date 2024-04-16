@@ -9,6 +9,8 @@
     - role: k8s-master
     - role: k8s-ca-certificate
     - role: k8s-infos
+    - role: k8s-metallb
+      when: k8s.metallb is defined
 
   post_tasks:
     - name: Wait for the node to be ready
