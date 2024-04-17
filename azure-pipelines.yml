@@ -180,26 +180,6 @@ stages:
            multipass exec leftswitch -- nohup sudo openvpn ran.ovpn </dev/null >nohup.log 2>&1 &
         readyTimeout: '2000'
 
-    - script: |
- 
-        #Setup Environment
-        export PATH="$HOME/.local/bin:$PATH"
-        . ~/.bashrc
-        cd sopnode/ansible
-        #Core deployment
-        echo 'deploying 5G core ...'
-        ansible-playbook  -i inventories/blueprint/core/  5g.yaml  --extra-vars "@params.blueprint.core.yaml"
-
-      displayName: '5G core deployment'
-    - script: |
- 
-        # Setup Environment
-        export PATH="$HOME/.local/bin:$PATH"
-        . ~/.bashrc
-        cd sopnode/ansible
-        ansible-playbook  -i inventories/blueprint/ran/  5g.yaml  --extra-vars "@params.blueprint.ran.yaml"
-      displayName: 'RAN deployment'
-      continueOnError: true
     - task: SSH@0
       displayName: 'Interconnection test'
       continueOnError: true
@@ -209,6 +189,36 @@ stages:
         commands: |
            multipass exec leftswitch -- ping -c 1 -I 10.0.10.1 172.22.10.1
         readyTimeout: '20000'
+
+    - script: |
+        #Setup Environment
+        export PATH="$HOME/.local/bin:$PATH"
+        . ~/.bashrc
+        cd sopnode/ansible
+        #Core deployment
+        echo 'deploying 5G core ...'
+        ansible-playbook  -i inventories/blueprint/core/  5g.yaml  --extra-vars "@params.blueprint.core.yaml" --extra-vars "@params.pipeline.yaml"
+      displayName: '5G core deployment'
+
+    - script: |
+        # Setup Environment
+        export PATH="$HOME/.local/bin:$PATH"
+        . ~/.bashrc
+        cd sopnode/ansible
+        ansible-playbook  -i inventories/blueprint/ran/  5g.yaml  --extra-vars "@params.blueprint.ran.yaml" --extra-vars "@params.pipeline.yaml"
+      displayName: 'RAN deployment'
+      continueOnError: true
+
+    - script: |
+        # Setup Environment
+        export PATH="$HOME/.local/bin:$PATH"
+        . ~/.bashrc
+        cd sopnode/ansible
+        kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=oai-nr-ue --timeout=3m --namespace blueprint
+        sleep 60
+        ansible-playbook  -i inventories/blueprint/ran/  5g_test.yaml  --extra-vars "@params.blueprint.ran.yaml" --extra-vars "@params.pipeline.yaml"
+      displayName: 'Test UE connectivity'
+      continueOnError: true
 
     - task: SSH@0
       inputs:

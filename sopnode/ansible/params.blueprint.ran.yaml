@@ -3,7 +3,7 @@
 k8s:
   runtime: docker
   podSubnet: 10.244.0.0/16
-  serviceSubnet: 10.0.10.0/24
+  serviceSubnet: 10.96.0.0/16
   dnsDomain: cluster.local
   #apiserver_advertise_address: 172.16.2.27
   calico:
@@ -14,13 +14,16 @@ k8s:
   encapsulation: VXLAN
 # 5G config
 GCN:
-  namespace: blueprint
+  namespace: pepr-ran
   RAN:
     present: true
-    custom_files: blueprint/v1.5.1/ran_files
-    custom_values: blueprint/oai-cn5g-fed__v1.5.1/charts/oai-5g-ran
+    custom_values: blueprint/v2.0.1_pepr/oai-5g-ran
+    split:
+      f1: true
+      e1: true
   UE:
     present: true
+    custom_values: blueprint/v2.0.1_pepr/oai-5g-ran
     tests:
       landmark_ping:
-          landmark: 172.22.10.1
+        landmark: 12.1.1.1

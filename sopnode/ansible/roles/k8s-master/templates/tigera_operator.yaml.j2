@@ -1,6 +1,10 @@
 installation:
   cni:
     type: Calico
+{% if k8s.serviceSubnet is defined %}
+  serviceCIDRs:
+    - {{ k8s.serviceSubnet }}
+{% endif %}
   calicoNetwork:   
     bgp: Disabled
     nodeAddressAutodetectionV4: 

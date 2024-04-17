@@ -1,0 +1,7 @@
+---
+# 5G config
+GCN:
+  namespace: pepr-ran-upf
+  core:
+    present: true
+    custom_values: blueprint/pepr/oai-5g-ran-upf

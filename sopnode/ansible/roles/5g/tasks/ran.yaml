@@ -1,9 +1,9 @@
 ---
-- name: Custom chart files
-  ansible.builtin.copy:
-    src: '{{ GCN.RAN.custom_files }}/'
-    dest: oai-cn5g-fed/charts/oai-5g-ran/
-  when: GCN.RAN.custom_files is defined
+# - name: Custom chart files
+#   ansible.builtin.copy:
+#     src: '{{ GCN.RAN.custom_files }}/'
+#     dest: oai-cn5g-fed/charts/oai-5g-ran/
+#   when: GCN.RAN.custom_files is defined
 
 - name: Custom chart values
   ansible.builtin.copy:
@@ -17,3 +17,37 @@
     chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-gnb
     release_namespace: '{{ GCN.namespace }}'
     wait: true
+  when: not GCN.RAN.split.f1 and not GCN.RAN.split.e1
+
+- block:
+  - name: Deploy gNB-CU
+    kubernetes.core.helm:
+      name: cu
+      chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-cu
+      release_namespace: '{{ GCN.namespace }}'
+      wait: true
+    when: GCN.RAN.split.f1 and not GCN.RAN.split.e1
+
+  - block:
+    - name: Deploy gNB-CU-cp
+      kubernetes.core.helm:
+        name: cucp
+        chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-cu-cp
+        release_namespace: '{{ GCN.namespace }}'
+        wait: true
+    - name: Deploy gNB-CU-up
+      kubernetes.core.helm:
+        name: cuup
+        chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-cu-up
+        release_namespace: '{{ GCN.namespace }}'
+        wait: true
+    when: GCN.RAN.split.f1 and GCN.RAN.split.e1
+
+  - name: Deploy gNB-DU
+    kubernetes.core.helm:
+      name: du
+      chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-du
+      release_namespace: '{{ GCN.namespace }}'
+      wait: true
+    when: GCN.RAN.split.f1
+  when: GCN.RAN.split.f1 or GCN.RAN.split.e1

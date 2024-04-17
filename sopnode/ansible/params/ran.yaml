@@ -1,0 +1,16 @@
+---
+# 5G config
+GCN:
+  namespace: pepr-ran-inria
+  RAN:
+    present: true
+    custom_values: blueprint/pepr/oai-5g-ran-inria
+    split:
+      f1: true
+      e1: true
+  UE:
+    present: true
+    custom_values: blueprint/pepr/oai-5g-ran-inria
+    tests:
+      landmark_ping:
+        landmark: 12.1.1.1
