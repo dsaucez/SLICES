@@ -1,3 +1,13 @@
+# SLICES Blueprint
+* [Blueprint version 1.0](blueprint/blueprintv1.md)
+* [Blueprint version 2.0](http://doc.slices-sc.eu/blueprint/)
+
+> [!WARNING]
+> The following of this page and all markdown files in this repo is deprecated, read the code :)
+
+> [!NOTE]
+> If you feel like writing a proper documentation, a pull request from you will be accepted!!!
+
 # Introduction
 
 In previous generations of testbeds, radio and compute resources were the only
@@ -22,4 +32,4 @@ how to inter-connect equipment from both a logical and a physical point of view.
     * Management network [[Management](management_network.md)]
 * Sharing a node between two partners [[Sharing](sharing_node.md)]
 
-# SLICES Blueprint [[Blueprint version 1.0](blueprint/blueprintv1.md)]
+
