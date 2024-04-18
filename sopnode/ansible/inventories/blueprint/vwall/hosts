@@ -1,0 +1,33 @@
+all:
+  hosts:
+    192.168.0.1:
+      xx-name: 192.168.0.1 
+      xx-local-ip: 192.168.0.1
+      xx-vwall: node0
+    192.168.0.3:
+      xx-name: 192.168.0.3 
+      xx-local-ip: 192.168.0.3
+      xx-vwall: node1
+    192.168.0.2:
+      xx-name: 192.168.0.2 
+      xx-local-ip: 192.168.0.2
+      xx-vwall: node2
+    192.168.0.4:
+      xx-name: 192.168.0.4 
+      xx-local-ip: 192.168.0.4
+      xx-vwall: node3
+    192.168.0.5:
+      xx-name: 192.168.0.5 
+      xx-local-ip: 192.168.0.5
+      xx-vwall: iov
+  children:
+    computes:
+      hosts:
+        192.168.0.4:
+    masters:
+      hosts:
+        192.168.0.3:
+        192.168.0.2:
+    HAproxy:
+      hosts:
+        192.168.0.1:

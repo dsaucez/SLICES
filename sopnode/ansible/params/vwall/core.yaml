@@ -1,0 +1,7 @@
+---
+# 5G config
+GCN:
+  namespace: vwall-core-common
+  core:
+    present: true
+    custom_values: blueprint/v2.0.1_vwall/oai-5g-core/
