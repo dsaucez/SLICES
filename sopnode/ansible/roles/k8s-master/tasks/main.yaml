@@ -48,3 +48,6 @@
   kubernetes.core.k8s:
     state: present
     src: multus-cni/deployments/multus-daemonset.yml
+
+- name: Install Node Feature Discovery
+  shell: kubectl apply -k https://github.com/kubernetes-sigs/node-feature-discovery/deployment/overlays/default?ref=v0.15.4
