@@ -14,4 +14,4 @@ k8s:
   encapsulation: VXLAN
   metallb:
     addresses:
-      - 172.21.10.203/32
+      - 172.31.10.203/32

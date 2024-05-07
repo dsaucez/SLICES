@@ -82,7 +82,7 @@ nfs:
       api_version: v1
       interface_name: eth0
   nrf:
-    host: 172.21.10.203 # oai-nrf.blueprint
+    host: 172.31.10.203 # oai-nrf.blueprint
     sbi:
       port: 80
       api_version: v1

@@ -36,7 +36,7 @@ data:
     ### Each NF takes its local SBI interfaces and remote interfaces from here, unless it gets them using NRF discovery mechanisms
     nfs:
       amf:
-        host: 172.21.10.200 # oai-amf
+        host: 172.31.10.200 # oai-amf
         sbi:
           port: 80
           api_version: v1
@@ -45,7 +45,7 @@ data:
           interface_name: n2
           port: 38412
       smf:
-        host: 172.21.10.202 # oai-smf
+        host: 172.31.10.202 # oai-smf
         sbi:
           port: 80
           api_version: v1
@@ -89,7 +89,7 @@ data:
           api_version: v1
           interface_name: eth0
       nrf:
-        host: 172.21.10.203 # oai-nrf
+        host: 172.31.10.203 # oai-nrf
         sbi:
           port: 80
           api_version: v1

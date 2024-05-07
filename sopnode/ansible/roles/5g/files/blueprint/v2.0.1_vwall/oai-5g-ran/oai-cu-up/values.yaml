@@ -29,8 +29,8 @@ multus:
   defaultGateway: ""
   e1Interface:
     create: true
-    IPadd: "172.21.10.209"
-    Netmask: "22"
+    IPadd: "172.31.10.209"
+    Netmask: "24"
     # #name inside the pod is hardcoded right now
     # name: "e1"
     # if gatway is empty then it will be removed
@@ -41,8 +41,8 @@ multus:
     hostInterface: "brk8s"      # Interface of the host machine on which this pod will be scheduled
   n3Interface:
     create: true
-    IPadd: "172.21.10.210"
-    Netmask: "22"
+    IPadd: "172.31.10.210"
+    Netmask: "24"
     # #name inside the pod is hardcoded right now
     # name: "n3"
     # if gatway is empty then it will be removed
@@ -53,8 +53,8 @@ multus:
     hostInterface: "brk8s"      # Interface of the host machine on which this pod will be scheduled
   f1uInterface:
     create: true
-    IPadd: "172.21.10.211"
-    Netmask: "22"
+    IPadd: "172.31.10.211"
+    Netmask: "24"
     # #name inside the pod is hardcoded right now
     # name: "f1u"
     # if gatway is empty then it will be removed
@@ -76,7 +76,7 @@ config:
   tac: "1"     # check the information with AMF
   sst: "1"     #currently only 4 standard values are allowed 1,2,3,4
   sd: "1"
-  cuCpHost: "172.21.10.206" # 
+  cuCpHost: "172.31.10.206" # 
   n2IfName: "n3"    # if multus.n2Interface.create is true then use n2
   n3IfName: "n3"   #if multus.n3Interface.create is true then use n3 or you can only use 1 interface n2 or eth0 
   f1IfName: "f1"   #if multus.f1uInterface.create is true then use f1

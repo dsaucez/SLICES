@@ -1,7 +1,7 @@
 global:
   nfConfigurationConfigMap: oai-5g-basic
   clusterIpServiceIpAllocation: true #this will allocate ip-address to cluster Ip service
-  loadBalancerIP: 172.21.10.203
+  loadBalancerIP: 172.31.10.203
   waitForNRF: true
   http2Param: "--http2-prior-knowledge"  # if waitForNRF is true and http2 is used for all NF then this param is needed
   timeout: 1
@@ -86,26 +86,18 @@ oai-amf-00101:
     defaultGateway: ""
     n2Interface:
       create: true
-      Ipadd: "172.21.10.200"
-      Netmask: "22"
+      Ipadd: "172.31.10.200"
+      Netmask: "24"
       # #name inside the pod is hardcoded right now
       # name: "n2"
       ## If you do not have a gateway leave the field empty
       Gateway:
       ## If you do not want to add any routes in your pod then leave this field empty
-      routes: [{
-                        "dst": "137.194.194.0/23",
-                        "gw": "172.21.11.254"
-                },
+      routes: [         
                 {
-                        "dst": "172.21.16.0/22",
-                        "gw": "172.21.11.254"
-                },
-                {
-                        "dst": "172.21.4.0/22",
-                        "gw": "172.21.11.254"
+                        "dst": "172.31.128.0/17",
+                        "gw": "172.31.10.254" 
                 }
-
         ]
       hostInterface: "brk8s" # Interface of the host machine on which this pod will be scheduled
   nodeName:
@@ -125,23 +117,18 @@ oai-amf-20899:
     defaultGateway: ""
     n2Interface:
       create: true
-      Ipadd: "172.21.10.201"
-      Netmask: "22"
+      Ipadd: "172.31.10.201"
+      Netmask: "24"
       # #name inside the pod is hardcoded right now
       # name: "n2"
       ## If you do not have a gateway leave the field empty
       Gateway:
       ## If you do not want to add any routes in your pod then leave this field empty
-      routes: [
+      routes: [         
                 {
-                        "dst": "172.21.16.0/22",
-                        "gw": "172.21.11.254"
-                },
-                {
-                        "dst": "172.21.4.0/22",
-                        "gw": "172.21.11.254"
+                        "dst": "172.31.128.0/17",
+                        "gw": "172.31.10.254" 
                 }
-
         ]
       hostInterface: "brk8s" # Interface of the host machine on which this pod will be scheduled
   nodeName:
@@ -164,66 +151,51 @@ oai-upf:
     defaultGateway: ""
     n3Interface:
       create: true
-      Ipadd: "172.21.10.198"
-      Netmask: "22"
+      Ipadd: "172.31.10.198"
+      Netmask: "24"
       # #name inside the pod is hardcoded right now
       # name: "n3"
       ## If you do not have a gateway leave the field empty
       Gateway: ""
       ## If you don't want to add a default route in your pod then replace this field with ""
-      routes: [
+      routes: [         
                 {
-                        "dst": "172.21.16.0/22",
-                        "gw": "172.21.11.254"
-                },
-                {
-                        "dst": "172.21.4.0/22",
-                        "gw": "172.21.11.254"
+                        "dst": "172.31.128.0/17",
+                        "gw": "172.31.10.254" 
                 }
-
         ]
       hostInterface: "brk8s"
     ## For n4 it is better to re-use eth0 interface inside the pod (primary CNI of Kubernetes)
     n4Interface:
       create: true
-      Ipadd: "172.21.10.199"
-      Netmask: "22"
+      Ipadd: "172.31.10.199"
+      Netmask: "24"
       # #name inside the pod is hardcoded right now
       # name: "n4"
       ## If you do not have a gateway leave the field empty
       Gateway: ""
       ## If you do not want to add any routes in your pod then leave this field empty
-      routes: [
+      routes: [         
                 {
-                        "dst": "172.21.16.0/22",
-                        "gw": "172.21.11.254"
-                },
-                {
-                        "dst": "172.21.4.0/22",
-                        "gw": "172.21.11.254"
+                        "dst": "172.31.128.0/17",
+                        "gw": "172.31.10.254" 
                 }
-
         ]
       hostInterface: "brk8s"
     n6Interface:
       create: true
-      Ipadd: "172.21.10.200"
+      Ipadd: "172.31.10.200"
       # #name inside the pod is hardcoded right now
       # name: "n6"
-      Netmask: "22"
+      Netmask: "24"
       ## If you do not have a gateway leave the field empty
       Gateway: ""
       ## If you do not want to add any routes in your pod then leave this field empty
-      routes: [
+      routes: [         
                 {
-                        "dst": "0.0.0.0/0",
-                        "gw": "172.21.11.254"
-                },
-                {
-                        "dst": "172.21.4.0/22",
-                        "gw": "172.21.11.254"
+                        "dst": "172.31.128.0/17",
+                        "gw": "172.31.10.254" 
                 }
-
         ]
       hostInterface: "brk8s"
   #NOTE: If the interface you selected for n6If is wrong then traffic will not be routed towards internet
@@ -262,22 +234,15 @@ oai-smf:
     defaultGateway: ""
     n4Interface:
       create: true
-      Ipadd: "172.21.10.202"
-      Netmask: "22"
+      Ipadd: "172.31.10.202"
+      Netmask: "24"
       ## If you do not have a gateway leave the field empty
       Gateway: ""
       ## If you do not want to add any routes in your pod then leave this field empty
-      routes: [{
-                        "dst": "137.194.194.0/23",
-                        "gw": "172.21.11.254"
-                },
+      routes: [         
                 {
-                        "dst": "172.21.16.0/22",
-                        "gw": "172.21.11.254"
-                },
-                {
-                        "dst": "172.21.4.0/22",
-                        "gw": "172.21.11.254"
+                        "dst": "172.31.128.0/17",
+                        "gw": "172.31.10.254" 
                 }
         ]
       #routes: [{'dst': '10.8.0.0/24','gw': '172.21.7.254'}, {'dst': '10.9.0.0/24','gw': '172.21.7.254'}]
