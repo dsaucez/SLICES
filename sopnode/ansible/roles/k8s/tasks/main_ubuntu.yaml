@@ -30,3 +30,12 @@
   ansible.builtin.file:
     path: /etc/kubernetes/manifests
     state: directory
+
+- name: Set KUBELET_EXTRA_ARGS
+  ansible.builtin.template: 
+    src: kubelet.j2
+    dest: /etc/default/kubelet
+  vars:
+    - kubelet_extra_args: "{{ hostvars[inventory_hostname]['KUBELET_EXTRA_ARGS'] }}"
+  when: hostvars[inventory_hostname]['KUBELET_EXTRA_ARGS'] is defined
+
