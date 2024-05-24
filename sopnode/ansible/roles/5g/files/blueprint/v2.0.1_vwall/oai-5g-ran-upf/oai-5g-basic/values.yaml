@@ -177,7 +177,7 @@ oai-traffic-server:
     create: true
     IPadd: "172.31.10.204"
     Netmask: "24"
-    defaultGateway: "172.31.10.254"
+    defaultGateway: "172.31.10.205"
     hostInterface: "brk8s"	# Interface of the host machine on which this pod will be scheduled
   config:
     ueroute: 12.1.1.0/24
