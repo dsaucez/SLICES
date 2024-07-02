@@ -1,0 +1,33 @@
+- name: Update APT cache
+  apt:
+    update_cache: yes
+
+- name: Download Loki
+  shell: |
+    LOKI_VERSION=$(curl -s "https://api.github.com/repos/grafana/loki/releases/latest" | grep -Po '"tag_name": "v\K[0-9.]+')
+    mkdir -p /opt/loki
+    wget -qO /opt/loki/loki.gz "https://github.com/grafana/loki/releases/download/v${LOKI_VERSION}/loki-linux-amd64.zip"
+    gunzip /opt/loki/loki.gz
+    chmod a+x /opt/loki/loki
+    ln -s /opt/loki/loki /usr/local/bin/loki
+    wget -qO /opt/loki/loki-local-config.yaml "https://raw.githubusercontent.com/grafana/loki/v${LOKI_VERSION}/cmd/loki/loki-local-config.yaml"
+
+- name: Configure Loki
+  template:
+    src: loki-local-config.yaml.j2
+    dest: /opt/loki/loki-local-config.yaml
+
+- name: Create systemd service for Loki
+  template:
+    src: loki.service.j2
+    dest: /etc/systemd/system/loki.service
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: Start and enable Loki service
+  systemd:
+    name: loki
+    state: started
+    enabled: yes

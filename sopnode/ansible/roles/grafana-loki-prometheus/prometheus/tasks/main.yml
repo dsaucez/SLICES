@@ -1,0 +1,72 @@
+- name: Create Prometheus group and user
+  group:
+    name: prometheus
+    system: yes
+
+- name: Create Prometheus user
+  user:
+    name: prometheus
+    shell: /sbin/nologin
+    group: prometheus
+    system: yes
+
+- name: Create directories for Prometheus
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: 0775
+  with_items:
+    - /var/lib/prometheus
+    - /etc/prometheus
+    - /etc/prometheus/rules
+    - /etc/prometheus/rules.d
+    - /etc/prometheus/files_sd
+
+- name: Download Prometheus
+  shell: |
+    curl -s https://api.github.com/repos/prometheus/prometheus/releases/latest | grep browser_download_url | grep linux-amd64 | cut -d '"' -f 4 | wget -qi -
+    tar xvf prometheus*.tar.gz
+    mv prometheus*/prometheus prometheus*/promtool /usr/local/bin/
+    mv prometheus*/consoles prometheus*/console_libraries prometheus*/prometheus.yml /etc/prometheus/
+
+- name: Set permissions for Prometheus directories
+  file:
+    path: "{{ item }}"
+    owner: prometheus
+    group: prometheus
+    recurse: yes
+  with_items:
+    - /etc/prometheus/rules
+    - /etc/prometheus/rules.d
+    - /etc/prometheus/files_sd
+    - /var/lib/prometheus
+
+- name: Install Apache2 utils
+  apt:
+    name: apache2-utils
+    state: present
+
+- name: Set up Prometheus basic auth
+  shell: htpasswd -nbB {{ prometheus_basic_auth_user }} {{ prometheus_basic_auth_password }} > /etc/prometheus/.htpasswd
+
+- name: Configure Prometheus
+  template:
+    src: prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+
+- name: Create systemd service for Prometheus
+  template:
+    src: prometheus.service.j2
+    dest: /etc/systemd/system/prometheus.service
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: Start and enable Prometheus service
+  systemd:
+    name: prometheus
+    state: started
+    enabled: yes

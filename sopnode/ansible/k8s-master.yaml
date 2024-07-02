@@ -34,3 +34,22 @@
   post_tasks:
     - name: Wait for the node to be ready
       ansible.builtin.include_tasks: k8s-ready.yaml
+
+- name: Install cluster monitoring
+  hosts: masters[0]
+  vars:
+    remote_write_address: "{{ k8s['cluster_monitoring']['prometheus']['remote_write_address'] }}"
+    remote_write_port: "{{ k8s['cluster_monitoring']['prometheus']['remote_write_port'] }}"
+    remote_write_user: "{{ k8s['cluster_monitoring']['prometheus']['remote_write_user'] }}"
+    remote_write_pass: "{{ k8s['cluster_monitoring']['prometheus']['remote_write_pass'] }}"
+    remote_data_label: "{{ k8s['cluster_monitoring']['prometheus']['remote_data_label'] }}"
+    loki_address: "{{ k8s['cluster_monitoring']['promtail']['loki_address'] }}"
+    loki_port: "{{ k8s['cluster_monitoring']['promtail']['loki_port'] }}"
+
+  roles:
+    - post-5g-bp-cluster-monitoring/prometheus
+    - post-5g-bp-cluster-monitoring/promtail
+    - post-5g-bp-cluster-monitoring/cadvisor
+    - post-5g-bp-cluster-monitoring/node-exporter
+    - post-5g-bp-cluster-monitoring/kube-state-metrics
+  

@@ -1,0 +1,7 @@
+- name: Apply Node Exporter DaemonSet
+  template:
+    src: node-exporter.yaml.j2
+    dest: /tmp/node-exporter.yaml
+
+- name: Apply Node Exporter YAML to the cluster
+  shell: sudo kubectl apply -f /tmp/node-exporter.yaml 

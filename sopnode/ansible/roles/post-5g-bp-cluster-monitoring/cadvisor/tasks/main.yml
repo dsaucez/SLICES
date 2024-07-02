@@ -1,0 +1,7 @@
+- name: Apply cAdvisor deployment
+  template:
+    src: cadvisor.yaml.j2
+    dest: /tmp/cadvisor-deployment.yaml
+
+- name: Apply cAdvisor YAML to the cluster
+  shell: sudo kubectl apply -f /tmp/cadvisor-deployment.yaml 

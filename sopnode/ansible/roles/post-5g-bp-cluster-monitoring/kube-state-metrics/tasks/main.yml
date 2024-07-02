@@ -1,0 +1,7 @@
+- name: Apply Kube-State-Metrics deployment
+  template:
+    src: kube-state-metrics.yaml.j2
+    dest: /tmp/kube-state-metrics-deployment.yaml
+
+- name: Apply Kube-State-Metrics YAML to the cluster
+  shell: sudo kubectl apply -f /tmp/kube-state-metrics-deployment.yaml

@@ -2,17 +2,22 @@ all:
   children:
     computes:
       hosts:
-        192.0.2.2:
-          xx-name: node2
-        192.0.2.3:
-          xx-name: node3
+        172.16.12.152:
+          xx-name: w1-bp
+          xx-local-ip: 172.16.12.152 
+        172.16.12.153:
+          xx-name: w2-bp
+          xx-local-ip: 172.16.12.153 
     masters:
       hosts:
-        192.0.2.1:
-          xx-name: node1
+        172.16.12.151:
+          xx-name: cp-bp
+          xx-local-ip: 172.16.12.151 
     switches:
       hosts:
     openvpn:
       hosts:
-        192.0.2.42:
-          xx-name: openvpn
+    central-monitor:
+      hosts: 
+        10.64.45.228:
+          xx-name: lpg-central

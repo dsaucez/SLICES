@@ -1,0 +1,10 @@
+- hosts: central-monitor
+  become: yes
+  vars:
+    prometheus_basic_auth_user: "{{ central_monitor['prometheus']['prometheus_basic_auth_user'] }}"
+    prometheus_basic_auth_password: "{{ central_monitor['prometheus']['prometheus_basic_auth_password'] }}"
+  roles:
+    - grafana-loki-prometheus/grafana
+    - grafana-loki-prometheus/prometheus
+    - grafana-loki-prometheus/loki
+

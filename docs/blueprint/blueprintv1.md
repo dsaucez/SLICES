@@ -184,10 +184,27 @@ k8s:
 If this file is called params.blueprint.yaml, to create the cluster run the following command:
 
 ```
-ansible-playbook  -i inventories/blueprint/ k8s-master.yaml --extra-vars "@params.blueprint.yaml"
+ansible-playbook  -i inventories/blueprint/hosts k8s-master.yaml --extra-vars "@params.blueprint.yaml"
 ```
 
 This command provisions the k8s control-plane node and creates a kubernetes cluster.
+
+The following section in the params file, configures the monitoring data to be pushed to a central Prometheus instance.
+
+```
+  cluster_monitoring:
+    prometheus:
+      remote_write_address: "10.64.45.228"
+      remote_write_port: "9090"
+      remote_write_user: "admin"
+      remote_write_pass: "test1234"
+      remote_data_label: "uth-cluster1"
+    promtail:
+      loki_address: 10.64.45.228
+      loki_port: 3100
+```
+The address, port shall match the one configured in the central prometheus instance, as well as the basic auth credentials for writing data through the API. The label field, adds a specific label to the data sent from this cluster to distinguish metrics in the central instance among similar pods/cluster.
+Similar configuration for the port and address happens for the central LOKI instance that handles the logs from the pods remotely. Usually, LOKI is deployed along with Prometheus (using the respective file for deployment), but deployment on different servers is also supported. 
 
 Once the cluster is created, the other nodes can be attached to it with the following command:
 
@@ -196,6 +213,57 @@ ansible-playbook  -i inventories/blueprint/ k8s-node.yaml --extra-vars "@params.
 ```
 
 At this stage the k8s cluster is up and running with all the nodes from the infrastructure.
+
+## Deploy a central Prometheus, LOKI and Grafana instance
+The centralized Prometheus instance is designed to receive measurements from all the different clusters (with data accordingly labeled, as mentioned above). 
+LOKI is in charge of handling the logs coming from all pods. 
+Through Grafana, measurements can be visualized from LOKI/Prometheus.
+
+To deploy the playbook, the hosts file needs to be appropriately populated to define the host that will receive the frameworks.
+This is done by defining the 'central-monitor' host in the hosts file
+
+```
+all:
+  children:
+    computes:
+      hosts:
+        172.16.12.152:
+          xx-name: w1-bp
+          xx-local-ip: 172.16.12.152
+        172.16.12.153:
+          xx-name: w2-bp
+          xx-local-ip: 172.16.12.153
+    masters:
+      hosts:
+        172.16.12.151:
+          xx-name: cp-bp
+          xx-local-ip: 172.16.12.151
+    switches:
+      hosts:
+    openvpn:
+      hosts:
+    central-monitor:
+      hosts:
+        10.64.45.228:
+          xx-name: lpg-central
+```
+
+The params file needs to be configured for the following parameters:
+
+```
+central_monitor:
+  prometheus:
+    prometheus_basic_auth_user: 'admin'
+    prometheus_basic_auth_password: 'test1234'
+```
+
+These parameters define basic credentials for accessing the remote write API of Prometheus. These credentials are used from the local Prometheus instances on each cluster.
+
+The playbook can be deployed by running the following:
+
+```
+ ansible-playbook -i inventories/blueprint/hosts lpg.yml --extra-vars "@params.blueprint.yaml"
+``` 
 
 ## Deploy 5G Core
 In this blueprint, the core is implemented with the 5G Core network by the OpenAirInterface community (see https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed for details).

@@ -1,0 +1,7 @@
+- name: Apply Promtail DaemonSet
+  template:
+    src: promtail.yaml.j2
+    dest: /tmp/promtail-daemonset.yaml
+
+- name: Apply Promtail DaemonSet YAML to the cluster
+  shell: sudo kubectl apply -f /tmp/promtail-daemonset.yaml

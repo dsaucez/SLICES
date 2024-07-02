@@ -1,0 +1,38 @@
+- name: Install dependencies
+  apt:
+    name:
+      - gnupg2
+      - apt-transport-https
+      - software-properties-common
+      - wget
+    state: present
+
+- name: Add Grafana GPG key
+  get_url:
+    url: https://packages.grafana.com/gpg.key
+    dest: /tmp/grafana.key
+
+- name: Add Grafana APT repository
+  shell: |
+    cat /tmp/grafana.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/grafana.gpg > /dev/null
+    echo 'deb [signed-by=/etc/apt/trusted.gpg.d/grafana.gpg] https://packages.grafana.com/oss/deb stable main' | tee /etc/apt/sources.list.d/grafana.list
+
+- name: Update APT cache
+  apt:
+    update_cache: yes
+
+- name: Install Grafana
+  apt:
+    name: grafana
+    state: present
+
+- name: Configure Grafana
+  template:
+    src: grafana.ini.j2
+    dest: /etc/grafana/grafana.ini
+
+- name: Start and enable Grafana service
+  systemd:
+    name: grafana-server
+    state: started
+    enabled: yes

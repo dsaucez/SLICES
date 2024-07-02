@@ -1,0 +1,17 @@
+- name: Apply Prometheus deployment
+  template:
+    src: prometheus.yaml.j2
+    dest: /tmp/prometheus.yaml
+
+- name: Make sure that no secrets exist for accessing prometheus
+  shell: sudo kubectl delete secret kubepromsecret 
+  ignore_errors: true
+
+- name: Create secrets for accessing remote write prometheus
+  shell: sudo kubectl create secret generic kubepromsecret   --from-literal=username={{ remote_write_user }}  --from-literal=password={{ remote_write_pass }}
+
+- name: Create crds for prometheus 
+  shell: sudo kubectl create -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml
+
+- name: Apply Prometheus YAML to the cluster
+  shell: sudo kubectl apply -f /tmp/prometheus.yaml
