@@ -12,8 +12,10 @@ This branch includes the following major enhancements:
 4. **RF Simulator FlexRIC Connectivity**: Enables RIC connectivity and in the simulation of radio frequencies setup within Kubernetes pods.
 5. **Baremetal Environment Preparation**: Supports compiling E2-Enabled RAN and FlexRIC on baremetal as a systemd service.
 6. **Baremetal FlexRIC Connectivity (USRP RAN)**: Direct connectivity through Universal Software Radio Peripheral (USRP) for real-world testing and deployment.
-7. **Fix of the K8s Cluster Initialization (v1.28.2)**: Fix of the K8s end-of-life old versions issue.
-8. **Flannel & Calico CNI support**: Option to install one of the two CNI plugins in the cluster.
+   Two ways to deploy k8s:
+1) Via params.blueprint and k8s-master/node roles in the sopnode/ansible directory that installs 1.30.2 version of k8s and fix the repo issues
+2) Via k8s_deployment directory on the SLICES/ directory that has a cleaner way to install k8s version 1.28.2 and gives flannel & calico support.
+
 
 ## Deployment Instructions
 
@@ -60,7 +62,7 @@ Add the following line to the file to allow the user to execute sudo commands wi
 
 `<username> ALL=(ALL) NOPASSWD: ALL `
 
-### Working setup with 22.04.4 LTS (Jammy Jellyfish) Cloud Image
+### 1.30.2 Kubernetes Version Deployment (Tested on 22.04.4 LTS (Jammy Jellyfish) Cloud Image
 
 ```cd blueprint```
 
@@ -79,7 +81,7 @@ Deploy FlexRIC BP:
 
 
 
-### Cluster Initialization
+### Alternate Kubernetes Deployment
 
 To install the k8s cluster with the **Flannel CNI** run the following playbook from the `blueprint/k8s_deployment` directory:
 
