@@ -1,0 +1,6 @@
+GCN:
+  namespace: blueprint
+  core:
+    present: true
+    custom_files: blueprint/oai-flexric/custom_core_files
+    custom_values: blueprint/oai-flexric/custom_core_values

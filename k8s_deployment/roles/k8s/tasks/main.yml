@@ -1,0 +1,72 @@
+---
+
+- name: Disable all swaps
+  command: swapoff -a
+  become: yes
+
+- name: Check if required packages are installed
+  stat:
+    path: /usr/bin/{{ item }}
+  loop:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg
+  register: package_checks
+
+- name: Install required packages if not already installed
+  apt:
+    name: "{{ item.item }}"
+    state: present
+    update_cache: yes
+  loop: "{{ package_checks.results }}"
+  when: not item.stat.exists
+  become: yes
+
+- name: Create /etc/apt/keyrings directory with correct permissions
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+  become: yes
+
+- name: Remove existing GPG key file to ensure it can be updated
+  ansible.builtin.file:
+    path: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    state: absent
+  become: yes
+
+- name: Download Kubernetes GPG key and place it in /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+  become: yes
+  ansible.builtin.shell:
+    cmd: |
+      curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    executable: /bin/bash
+  args:
+    creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+- name: Create /etc/apt/sources.list.d/kubernetes.list file
+  copy:
+    content: |
+      deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /
+    dest: /etc/apt/sources.list.d/kubernetes.list
+  become: yes
+
+- name: Update package cache
+  apt:
+    update_cache: yes
+  become: yes
+
+- name: Install kubelet, kubeadm, and kubectl packages
+  apt:
+    name:
+      - kubelet
+      - kubeadm
+      - kubectl
+    state: present
+  become: yes
+
+- name: Mark kubelet, kubeadm, and kubectl packages as on hold
+  shell: apt-mark hold kubelet kubeadm kubectl
+  become: yes
+

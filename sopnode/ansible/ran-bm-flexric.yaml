@@ -1,0 +1,323 @@
+---
+    - name: OAI-RAN-FlexRIC-BareMetal
+      hosts: rans
+      become: yes
+
+      vars:
+        - tcp_rmem: "4096 87380 {{ 67108864 if ansible_memtotal_mb >= 64000 else 33554432 if ansible_memtotal_mb >= 32000 else 16777216 }}"
+        - tcp_wmem: "4096 87380 {{ 67108864 if ansible_memtotal_mb >= 64000 else 33554432 if ansible_memtotal_mb >= 32000 else 16777216 }}"
+        - flexric_service_name: flexric.service
+        - flexric_service_path: /etc/systemd/system/flexric.service
+      tasks:
+        - name: Check if the system is Ubuntu 20.04 or Ubuntu 22.04
+          assert:
+            that:
+              - "'Ubuntu' in ansible_distribution"
+              - "'20.04' in ansible_distribution_version or '22.04' in ansible_distribution_version"
+
+        - name: Update and upgrade packages
+          apt:
+            update_cache: yes
+            upgrade: dist
+            force_apt_get: yes
+            autoremove: yes
+
+        - name: Check current kernel version
+          command: uname -r
+          register: kernel_version
+
+        - name: Install linux-image-lowlatency package
+          apt:
+            name: linux-image-lowlatency
+            state: present
+          when: "'lowlatency' not in kernel_version.stdout"
+
+        - name: Modify GRUB_CMDLINE_LINUX_DEFAULT in /etc/default/grub
+          lineinfile:
+            path: /etc/default/grub
+            regexp: '^GRUB_CMDLINE_LINUX_DEFAULT='
+            line: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet splash elevator=bfq"'
+            backup: yes
+
+        - name: Modify /etc/sysctl.conf file
+          lineinfile:
+            path: /etc/sysctl.conf
+            line: '{{ item }}'
+          with_items:
+            - 'vm.swappiness=1'
+            - 'net.core.somaxconn = 65535'
+            - 'net.ipv4.tcp_tw_reuse = 1'
+            - 'net.ipv4.tcp_fin_timeout = 30'
+            - 'net.ipv4.tcp_keepalive_time = 1200'
+            - 'net.ipv4.ip_local_port_range = 1024 65000'
+            - 'net.ipv4.tcp_syncookies = 1'
+            - 'net.ipv4.tcp_synack_retries = 2'
+            - 'net.ipv4.tcp_timestamps = 1'
+            - 'net.ipv4.tcp_max_syn_backlog = 65535'
+            - 'net.core.netdev_max_backlog = 65535'
+            - 'net.ipv4.tcp_rmem = {{ tcp_rmem }}'
+            - 'net.ipv4.tcp_wmem = {{ tcp_wmem }}'
+            - 'net.core.rmem_max = {{ tcp_rmem.split()[-1] }}'
+            - 'net.core.wmem_max = {{ tcp_wmem.split()[-1] }}'
+
+        - name: Modify /etc/security/limits.conf file
+          lineinfile:
+            path: /etc/security/limits.conf
+            line: '{{ item }}'
+          with_items:
+            - '* hard nofile 4194304'
+            - '* soft nofile 4194304'
+
+        - name: Reboot the system
+          reboot:
+            post_reboot_delay: 120
+            connect_timeout: 5
+            reboot_timeout: 400
+
+        - name: Wait for the system to come back online
+          wait_for_connection:
+            connect_timeout: 100
+            sleep: 5
+            delay: 5
+            timeout: 300
+
+
+        - name: Update and upgrade packages
+          apt:
+            update_cache: yes
+            upgrade: dist
+            force_apt_get: yes
+            autoremove: yes
+
+        - name: Install required packages
+          apt:
+            name:
+              - libboost-all-dev
+              - libusb-1.0-0-dev
+              - doxygen
+              - python3-docutils
+              - python3-mako
+              - python3-numpy
+              - python3-requests
+              - python3-ruamel.yaml
+              - python3-setuptools
+              - cmake
+              - build-essential
+            state: present
+
+        - name: Install development tools and libraries
+          apt:
+            name:
+              - build-essential
+              - libsctp-dev
+              - git
+              - wget
+              - tar
+              - m4
+              - automake
+              - libtool
+              - python3
+              - cmake
+              - cmake-curses-gui
+              - bison
+              - flex
+              - gdb
+              - libpcre2-dev
+              - python3-dev
+              - python3-pip
+              - gcc-12
+              - g++-12
+              - mold
+              - ninja-build
+            state: present
+
+        - name: Clone and install SWIG from source
+          block:
+            - name: Clone SWIG repository
+              git:
+                repo: https://github.com/swig/swig.git
+                dest: "~/swig"
+                version: release-4.1
+                depth: 1
+
+            - name: Build and install SWIG
+              shell: |
+                ./autogen.sh
+                ./configure --prefix=/usr/
+                make -j8
+                make install
+              args:
+                chdir: "~/swig"
+              notify: Run ldconfig   
+
+        - name: Clone UHD repository
+          git:
+            repo: https://github.com/EttusResearch/uhd.git
+            dest: ~/uhd
+            version: v4.6.0.0
+
+        - name: Configure and install UHD
+          become: true
+          become_user: root
+          shell:
+            cmd: |
+              cd ~/uhd/host
+              mkdir build
+              cd build
+              cmake ../
+              make -j $(nproc)
+              make install
+              ldconfig
+              uhd_images_downloader -t sdimg -t n3xx
+            executable: /bin/bash
+          register: shell_output
+
+        - name: Print shell output
+          debug:
+            var: shell_output.stdout_lines
+
+        - name: Check for UHD device
+          command: "uhd_usrp_probe"
+          register: uhd_probe_output
+          ignore_errors: yes
+
+        - name: Print error if UHD device not found
+          debug:
+            msg: "USRP device not found. Make sure that USRP is reachable from the node. If not, you may need to update the UHD image on the USRP (SDCard image on N310s)"
+          when: "'Initializing 1 device:' not in uhd_probe_output.stdout"
+
+        - name: Clone openairinterface5g repo
+          become: true
+          git:
+            repo: https://gitlab.eurecom.fr/oai/openairinterface5g.git
+            dest: ~/openairinterface5g
+
+        - name: Checkout to specific OAI version
+          become: true
+          command: git checkout develop
+          args:
+            chdir: ~/openairinterface5g
+
+        - name: Build Basic OAI
+          become: true
+          shell: "./build_oai -I"
+          args:
+            chdir: ~/openairinterface5g/cmake_targets
+
+        - name: Source OAI
+          become: true
+          shell: "./build_oai -w USRP --ninja --gNB -c --build-e2 --ninja"
+          args:
+            chdir: ~/openairinterface5g/cmake_targets
+     
+
+        - name: Check installed GCC version
+          shell: gcc --version | grep ^gcc | sed 's/^.* //g'
+          register: gcc_version
+          ignore_errors: true
+
+        - name: Print GCC version
+          debug:
+            msg: "Installed GCC version is {{ gcc_version.stdout }}"
+
+        - name: Install GCC-12
+          apt:
+            name: gcc-12
+            state: present
+          when: gcc_version.stdout is search("11")
+
+        - name: Set alternative for GCC
+          command: update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100
+          when: gcc_version.stdout is search("11") and ansible_facts['distribution'] == 'Ubuntu'
+
+        - name: Clone FlexRIC repository
+          git:
+            repo: 'https://gitlab.eurecom.fr/mosaic5g/flexric'
+            dest: "~/flexric"
+            version: "dev"
+
+        - name: Build FlexRIC
+          block:
+            - name: Create build directory
+              ansible.builtin.file:
+                path: "~/flexric/build"
+                state: directory
+
+            - name: CMake configure FlexRIC
+              command:
+                cmd: cmake ..
+                chdir: "~/flexric/build"
+
+            - name: Make build FlexRIC
+              command:
+                cmd: make -j8
+                chdir: "~/flexric/build"
+
+        - name: Install FlexRIC
+          become: true
+          command:
+            cmd: make install
+            chdir: "~/flexric/build"
+
+
+        - name: Ensure FlexRIC executable has correct permissions
+          ansible.builtin.file:
+            path: /root/flexric/build/examples/ric/nearRT-RIC
+            mode: '0755'
+            state: file
+
+
+        - name: Deploy FlexRIC systemd service file
+          copy:
+            dest: "{{ flexric_service_path }}"
+            content: |
+              [Unit]
+              Description=FlexRIC Near Real-Time RIC
+              After=network.target
+
+              [Service]
+              Type=simple
+              WorkingDirectory=/root/flexric
+              ExecStart=/root/flexric/build/examples/ric/nearRT-RIC
+              Restart=on-failure
+              User=root
+              Group=root
+
+              [Install]
+              WantedBy=multi-user.target
+          notify:
+            - Reload systemd and enable FlexRIC service       
+
+        - name: Ensure handlers are run now
+          meta: flush_handlers
+
+        - name: Directly reload systemd
+          systemd:
+            daemon_reload: true
+
+        - name: Start and enable FlexRIC
+          systemd:
+            name: "{{ flexric_service_name }}"
+            state: started
+            enabled: yes
+
+        - name: Create Macvlan Interface
+          shell: |
+            ip link add 5g-macvlan link eth0 type macvlan mode bridge &&
+            ip addr add 10.10.20.1/24 dev 5g-macvlan &&
+            ip link set 5g-macvlan up
+          args:
+            warn: false
+          ignore_errors: yes
+
+
+      handlers:
+        - name: Reload systemd and enable FlexRIC service
+          systemd:
+            daemon_reload: true
+
+        - name: Run ldconfig
+          ansible.builtin.command: ldconfig
+
+ 
+

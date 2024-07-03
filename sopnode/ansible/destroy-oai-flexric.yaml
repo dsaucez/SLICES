@@ -1,0 +1,24 @@
+- name: Uninstall OAI FlexRIC Deployment
+  hosts: masters
+  become: yes
+
+  vars:
+    namespace: "blueprint"
+    helm_releases:
+      - "oai-core"
+      - "oai-gnb"
+      - "oai-nr-ue"
+      - "oai-flexric"
+
+  tasks:
+    - name: Uninstall Helm Releases
+      shell: helm uninstall {{ item }} -n {{ namespace }}
+      environment:
+       KUBECONFIG: "/etc/kubernetes/admin.conf"
+      loop: "{{ helm_releases }}"
+      register: helm_uninstall_output
+      ignore_errors: yes
+
+    - name: Output Results
+      debug:
+        msg: "{{ helm_uninstall_output.results }}"

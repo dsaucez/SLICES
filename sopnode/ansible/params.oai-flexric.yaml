@@ -1,0 +1,26 @@
+---
+# 5G config
+GCN:
+  namespace: blueprint
+  core:
+    present: true
+    custom_files: blueprint/oai-flexric/core_files
+    custom_values: blueprint/oai-flexric/core_values 
+ 
+  RAN:
+    present: true
+    custom_files: blueprint/oai-flexric/ran_files
+    custom_values: blueprint/oai-flexric/ran_values
+
+  flexRIC:
+    present: true
+    custom_files: blueprint/oai-flexric/flexric_files
+    custom_values: blueprint/oai-flexric/flexric_values
+
+  UE:
+    present: true
+    custom_files: blueprint/oai-flexric/ue_files
+    custom_values: blueprint/oai-flexric/ue_values
+    tests:
+      landmark_ping:
+          landmark: google.fr

@@ -1,0 +1,33 @@
+- name: Uninstall oai-core Helm Release on Kubernetes Masters
+  hosts: masters
+  become: yes
+  tasks:
+    - name: Uninstall oai-core Helm Release
+      shell: helm uninstall oai-core -n blueprint
+      environment:
+       KUBECONFIG: "/etc/kubernetes/admin.conf"
+      register: helm_uninstall_output
+      ignore_errors: yes
+
+    - name: Output Result of Helm Uninstall
+      debug:
+        msg: "{{ helm_uninstall_output.stdout_lines }}"
+
+- name: Stop and Disable FlexRIC Service on RAN Hosts
+  hosts: rans
+  become: yes
+  vars:
+    flexric_service_name: "flexric.service"
+  tasks:
+    - name: Stop FlexRIC Service
+      systemd:
+        name: "{{ flexric_service_name }}"
+        state: stopped
+        enabled: no
+      notify:
+        - Reload systemd
+
+  handlers:
+    - name: Reload systemd
+      systemd:
+        daemon_reload: yes

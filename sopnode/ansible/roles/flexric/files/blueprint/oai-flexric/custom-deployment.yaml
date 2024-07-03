@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "oai-flexric.fullname" . }}
+  labels:
+    {{- include "oai-flexric.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "oai-flexric.selectorLabels" . | nindent 6 }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        {{- include "oai-flexric.labels" . | nindent 8 }}
+        app: oai-flexric
+    spec:
+      containers:
+        - name: oai-flexric
+          image: "{{ .Values.containerImage.repository }}:{{ .Values.containerImage.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.containerImage.pullPolicy }}
+          securityContext:
+            privileged: true
+          command: [ "/bin/bash", "-c" ]
+          args: 
+            - |
+              cp -r /usr/local/lib/flexric/* {{ .Values.volume.sharedVolume.path }} # Copy files from /usr/local/lib/flexric/ to shared volume path
+              sed -i "s/NearRT_RIC_IP = \"127.0.0.1\"/NearRT_RIC_IP = \"${POD_IP}\"/" /usr/local/etc/flexric/ric.conf
+              exec stdbuf -o0  /usr/local/bin/flexric/ric/nearRT-RIC # Execute the nearRT-RIC example
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          volumeMounts:
+            - name: shared-volume
+              mountPath: {{ .Values.volume.sharedVolume.path }}
+      volumes:
+        - name: shared-volume
+          hostPath:
+            path: {{ .Values.volume.sharedVolume.path }}
+      restartPolicy: {{ .Values.restartPolicy }}

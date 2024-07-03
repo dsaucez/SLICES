@@ -1,0 +1,25 @@
+---
+- name: Install k8s dependencies
+  hosts: all
+  become: yes
+  roles:
+    - docker
+    - docker-cri
+    - k8s
+
+- name: Initialize k8s cluster
+  hosts: masters
+  become: yes
+  roles:
+    - role: k8s_master
+      vars:
+        cni_pod_network_cidrs:
+          calico: "192.168.0.0/16"
+          flannel: "10.244.0.0/16"
+
+
+- name: Join cluster
+  hosts: computes
+  become: yes
+  roles:
+    - k8s_workers

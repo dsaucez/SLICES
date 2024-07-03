@@ -1,0 +1,1 @@
+kubeadm join 10.64.44.168:6443 --token qajlnu.9gjk57e2wkri6ggx --discovery-token-ca-cert-hash sha256:ee0795e1d76d42c7acb64c26ea81bebd47feac7f4a6df9b6523bbcdb95305798  --cri-socket=unix:///var/run/cri-dockerd.sock

@@ -1,0 +1,26 @@
+- name: Copy the calico file.
+  copy:
+    src: calico.yml
+    dest: /calico.yml
+
+- name: Ensure required directories exist for Calico
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /etc/cni/net.d
+    - /var/run/calico
+    - /var/lib/cni/multus
+    - /run/k8s.cni.cncf.io
+  become: yes
+
+- name: Apply Calico manifest
+  command: kubectl apply -f /calico.yml
+  environment:
+    KUBECONFIG: "/etc/kubernetes/admin.conf"
+
+- name: Wait for master node to be ready
+  wait_for:
+    host: "{{ ansible_host }}"
+    port: 6443
+    state: started

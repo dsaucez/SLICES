@@ -1,0 +1,20 @@
+---
+- name: Custom chart files
+  ansible.builtin.copy:
+    src: '{{ GCN.RAN.custom_files }}/'
+    dest: bp-flexric/oai-gnb
+  when: GCN.RAN.custom_files is defined
+
+- name: Custom chart values
+  ansible.builtin.copy:
+    src: '{{ GCN.RAN.custom_values }}/'
+    dest: bp-flexric/oai-gnb
+  when: GCN.RAN.custom_values is defined
+
+- name: Deploy gNB
+  kubernetes.core.helm:
+    name: oai-gnb
+    chart_ref: ./bp-flexric/oai-gnb/
+    kubeconfig: /etc/kubernetes/admin.conf
+    release_namespace: '{{ GCN.namespace }}'
+    wait: true

@@ -1,0 +1,37 @@
+kubernetesType: Vanilla  #Vanilla for community kubernetes distribution else Openshift for Openshift
+## In case of using these charts on Openshift then please use UBI images
+## To know more about them follow this tutorial https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed/-/tree/master/openshift
+
+replicaCount: 1
+
+containerImage:
+  repository: docker.io/ttsourdinis/bp-flexric
+  tag: new  # image tag or develop 
+  pullPolicy: IfNotPresent   # pullPolicy: IfNotPresent or Never or Always
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  name: "oai-flexric"
+
+service:
+  ports:
+    gnb:
+      port: 36421
+      targetPort: 36421
+      protocol: SCTP
+    xapp:
+      port: 36422
+      targetPort: 36422
+      protocol: SCTP
+
+volume: # Specify the shared volume path 
+  sharedVolume: 
+    path: /mnt/flexric/
+  
+restartPolicy: Always
+nodeSelector: {}
+tolerations: []
+affinity: {}

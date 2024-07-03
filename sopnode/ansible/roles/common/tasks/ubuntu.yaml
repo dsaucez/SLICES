@@ -6,7 +6,7 @@
 
 - name: Update apt cache
   ansible.builtin.apt:
-    update_cache: yes
+    update_cache: no
 
 - name: Set dependencies
   set_fact:

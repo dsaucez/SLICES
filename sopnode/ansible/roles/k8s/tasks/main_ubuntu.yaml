@@ -1,17 +1,41 @@
 ---
-- name: Add k8s APT key
-  ansible.builtin.apt_key:
-    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-    state: present
-
+#- name: Add k8s APT key
+##  ansible.builtin.apt_key:
+#   get_url:
+#    url: https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key
+#    dest: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+#    mode: '0644'
+#    force: true
+#    state: present
+#
 #- name: Add k8s repository into sources list
 #  ansible.builtin.apt_repository:
-#    repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+#    repo: deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /
 #    state: present
 #    update_cache: true
 
-- name: quick fix
-  shell: curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key |  gpg --batch --yes --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg ; echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' |  tee /etc/apt/sources.list.d/kubernetes.list; apt update -y
+- name: Ensure the keyring directory exists
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Download k8s APT key
+  ansible.builtin.get_url:
+#    url: https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key
+    url: https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key
+    dest: /etc/apt/keyrings/kubernetes-apt-keyring.asc
+    mode: '0644'
+
+- name: Add k8s repository into sources list
+  ansible.builtin.apt_repository:
+    repo: 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.asc] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /'
+    state: present
+    filename: k8s
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: yes
 
 - name: Install k8s tools
   ansible.builtin.apt:
@@ -30,12 +54,3 @@
   ansible.builtin.file:
     path: /etc/kubernetes/manifests
     state: directory
-
-- name: Set KUBELET_EXTRA_ARGS
-  ansible.builtin.template: 
-    src: kubelet.j2
-    dest: /etc/default/kubelet
-  vars:
-    - kubelet_extra_args: "{{ hostvars[inventory_hostname]['KUBELET_EXTRA_ARGS'] }}"
-  when: hostvars[inventory_hostname]['KUBELET_EXTRA_ARGS'] is defined
-

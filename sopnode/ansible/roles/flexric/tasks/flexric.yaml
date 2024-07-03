@@ -1,0 +1,21 @@
+---
+- name: Custom chart files
+  ansible.builtin.copy:
+    src: '{{ GCN.flexRIC.custom_files }}/'
+    dest: bp-flexric/oai-flexric
+  when: GCN.flexRIC.custom_files is defined
+
+- name: Custom chart values
+  ansible.builtin.copy:
+    src: '{{ GCN.flexRIC.custom_values }}/'
+    dest: bp-flexric/oai-flexric
+  when: GCN.flexRIC.custom_values is defined
+
+- name: Deploy flexRIC
+  kubernetes.core.helm:
+    name: oai-flexric
+    chart_ref: ./bp-flexric/oai-flexric
+    kubeconfig: /etc/kubernetes/admin.conf
+    release_namespace: '{{ GCN.namespace }}'
+    wait: true
+

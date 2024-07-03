@@ -1,0 +1,26 @@
+- name: Copy the flannel file.
+  copy:
+    src: flannel.yml
+    dest: /flannel.yml 
+
+- name: Ensure required directories exist for Flannel
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /etc/cni/net.d
+    - /run/flannel
+    - /var/lib/cni/multus
+    - /run/k8s.cni.cncf.io
+  become: yes
+
+- name: Apply Flannel manifest
+  command: kubectl apply -f /flannel.yml
+  environment:
+    KUBECONFIG: "/etc/kubernetes/admin.conf"
+
+- name: Wait for master node to be ready
+  wait_for:
+    host: "{{ ansible_host }}"
+    port: 6443
+    state: started

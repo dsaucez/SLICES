@@ -1,14 +1,14 @@
 ---
 # k8s config
 k8s:
-  runtime: docker
-  podSubnet: 10.244.0.0/16
-  serviceSubnet: 10.96.0.0/16
-  dnsDomain: cluster.local
-  #apiserver_advertise_address: 192.0.2.1
-  calico:
-    nodeAddressAutodetectionV4:
-      cidrs:
-        - 10.0.1.0/24
-        #- 192.0.2.0/24
-  encapsulation: VXLAN
+   runtime: docker
+   podSubnet: 10.244.0.0/16
+   serviceSubnet: 10.96.0.0/16
+   dnsDomain: cluster.local
+   apiserver_advertise_address: 10.64.45.113
+   calico:
+     nodeAddressAutodetectionV4:
+       cidrs:
+#         - 10.0.1.0/24
+         -  10.64.45.113/23
+   encapsulation: VXLAN

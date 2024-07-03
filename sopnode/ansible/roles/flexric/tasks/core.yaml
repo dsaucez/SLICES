@@ -1,0 +1,22 @@
+---
+- name: Custom chart files
+  ansible.builtin.copy:
+    src: '{{ GCN.core.custom_files }}/'
+    dest: bp-flexric/oai-5g-core/
+  when: GCN.core.custom_files is defined
+
+- name: Custom chart values
+  ansible.builtin.copy:
+    src: '{{ GCN.core.custom_values }}/'
+    dest: bp-flexric/oai-5g-core/
+  when: GCN.core.custom_values is defined
+
+- name: Get chart dependencies
+  ansible.builtin.shell: helm dependency update
+  args:
+    chdir: bp-flexric/oai-5g-core/oai-5g-basic
+
+- name: Deploy 5G core
+  ansible.builtin.shell: 'helm install oai-core --namespace {{ GCN.namespace }} . --kubeconfig /etc/kubernetes/admin.conf'
+  args:
+    chdir: bp-flexric/oai-5g-core/oai-5g-basic

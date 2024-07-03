@@ -212,6 +212,6 @@ redhat_9_dependencies:
 
 python_packages:
     - name: docker
-      version: 4.4.4
+      version: 7.0.0
     - name: kubernetes
-      version: 18.20.0
+      version: 30.1.0

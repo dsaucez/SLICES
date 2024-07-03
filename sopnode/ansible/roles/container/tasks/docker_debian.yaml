@@ -1,21 +1,56 @@
 ---
-- name: Add signing key
-  ansible.builtin.apt_key:
-    url: "https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }}/gpg"
-    state: present
+#- name: Add signing key
+#  ansible.builtin.apt_key:
+#    url: "https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }}/gpg"
+#    state: present
+#
+#- name: Add repository into sources list
+#  ansible.builtin.apt_repository:
+#    repo: "deb [arch={{ [ansible_architecture] | map('extract', deb_architecture) | first }}] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+#    state: present
+#    filename: docker
+#
+#- name: Install Docker
+#  ansible.builtin.apt:
+#    name: '{{item}}'
+#    update_cache: true
+#    autoclean: yes
+#  with_items: "{{ lookup('vars', (ansible_os_family | lower)+ '_docker')}}"
+#
+#- name: Allow all to use docker
+#  ansible.builtin.file:
+#    path: /var/run/docker.sock
+#    mode: '0666'
+#---
+- name: Ensure the keyring directory exists
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
 
-- name: Add repository into sources list
+- name: Download Docker APT key
+  ansible.builtin.get_url:
+    url: "https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }}/gpg"
+    dest: /etc/apt/keyrings/docker-apt-keyring.asc
+    mode: '0644'
+
+- name: Add Docker repository into sources list
   ansible.builtin.apt_repository:
-    repo: "deb [arch={{ [ansible_architecture] | map('extract', deb_architecture) | first }}] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+    repo: "deb [signed-by=/etc/apt/keyrings/docker-apt-keyring.asc] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
     state: present
     filename: docker
 
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+
 - name: Install Docker
   ansible.builtin.apt:
-    name: '{{item}}'
+    name: '{{ item }}'
     update_cache: true
     autoclean: yes
-  with_items: "{{ lookup('vars', (ansible_os_family | lower)+ '_docker')}}"
+  with_items: "{{ lookup('vars', (ansible_os_family | lower) + '_docker') }}"
 
 - name: Allow all to use docker
   ansible.builtin.file:

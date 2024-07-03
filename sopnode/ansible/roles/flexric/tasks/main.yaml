@@ -1,0 +1,117 @@
+---
+
+- name: Retrieve OAI
+  ansible.builtin.git:
+    repo: https://github.com/teo-tsou/oai-flexric.git
+    dest: bp-flexric
+    version: master
+    force: yes
+  become: yes
+
+
+- name: Ensure pip3 is installed
+  ansible.builtin.apt:
+    name: python3-pip
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Install Kubernetes module via pip
+  ansible.builtin.pip:
+    name: kubernetes
+    state: present
+
+- name: Check if Helm is installed
+  command: which helm
+  register: helm_check
+  failed_when: false
+  changed_when: false
+
+- name: Install dependencies
+  apt:
+    name: 
+      - curl
+    state: present
+  when: helm_check.rc != 0
+
+- name: Download Helm
+  get_url:
+    url: "https://get.helm.sh/helm-v3.7.0-linux-amd64.tar.gz"
+    dest: "/tmp/helm-v3.7.0-linux-amd64.tar.gz"
+    mode: '0644'
+  when: helm_check.rc != 0
+
+- name: Extract Helm tar.gz
+  ansible.builtin.unarchive:
+    src: "/tmp/helm-v3.7.0-linux-amd64.tar.gz"
+    dest: "/tmp"
+    remote_src: yes
+  when: helm_check.rc != 0
+
+- name: Move Helm to /usr/local/bin
+  command: mv /tmp/linux-amd64/helm /usr/local/bin/helm
+  args:
+    creates: "/usr/local/bin/helm"
+  when: helm_check.rc != 0
+
+- name: Verify Helm installation (for new installations)
+  command: helm version
+  register: helm_version_output
+  when: helm_check.rc != 0
+
+- name: Show Helm version (for new installations)
+  debug:
+    msg: "{{ helm_version_output.stdout }}"
+  when: helm_check.rc != 0
+
+- name: Install Helm spray plugin
+  kubernetes.core.helm_plugin:
+    plugin_path: https://github.com/ThalesGroup/helm-spray
+    plugin_version: v4.0.10
+    state: present
+
+- name: Create blueprint namespace
+  kubernetes.core.k8s:
+    name: '{{ GCN.namespace }}'
+    api_version: v1
+    kind: Namespace
+    state: present
+    kubeconfig: /etc/kubernetes/admin.conf
+  become: yes
+
+
+
+# The tasks for setting up the 5G core, FlexRIC, RAN, and UEs
+- name: Setup 5G core
+  ansible.builtin.include_tasks: 'core.yaml'
+  when: GCN.core.present is defined and GCN.core.present
+
+- name: Fetch status of core pods
+  kubernetes.core.k8s_info:
+    kind: Pod
+    kubeconfig: /etc/kubernetes/admin.conf
+    namespace: '{{ GCN.namespace }}'
+    label_selectors:
+      - "app.kubernetes.io/instance=oai-core"  # Adjust this to match your pods' labeling
+  register: pod_info
+
+- name: Verify all the core pods and their containers are ready
+  ansible.builtin.command:
+    cmd: "kubectl get pods --kubeconfig /etc/kubernetes/admin.conf --namespace {{ GCN.namespace }} -l app.kubernetes.io/instance=oai-core -o jsonpath='{.items[*].status.conditions[?(@.type==\"Ready\")].status}'"
+  register: pod_ready_status
+  until: pod_ready_status.stdout.split() | select("equalto", "True") | list | length == pod_info.resources | length
+  retries: 30
+  delay: 10
+  when: GCN.core.present is defined and GCN.core.present
+
+- name: Setup FlexRIC
+  ansible.builtin.include_tasks: 'flexric.yaml'
+  when: GCN.flexRIC.present is defined and GCN.flexRIC.present
+
+- name: Setup RAN
+  ansible.builtin.include_tasks: 'ran.yaml'
+  when: GCN.RAN.present is defined and GCN.RAN.present
+
+- name: Setup UEs
+  ansible.builtin.include_tasks: 'ue.yaml'
+  when: GCN.UE.present is defined and GCN.UE.present

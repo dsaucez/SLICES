@@ -1,0 +1,25 @@
+---
+
+- name: Execute the command stored in a file on the remote node
+  script: output.sh
+  become: yes
+
+- name: Get user's home directory
+  shell: pwd
+  register: user_Homedir
+  changed_when: false
+  become: no
+
+- name: Create kubeconfig directory
+  file:
+    path: "{{ user_Homedir.stdout }}/.kube"
+    state: directory
+    mode: "0755"
+  become: no
+
+- name: Copy admin.conf to "{{ user_Homedir.stdout }}/.kube/config"
+  copy:
+    src: ../files/admin.conf
+    dest: "{{ user_Homedir.stdout }}/.kube/config"
+  become: yes
+

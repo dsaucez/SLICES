@@ -1,0 +1,13 @@
+- name: Include initialization tasks
+  include_tasks: k8s_init.yml
+
+- name: Deploy Calico network
+  include_tasks: k8s_calico.yml
+  when: cni_plugin == 'calico'
+
+- name: Deploy Flannel network
+  include_tasks: k8s_flannel.yml
+  when: cni_plugin == 'flannel'
+
+- name: Include cluster information tasks
+  include_tasks: k8s_info.yml

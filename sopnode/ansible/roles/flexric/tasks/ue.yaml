@@ -1,0 +1,21 @@
+---
+
+- name: Custom chart files
+  ansible.builtin.copy:
+    src: '{{ GCN.UE.custom_files }}/'
+    dest: bp-flexric/oai-nr-ue
+  when: GCN.UE.custom_files is defined
+
+- name: Custom chart values
+  ansible.builtin.copy:
+    src: '{{ GCN.UE.custom_values }}/'
+    dest: bp-flexric/oai-nr-ue
+  when: GCN.UE.custom_values is defined
+
+- name: Deploy UE
+  kubernetes.core.helm:
+    name: oai-nr-ue
+    chart_ref: ./bp-flexric/oai-nr-ue
+    kubeconfig: /etc/kubernetes/admin.conf
+    release_namespace: '{{ GCN.namespace }}'
+    wait: true

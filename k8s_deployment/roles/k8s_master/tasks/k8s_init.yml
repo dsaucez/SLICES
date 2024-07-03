@@ -1,0 +1,33 @@
+- name: Get user's home directory
+  shell: pwd
+  register: user_Homedir
+  changed_when: false
+  become: no
+
+- name: Initialize Kubeadm
+  command: "kubeadm init --pod-network-cidr={{ cni_pod_network_cidrs[cni_plugin] }} --apiserver-advertise-address={{ ansible_host }} --cri-socket=unix:///var/run/cri-dockerd.sock"
+
+
+- name: Debug user's home directory
+  debug:
+    msg: "{{ user_Homedir.stdout }}"
+
+- name: Create kubeconfig directory
+  file:
+    path: "{{ user_Homedir.stdout }}/.kube"
+    state: directory
+    mode: "0755"
+  become: no
+
+- name: Copy kubeconfig file
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: "{{ user_Homedir.stdout }}/.kube/config"
+    remote_src: yes
+
+- name: Set ownership of ~/.kube/config file
+  file:
+    path: "{{ user_Homedir.stdout }}/.kube/config"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"

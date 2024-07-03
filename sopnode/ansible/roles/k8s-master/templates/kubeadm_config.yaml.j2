@@ -17,7 +17,7 @@ networking:
   serviceSubnet: "{{ k8s.serviceSubnet | default('10.96.0.0/16') }}"
   podSubnet: "{{ k8s.podSubnet | default('10.244.0.0/16') }}"
   dnsDomain: "{{ k8s.dnsDomain | default('cluster.local') }}"
-kubernetesVersion: "v1.29.2"
+kubernetesVersion: "v1.30.2"
 {% if k8s.controlPlaneEndpoint is defined %}
 controlPlaneEndpoint: "{{ k8s.controlPlaneEndpoint }}"
 {% endif %}
