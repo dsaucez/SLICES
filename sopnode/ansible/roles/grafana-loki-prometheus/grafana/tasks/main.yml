@@ -36,3 +36,92 @@
     name: grafana-server
     state: started
     enabled: yes
+
+- name: Wait for Grafana to start
+  wait_for:
+    port: 3000
+    state: started
+    delay: 30  # Increased delay time
+
+- name: Reset Grafana admin password
+  command: "grafana-cli admin reset-admin-password {{ grafana_password }}"
+  become: yes
+
+
+- name: Load data sources from JSON file
+  set_fact:
+    datasources: "{{ lookup('file', '{{ playbook_dir }}/roles/grafana-loki-prometheus/grafana/templates/datasources2.json') | from_json }}"
+
+#- name: Debug datasources content
+#  debug:
+#    msg: "Loaded datasources: {{ datasources }}"
+
+- name: Ensure Grafana data sources are present
+  community.grafana.grafana_datasource:
+    url: http://localhost:3000
+    url_username: admin
+    url_password: "{{ grafana_password }}"
+    user: admin
+    password: "{{ grafana_password }}"
+    validate_certs: no
+    state: present
+    name: "{{ item.name }}"
+    ds_type: "{{ item.type }}"
+    ds_url: "{{ item.url }}"
+    access: "{{ item.access }}"
+    is_default: "{{ item.isDefault | default(false) }}"
+    additional_json_data: "{{ item.jsonData | default({}) }}"
+  loop: "{{ datasources }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: datasource_result
+
+#- name: Debug datasource result
+#  debug:
+#    var: datasource_result
+
+
+- name: Create remote directory
+  ansible.builtin.file:
+    path: /tmp/dashboards
+    state: directory
+
+- name: Copy dashboard files to remote server
+  vars:
+    local_dashboard_dir:  "{{ playbook_dir }}/roles/grafana-loki-prometheus/grafana/templates/dashboards/"
+  copy:
+    src: "{{ item }}"
+    dest: "/tmp/dashboards/{{ item | basename }}"
+  loop: "{{ lookup('fileglob', local_dashboard_dir + '/*.json', wantlist=True) }}"
+  loop_control:
+    label: "{{ item }}"
+
+- name: Find JSON files in the dashboard directory
+  find:
+    paths: "/tmp/dashboards/"
+    patterns: "*.json"
+    recurse: yes
+  register: dashboard_files
+
+#- name: Debug found dashboard files
+#  debug:
+#    var: dashboard_files.files
+
+- name: Ensure Grafana dashboards are present
+  community.grafana.grafana_dashboard:
+    grafana_url: http://localhost:3000
+    grafana_user: admin
+    grafana_password: "{{ grafana_password }}"
+    validate_certs: no
+    state: present
+    folder: "General"
+    overwrite: true
+    path: "{{ item.path }}"
+  loop: "{{ dashboard_files.files }}"
+  loop_control:
+    label: "{{ item.path }}"
+  register: dashboard_result
+
+#- name: Debug dashboard result
+#  debug:
+#    var: dashboard_result

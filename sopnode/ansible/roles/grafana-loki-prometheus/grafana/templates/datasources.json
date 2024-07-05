@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Prometheus",
+    "type": "prometheus",
+    "url": "http://localhost:9090",
+    "access": "proxy",
+    "isDefault": true,
+    "basicAuth": false,
+    "jsonData": {
+      "httpMethod": "POST"
+    }
+  },
+  {
+    "name": "Loki",
+    "type": "loki",
+    "url": "http://localhost:3100",
+    "access": "proxy",
+    "isDefault": false,
+    "basicAuth": false,
+    "jsonData": {}
+  }
+]

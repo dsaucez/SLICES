@@ -19,5 +19,5 @@ all:
       hosts:
     central-monitor:
       hosts: 
-        10.64.45.228:
+        10.64.45.53:
           xx-name: lpg-central

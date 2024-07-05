@@ -23,6 +23,8 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: 'spec.nodeName'
+        - name: 'CLUSTER_NAME'
+          value: '{{ loki_label }}' 
         volumeMounts:
         - name: logs
           mountPath: /var/log
@@ -66,7 +68,7 @@ data:
       pipeline_stages:
         - docker: {}
         - labels:
-            cluster: uth
+            cluster: ${CLUSTER_NAME}
       relabel_configs:
         - source_labels:
             - __meta_kubernetes_pod_node_name

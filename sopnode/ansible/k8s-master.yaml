@@ -45,6 +45,7 @@
     remote_data_label: "{{ k8s['cluster_monitoring']['prometheus']['remote_data_label'] }}"
     loki_address: "{{ k8s['cluster_monitoring']['promtail']['loki_address'] }}"
     loki_port: "{{ k8s['cluster_monitoring']['promtail']['loki_port'] }}"
+    loki_label: "{{ k8s['cluster_monitoring']['promtail']['loki_label'] }}"
 
   roles:
     - post-5g-bp-cluster-monitoring/prometheus

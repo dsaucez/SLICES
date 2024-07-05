@@ -14,16 +14,19 @@ k8s:
   encapsulation: VXLAN
   cluster_monitoring:
     prometheus:
-      remote_write_address: "10.64.45.228"
+      remote_write_address: "10.64.45.53"
       remote_write_port: "9090"
       remote_write_user: "admin"
       remote_write_pass: "test1234"
       remote_data_label: "uth-cluster1"
     promtail:
-      loki_address: 10.64.45.228
+      loki_address: 10.64.45.53
       loki_port: 3100
+      loki_label: "uth-cluster1"
 central_monitor:
   prometheus:
     prometheus_basic_auth_user: 'admin'
     prometheus_basic_auth_password: 'test1234'
-
+  grafana:
+    grafana_password: 'test1234'
+  

@@ -512,6 +512,8 @@ http_port = 3000
 ; token_expiration_day_limit =
 
 [auth]
+basic_auth_enabled = true
+
 # Login cookie name
 ;login_cookie_name = grafana_session
 
@@ -752,7 +754,7 @@ http_port = 3000
 
 #################################### Basic Auth ##########################
 [auth.basic]
-;enabled = true
+enabled = true
 ;password_policy = false
 
 #################################### Auth Proxy ##########################
