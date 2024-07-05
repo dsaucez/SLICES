@@ -1,0 +1,13 @@
+---
+# 5G config
+GCN:
+  custom_values: oai-cn5g-fed/
+  RAN:
+    present: true
+    namespace: ran
+    split:
+      f1: true
+      e1: true
+  UE:
+    present: true
+    namespace: ran
