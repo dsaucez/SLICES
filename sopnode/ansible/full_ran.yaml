@@ -3,82 +3,109 @@
   hosts: masters[0]
 
   tasks:
-  - name: Custom chart values
-    ansible.posix.synchronize:
-      src: '{{ GCN.custom_values }}'
-      dest: oai-cn5g-fed/
-      recursive: true
-      checksum: true
-    when: GCN.custom_values is defined
-
-  - name: Create RAN blueprint namespace 
-    kubernetes.core.k8s:
-      name: '{{ GCN.RAN.namespace }}'
-      api_version: v1
-      kind: Namespace
-      state: present
-    become: yes
-
-  - name: Deploy gNB
-    kubernetes.core.helm:
-      name: oai-gnb
-      chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-gnb
-      release_namespace: '{{ GCN.RAN.namespace }}'
-      wait: true
-      force: true
-    when: not GCN.RAN.split.f1 and not GCN.RAN.split.e1
-
   - block:
-    - name: Deploy gNB-CU
+    - name: Custom chart values
+      ansible.posix.synchronize:
+        src: '{{ GCN.custom_values }}'
+        dest: oai-cn5g-fed/
+        recursive: true
+        checksum: true
+      when: GCN.custom_values is defined
+
+    - name: Cleanup RAN blueprint namespace 
+      kubernetes.core.k8s:
+        name: '{{ GCN.RAN.namespace }}'
+        api_version: v1
+        kind: Namespace
+        wait: yes
+        state: absent
+        wait_condition:
+           type: Complete 
+           status: "True"
+      become: yes
+
+
+    - name: Create RAN blueprint namespace 
+      kubernetes.core.k8s:
+        name: '{{ GCN.RAN.namespace }}'
+        api_version: v1
+        kind: Namespace
+        state: present
+      become: yes
+
+    - name: Deploy gNB
       kubernetes.core.helm:
-        name: cu
-        chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-cu
+        name: oai-gnb
+        chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-gnb
         release_namespace: '{{ GCN.RAN.namespace }}'
         wait: true
         force: true
-      when: GCN.RAN.split.f1 and not GCN.RAN.split.e1
+      when: not GCN.RAN.split.f1 and not GCN.RAN.split.e1
 
     - block:
-      - name: Deploy gNB-CU-cp
+      - name: Deploy gNB-CU
         kubernetes.core.helm:
-          name: cucp
-          chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-cu-cp
+          name: cu
+          chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-cu
           release_namespace: '{{ GCN.RAN.namespace }}'
           wait: true
           force: true
-      - name: Deploy gNB-CU-up
-        kubernetes.core.helm:
-          name: cuup
-          chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-cu-up
-          release_namespace: '{{ GCN.RAN.namespace }}'
-          wait: true
-          force: true
-      when: GCN.RAN.split.f1 and GCN.RAN.split.e1
+        when: GCN.RAN.split.f1 and not GCN.RAN.split.e1
 
-    - name: Deploy gNB-DU
+      - block:
+        - name: Deploy gNB-CU-cp
+          kubernetes.core.helm:
+            name: cucp
+            chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-cu-cp
+            release_namespace: '{{ GCN.RAN.namespace }}'
+            wait: true
+            force: true
+        - name: Deploy gNB-CU-up
+          kubernetes.core.helm:
+            name: cuup
+            chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-cu-up
+            release_namespace: '{{ GCN.RAN.namespace }}'
+            wait: true
+            force: true
+        when: GCN.RAN.split.f1 and GCN.RAN.split.e1
+
+      - name: Deploy gNB-DU
+        kubernetes.core.helm:
+          name: du
+          chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-du
+          release_namespace: '{{ GCN.RAN.namespace }}'
+          wait: true
+          force: true
+        when: GCN.RAN.split.f1
+      when: GCN.RAN.split.f1 or GCN.RAN.split.e1
+    when: GCN.RAN.present
+
+  - block:
+    - name: Cleanup UE  blueprint namespace 
+      kubernetes.core.k8s:
+        name: '{{ GCN.UE.namespace }}'
+        api_version: v1
+        kind: Namespace
+        wait: yes
+        state: absent
+        wait_condition:
+           type: Complete 
+           status: "True"
+      become: yes
+
+    - name: Create UE blueprint namespace 
+      kubernetes.core.k8s:
+        name: '{{ GCN.UE.namespace }}'
+        api_version: v1
+        kind: Namespace
+        state: present
+      become: yes
+
+    - name: Deploy UE
       kubernetes.core.helm:
-        name: du
-        chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-du
-        release_namespace: '{{ GCN.RAN.namespace }}'
+        name: nrue
+        chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-nr-ue
+        release_namespace: '{{ GCN.UE.namespace }}'
         wait: true
         force: true
-      when: GCN.RAN.split.f1
-    when: GCN.RAN.split.f1 or GCN.RAN.split.e1
-      
-
-
-  - name: Create UE blueprint namespace 
-    kubernetes.core.k8s:
-      name: '{{ GCN.RAN.namespace }}'
-      api_version: v1
-      kind: Namespace
-      state: present
-    become: yes
-
-  - name: Deploy UE
-    kubernetes.core.helm:
-      name: nrue
-      chart_ref: ./oai-cn5g-fed/charts/oai-5g-ran/oai-nr-ue
-      release_namespace: '{{ GCN.UE.namespace }}'
-      wait: true
-      force: true
+    when: GCN.UE.present

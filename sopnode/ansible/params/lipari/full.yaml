@@ -10,4 +10,4 @@ GCN:
       e1: true
   UE:
     present: true
-    namespace: ran
+    namespace: ue
