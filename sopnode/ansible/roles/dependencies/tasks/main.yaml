@@ -16,5 +16,6 @@
 
 - name: Install dependencies (Python)
   ansible.builtin.pip:
-    name: "{{ item.name }}=={{ item.version }}"
+    name: "{{item.name}}"
+    break_system_packages: true
   with_items: "{{ dependencies.python }}"

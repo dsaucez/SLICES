@@ -1,0 +1,12 @@
+all:
+  hosts:
+    172.28.1.100:
+      xx-name: 172.28.1.100
+      xx-local-ip: 172.28.1.100
+  children:
+    computes:
+      hosts:
+        172.28.1.100:
+    masters:
+      hosts:
+        172.28.1.100:

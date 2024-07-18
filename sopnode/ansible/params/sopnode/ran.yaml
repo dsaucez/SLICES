@@ -1,0 +1,16 @@
+---
+# 5G config
+GCN:
+  namespace: vwall-ran
+  RAN:
+    present: true
+    custom_values: blueprint/v2.0.1_vwall/oai-5g-ran
+    split:
+      f1: true
+      e1: true
+  UE:
+    present: true
+    custom_values: blueprint/v2.0.1_vwall/oai-5g-ran
+    tests:
+      landmark_ping:
+        landmark: 12.1.1.1

@@ -126,6 +126,32 @@ ubuntu_22_dependencies:
   - name: openvpn
     state: present
 
+ubuntu_24_dependencies:
+  - name: git
+    state: present
+  - name: conntrack
+    state: present
+  - name: python3-pip
+    state: present
+  - name: curl
+    state: present
+  - name: apt-transport-https
+    state: present
+  - name: ca-certificates
+    state: present
+  - name: lsb-release
+    state: present
+  - name: patch
+    state: present
+  - name: wget
+    state: present
+  - name: openssl
+    state: present
+  - name: openvpn
+    state: present
+
+
+
 fedora_36_dependencies:
   - name: git
     state: present
@@ -212,6 +238,6 @@ redhat_9_dependencies:
 
 python_packages:
     - name: docker
-      version: 4.4.4
+      #      version: 4.4.4
     - name: kubernetes
-      version: 18.20.0
+      #      version: 18.20.0

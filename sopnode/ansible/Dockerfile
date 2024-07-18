@@ -1,6 +1,6 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 RUN apt update && apt install -y python3-pip git rsync
-RUN python3 -m pip install --user ansible-core==2.13.2
+RUN python3 -m pip install --user ansible-core==2.17
 RUN echo "export PATH=$PATH:~/.local/bin" >> ~/.bashrc
 RUN mkdir /reqs/
 COPY collections/requirements.yml /reqs/ansible-galaxy.yml
