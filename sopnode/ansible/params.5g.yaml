@@ -10,6 +10,9 @@ GCN:
     present: true
     custom_files: blueprint/ran_files
     custom_values: blueprint/ran_values
+    split:
+      e1: false
+      f1: false
   UE:
     present: true
     tests:
