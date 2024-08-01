@@ -1,8 +1,16 @@
 {
-{% if docker.insecure_registries is defined %} 
-  "insecure-registries": {{ docker.insecure_registries | tojson }}
+{% for key, value in docker.items() %}
+{% if key == 'insecure_registries' %}
+  "insecure-registries": {{ value | tojson }}
 {% endif %}
-{% if docker.registry_mirrors is defined %} 
-  "registry-mirrors" : {{ docker.registry_mirrors | tojson }}
+{% if key == 'registry_mirrors' %}
+  "registry-mirrors": {{ value | tojson }}
 {% endif %}
+{% if key == 'data_root' %}
+  "data-root": {{ value | tojson }}
+{% endif %}
+{% if not loop.last %}
+  ,
+{% endif %}
+{% endfor %}
 }
