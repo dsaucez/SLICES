@@ -23,6 +23,18 @@
       dest: '/etc/docker/daemon.json'
   when: (docker is defined)
 
+- name: Cleanup docker data root directory
+  block:
+  - name: Remove docker data root path
+    ansible.builtin.file:
+      path: '{{ docker.data_root }}'
+      state: absent
+  - name: Create empty docker data root directory
+    ansible.builtin.file:
+      path: '{{ docker.data_root }}'
+      state: directory
+  when: (docker.data_root is defined)
+
 - include_tasks: "{{ 'docker_' + (ansible_distribution | lower) + '.yaml' }}"
 
 - name: Pre load images
