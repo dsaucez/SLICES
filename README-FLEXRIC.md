@@ -21,7 +21,7 @@ This branch includes the following major enhancements:
 
 #### Prerequisites
 
-- You have already copied the public key of the deployment node to all the compute nodes including it self.
+- You have already copied the public key of the deployment node to all the compute nodes including itself.
 
 - You have already built the ansible host container with docker with the following command:
 
@@ -30,7 +30,7 @@ This branch includes the following major enhancements:
     docker build -t blueprint -f Dockerfile .
     ```
 
-- You already operating in the ansible host container by running this command in the repo's root directory (`blueprint-flexric`):
+- You already operating in the ansible host container by running this command:
 
     ```
     docker run -it -v "$(pwd)":/blueprint -v ${HOME}/.ssh/id_rsa_blueprint:/id_rsa_blueprint blueprint
