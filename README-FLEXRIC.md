@@ -64,7 +64,7 @@ Add the following line to the file to allow the user to execute sudo commands wi
 
 ### 1.30.2 Kubernetes Version Deployment (Tested on 22.04.4 LTS (Jammy Jellyfish) Cloud Image
 
-```cd blueprint```
+```cd sopnode/ansible```
 
 Install K8s Control Plane:
 
@@ -236,7 +236,7 @@ ansible-playbook  -i inventories/UTH/ ran-bm-flexric.yaml
 
 This playbook does the following:
 
-1. Will set system/perfomance parameters and will deploy a new linux kernel (low-latency).
+1. Will set system/performance parameters and will deploy a new linux kernel (low-latency).
 2. Will install and build the RAN with E2 capabilities (E2 Agent).
 3. Will install and build FlexRIC.
 4. Will assign a host macvlan interface (named 5g-macvlan) based on eth0 parent interface (it can be changed on line 306: ran-bm-flexric.yaml) to be able to communicate with any pod deployed on any node within the same subnet (for n3 and n2 connectivity). The IP address is well-known: 10.10.20.1/24 (it can be changed on line 307: ran-bm-flexric.yaml).
@@ -244,7 +244,7 @@ This playbook does the following:
 
 #### Core
 
-The AMF adress is static IP adress atatched on the pod via Multus and is well-known: 10.10.20.2
+The AMF address is a static IP address attached on the pod via Multus and is well-known: 10.10.20.2
 ( it can be changed on `blueprint/sopnode/ansible/roles/flexric/files/blueprint/oai-flexric/custom_core_values/oai-5g-basic/values.yaml`)
 
 You can always change the configurations on the core network:
