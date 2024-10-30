@@ -28,3 +28,19 @@ kind: KubeletConfiguration
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
 cgroupDriver: systemd
+cpuManagerPolicy: static
+cpuManagerPolicyOptions:
+   "full-pcpus-only": "true"
+reservedSystemCPUs: 0-5
+memorySwap: {}
+failSwapOn: false
+containerLogMaxSize: 50Mi
+featureGates:
+   CPUManager: true
+   CPUManagerPolicyOptions: true
+   CPUManagerPolicyBetaOptions: true
+---
+apiVersion: kubeproxy.config.k8s.io/v1alpha1
+kind: KubeProxyConfiguration
+ipvs:
+  strictARP: true
