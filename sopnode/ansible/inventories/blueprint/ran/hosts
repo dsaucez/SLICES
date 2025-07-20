@@ -2,9 +2,9 @@ all:
   children:
     computes:
       hosts:
-        192.168.100.92:
-          xx-name: 192.168.100.92
-          xx-local-ip: 192.168.100.92
+        192.168.100.94:
+          xx-name: 192.168.100.94
+          xx-local-ip: 192.168.100.94
           ansible_user: root
     masters:
       hosts:

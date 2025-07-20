@@ -22,16 +22,13 @@ kubernetesVersion: "v1.29.2"
 controlPlaneEndpoint: "{{ k8s.controlPlaneEndpoint }}"
 {% endif %}
 ---
-apiVersion: kubelet.config.k8s.io/v1beta1
-kind: KubeletConfiguration
-# kubelet specific options here
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
 cgroupDriver: systemd
 cpuManagerPolicy: static
 cpuManagerPolicyOptions:
    "full-pcpus-only": "true"
-reservedSystemCPUs: 0-5
+reservedSystemCPUs: 0-7
 memorySwap: {}
 failSwapOn: false
 containerLogMaxSize: 50Mi
