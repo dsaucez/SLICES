@@ -1,0 +1,24 @@
+---
+# k8s config
+k8s:
+  runtime: docker
+  podSubnet: 10.244.0.0/16
+  serviceSubnet: 10.96.0.0/16
+  dnsDomain: cluster.local
+  #apiserver_advertise_address: 192.168.100.92
+  calico:
+    nodeAddressAutodetectionV4:
+      cidrs:
+        - 192.168.100.0/24
+  encapsulation: VXLAN
+
+# runtime config (from roles/container/vars/main.yaml)
+runtime:
+  docker:
+    cri:
+      socket: unix:///var/run/cri-dockerd.sock
+  cri-o:
+    cri:
+      socket: unix:///var/run/crio/crio.sock
+
+

@@ -1,0 +1,18 @@
+all:
+  children:
+    computes:
+      hosts:
+WORKER_ITEMS
+        192.168.100.93:
+          xx-name: sopnode-l1-v100
+          xx-local-ip: 192.168.100.93
+          xx-docker-root-home: true  
+    masters:
+      hosts:
+        192.168.100.93:
+          xx-name: sopnode-l1-v100
+          xx-local-ip: 192.168.100.93
+          xx-docker-root-home: true  
+    openvpn:
+      hosts:
+

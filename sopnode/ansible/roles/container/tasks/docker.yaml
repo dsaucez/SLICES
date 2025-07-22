@@ -11,6 +11,18 @@
       dest: '/etc/systemd/system/docker.service.d/10-ramdisk.conf'
   when: (hostvars[inventory_hostname]['xx-ramdisk'] is defined) and (hostvars[inventory_hostname]['xx-ramdisk'])
 
+- name: Custom docker root directory
+  block:
+  - name: Create docker systemd directory
+    ansible.builtin.file:
+      path: '/etc/systemd/system/docker.service.d/'
+      state: directory
+  - name: Change default docker root directory when needed
+    ansible.builtin.template:
+      src: docker.root.conf.j2
+      dest: '/etc/systemd/system/docker.service.d/10-docker.root.conf'
+  when: (hostvars[inventory_hostname]['xx-docker-root-home'] is defined)
+
 - name: Custom docker systemd parameters
   block:
   - name: Create docker systemd directory

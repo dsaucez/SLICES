@@ -1,12 +1,14 @@
 all:
-  hosts:
-    192.168.128.99:
-      xx-name: ran1 
-      xx-local-ip: 192.168.128.99
   children:
     computes:
       hosts:
-        192.168.128.99:
+        192.168.100.94:
+          xx-name: 192.168.100.94
+          xx-local-ip: 192.168.100.94
+          ansible_user: root
     masters:
       hosts:
-        192.168.128.99:
+        192.168.100.140:
+          xx-name: 192.168.100.140
+          xx-local-ip: 192.168.100.140
+          ansible_user: ubuntu
