@@ -3,15 +3,15 @@ all:
     computes:
       hosts:
 WORKER_ITEMS
-        192.168.100.94:
-          xx-name: sopnode-w1-v100
-          xx-local-ip: 192.168.100.94
+        192.168.3.251:
+          xx-name: sopnode-w1-v30
+          xx-local-ip: 192.168.3.251
           xx-docker-root-home: true  
     masters:
       hosts:
-        192.168.100.94:
-          xx-name: sopnode-w1-v100
-          xx-local-ip: 192.168.100.94
+        192.168.3.251:
+          xx-name: sopnode-w1-v30
+          xx-local-ip: 192.168.3.251
           xx-docker-root-home: true  
     openvpn:
       hosts:
