@@ -2,12 +2,18 @@
 - name: Remove zram
   shell: dnf remove -y zram-generator-defaults
 
-- name: Create /run/systemd/resolve/ directory
+- name: Ensure /run/systemd/resolve/ directory exists
   ansible.builtin.file:
     path: /run/systemd/resolve/
     state: directory
+    mode: '0755'
 
-- name: Create a symbolic link /run/systemd/resolve/resolv.conf -> /usr/lib/systemd/resolv.conf
+- name: Remove existing /run/systemd/resolve/resolv.conf if present
+  ansible.builtin.file:
+    path: /run/systemd/resolve/resolv.conf
+    state: absent
+
+- name: Create symlink /run/systemd/resolve/resolv.conf -> /usr/lib/systemd/resolv.conf
   ansible.builtin.file:
     src: /usr/lib/systemd/resolv.conf
     dest: /run/systemd/resolve/resolv.conf
