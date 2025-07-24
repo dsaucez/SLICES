@@ -5,11 +5,11 @@ k8s:
   podSubnet: 10.244.0.0/16
   serviceSubnet: 10.96.0.0/16
   dnsDomain: cluster.local
-  #apiserver_advertise_address: 192.168.100.92
+  #apiserver_advertise_address: 192.168.3.251
   calico:
     nodeAddressAutodetectionV4:
       cidrs:
-        - 192.168.100.0/24
+        - 192.168.3.0/24
   encapsulation: VXLAN
 
 # runtime config (from roles/container/vars/main.yaml)
