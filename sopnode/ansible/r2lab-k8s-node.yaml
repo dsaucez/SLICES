@@ -55,13 +55,6 @@
       src: ./roles/k8s-node/templates/kubeadm_config.yaml.j2
       dest: ./kubeadm_config.yaml
 
-  - name: Remove reservedSystemCPUs line from kubelet config if present
-    ansible.builtin.lineinfile:
-      path: /var/lib/kubelet/config.yaml
-      regexp: '^(\s*)reservedSystemCPUs\s*:'
-      state: absent
-      backup: yes
-    
   - name: Join k8s cluster
     ansible.builtin.shell: 'kubeadm join --config ./kubeadm_config.yaml'
 

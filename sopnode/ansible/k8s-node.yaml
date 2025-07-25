@@ -16,6 +16,17 @@
   environment:
     PATH: '{{ansible_env.PATH }}:/usr/local/bin/'
 
+  pre_tasks:
+    - name: Append KubeletConfiguration override to kubeadm_config.yaml
+      ansible.builtin.blockinfile:
+        path: ./kubeadm_config.yaml
+        marker: "# {mark} Kubelet config override"
+        block: |
+          apiVersion: kubelet.config.k8s.io/v1beta1
+          kind: KubeletConfiguration
+          cpuManagerPolicy: "none"
+      when: ansible_hostname is defined
+
   roles:
     - role: k8s-node
     - role: k8s-ca-certificate
