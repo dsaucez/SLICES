@@ -50,6 +50,19 @@
 #      var: runtime
 #    tags: debug_info
 
+  - name: Ensure br_netfilter module is loaded
+    ansible.builtin.modprobe:
+      name: br_netfilter
+      state: present
+
+  - name: Set sysctl for bridge-nf-call-iptables
+    ansible.builtin.sysctl:
+      name: net.bridge.bridge-nf-call-iptables
+      value: 1
+      sysctl_set: yes
+      state: present
+      reload: yes
+    
   - name: Create kubeadm configuration
     ansible.builtin.template:
       src: ./roles/k8s-node/templates/kubeadm_config.yaml.j2
