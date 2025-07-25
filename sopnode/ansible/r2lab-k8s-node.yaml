@@ -76,7 +76,7 @@
         cpuManagerPolicyOptions:
           full-pcpus-only: "true"
         cpuManagerReconcilePeriod: 0s
-	reservedSystemCPUs: 0-7
+        reservedSystemCPUs: 0-7
         evictionPressureTransitionPeriod: 0s
         failSwapOn: false
         featureGates:
