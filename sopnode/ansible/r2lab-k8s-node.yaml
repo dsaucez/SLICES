@@ -67,10 +67,22 @@
   tasks:
   - name: Add oai-gnb:NoSchedule
     shell: 'kubectl taint nodes {{ hostvars[inventory_hostname]["xx-name"] }} app.kubernetes.io/name=oai-gnb:NoSchedule --overwrite'
-  - name: Remove reservedSystemCPUs from kubelet config
-    ansible.builtin.lineinfile:
+  - name: Remove CPU directives from kubelet config
+    ansible.builtin.blockinfile:
       path: /var/lib/kubelet/config.yaml
-      regexp: '^reservedSystemCPUs:'
+      marker: ""
+      block: |
+        cpuManagerPolicy: static
+        cpuManagerPolicyOptions:
+          full-pcpus-only: "true"
+        cpuManagerReconcilePeriod: 0s
+	reservedSystemCPUs: 0-7
+        evictionPressureTransitionPeriod: 0s
+        failSwapOn: false
+        featureGates:
+          CPUManager: true
+          CPUManagerPolicyBetaOptions: true
+          CPUManagerPolicyOptions: true
       state: absent
   - name: Restart kubelet to apply config
     ansible.builtin.service:
