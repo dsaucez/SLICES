@@ -9,16 +9,5 @@
     src: kubeadm_config.yaml.j2
     dest: ./kubeadm_config.yaml
 
-- name: Append KubeletConfiguration to override reservedSystemCPUs
-  ansible.builtin.copy:
-    dest: ./kubeadm_config.yaml
-    content: |
-      {{ lookup('file', './kubeadm_config.yaml') | from_yaml | to_nice_yaml }}
-
-      ---
-      apiVersion: kubelet.config.k8s.io/v1beta1
-      kind: KubeletConfiguration
-      cpuManagerPolicy: "none"
-
 - name: Join k8s cluster
   ansible.builtin.shell: 'kubeadm join --config ./kubeadm_config.yaml'
