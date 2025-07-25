@@ -23,3 +23,14 @@ controlPlane:
 {% endif %}
   certificateKey: "{{ certificate_key }}"
 {% endif %}
+---
+kind: KubeletConfiguration
+apiVersion: kubelet.config.k8s.io/v1beta1
+cgroupDriver: systemd
+cpuManagerPolicy: none
+reservedSystemCPUs: 0-1
+CPUManagerPolicyOptions: false
+memorySwap: {}
+failSwapOn: false
+containerLogMaxSize: 50Mi
+
