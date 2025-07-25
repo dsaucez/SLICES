@@ -61,13 +61,6 @@
   - name: Wait for the node to be ready
     ansible.builtin.include_tasks: k8s-ready.yaml
 
-- name: Allow scheduling on masters that are also computes
-  hosts: masters:&computes
-  become: yes
-  tasks:
-  - name: Remove NoSchedule
-    shell: 'kubectl taint nodes {{ hostvars[inventory_hostname]["xx-name"] }} node-role.kubernetes.io/control-plane:NoSchedule- --overwrite'
-
 - name: Taint worker FIT nodes with oai-gnb:NoSchedule
   hosts: computes:!masters
   become: yes
@@ -83,4 +76,22 @@
     ansible.builtin.service:
       name: kubelet
       state: restarted
+      
+  - name: Allow scheduling on masters that are also computes
+    hosts: masters:&computes
+    become: yes
+    tasks:
+      - name: Check if control-plane NoSchedule taint exists
+        ansible.builtin.command: >
+          kubectl get node {{ hostvars[inventory_hostname]["xx-name"] }} -o jsonpath="{.spec.taints[*]}"
+        register: taints_check
+        changed_when: false
+        failed_when: false
+
+      - name: Remove NoSchedule taint from control-plane if present
+        ansible.builtin.shell: >
+          kubectl taint nodes {{ hostvars[inventory_hostname]["xx-name"] }} node-role.kubernetes.io/control-plane:NoSchedule- --overwrite
+        when: "'node-role.kubernetes.io/control-plane' in taints_check.stdout and 'NoSchedule' in taints_check.stdout"
+
+
 
