@@ -55,6 +55,19 @@
       src: ./roles/k8s-node/templates/kubeadm_config.yaml.j2
       dest: ./kubeadm_config.yaml
 
+  - name: Check if reservedSystemCPUs line exists
+    ansible.builtin.shell: grep -q '^reservedSystemCPUs' ./kubeadm_config.yaml
+    register: reserved_line_check
+    ignore_errors: yes
+
+  - name: Comment out reservedSystemCPUs if present
+    ansible.builtin.replace:
+      path: ./kubeadm_config.yaml
+      regexp: '^(\s*)reservedSystemCPUs\s*:\s*(.+)$'
+      replace: '\1# reservedSystemCPUs: \2'
+      when: reserved_line_check.rc == 0
+      backup: yes
+
   - name: Join k8s cluster
     ansible.builtin.shell: 'kubeadm join --config ./kubeadm_config.yaml'
 
