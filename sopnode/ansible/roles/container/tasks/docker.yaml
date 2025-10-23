@@ -50,13 +50,13 @@
   when: (docker.pull is defined)
 
 # install Go
-- name: Download Go
-  ansible.builtin.get_url:
-    url: https://storage.googleapis.com/golang/getgo/installer_linux
-    dest: './installer_linux'
-    mode: '0500'
-- name: Install Go
-  ansible.builtin.shell: './installer_linux -version 1.18'
+- name: Download Go install script (TT fix)
+  get_url:
+    url: https://golang.org/dl/goinstall.sh
+    dest: /tmp/goinstall.sh
+    mode: '0700'
+- name: Run Go install script
+  shell: /tmp/goinstall.sh -version 1.18.10
 
 # install cri-dockerd
 - name: Retrieve cri-dockerd (1/2)
