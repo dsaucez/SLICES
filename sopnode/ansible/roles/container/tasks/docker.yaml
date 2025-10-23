@@ -50,13 +50,42 @@
   when: (docker.pull is defined)
 
 # install Go
-- name: Download Go install script (TT fix)
+# --- install_go.yml ---
+- name: Define Go version and architecture
+  set_fact:
+    go_version: "1.18.10"
+    go_arch: >-
+      {% if ansible_architecture == "x86_64" %}amd64{% elif ansible_architecture == "aarch64" %}arm64{% else %}{{ ansible_architecture }}{% endif %}
+- name: Download Go {{ go_version }} ({{ go_arch }})
   get_url:
-    url: https://golang.org/dl/goinstall.sh
-    dest: /tmp/goinstall.sh
-    mode: '0700'
-- name: Run Go install script
-  shell: /tmp/goinstall.sh -version 1.18.10
+    url: "https://go.dev/dl/go{{ go_version }}.linux-{{ go_arch }}.tar.gz"
+    dest: "/tmp/go{{ go_version }}.linux-{{ go_arch }}.tar.gz"
+    mode: '0644'
+    timeout: 30
+  register: go_tarball
+- name: Remove existing /usr/local/go (if corrupted or wrong version)
+  file:
+    path: /usr/local/go
+    state: absent
+  when: go_tarball.changed or not ansible_check_mode
+
+- name: Extract Go to /usr/local
+  unarchive:
+    src: "{{ go_tarball.dest }}"
+    dest: /usr/local
+    remote_src: yes
+    creates: /usr/local/go/bin/go
+  when: go_tarball.changed or not ansible_check_mode
+- name: Add Go bin to PATH (/etc/profile.d)
+  copy:
+    content: |
+      export PATH=$PATH:/usr/local/go/bin
+    dest: /etc/profile.d/go.sh
+    mode: '0644'
+- name: Clean up tarball
+  file:
+    path: "{{ go_tarball.dest }}"
+    state: absent
 
 # install cri-dockerd
 - name: Retrieve cri-dockerd (1/2)
