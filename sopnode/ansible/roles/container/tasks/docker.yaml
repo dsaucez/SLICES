@@ -1,4 +1,9 @@
 ---
+- name: RESTART_DOCKER
+  ansible.builtin.meta: noop
+  tags:
+    - restart_docker
+    
 - name: Operate docker on ramdisk machines
   block:
   - name: Create docker systemd directory
@@ -53,7 +58,8 @@
 # --- install_go.yml ---
 - name: Define Go version and architecture
   set_fact:
-    go_version: "1.18.10"
+    #go_version: "1.18.10"
+    go_version: "1.23.5"
     go_arch: >-
       {% if ansible_architecture == "x86_64" %}amd64{% elif ansible_architecture == "aarch64" %}arm64{% else %}{{ ansible_architecture }}{% endif %}
 - name: Download Go {{ go_version }} ({{ go_arch }})
@@ -92,7 +98,8 @@
   ansible.builtin.git:
     repo: https://github.com/Mirantis/cri-dockerd.git
     dest: cri-dockerd
-    version: v0.3.1
+    #version: v0.3.1
+    version: v0.3.18
     force: yes
 - name: Retrieve cri-dockerd (2/2)
   ansible.builtin.file:
@@ -100,7 +107,7 @@
     state: directory
 
 - name: Build cri-dockerd
-  ansible.builtin.shell: '/root/.go/bin/go build -o bin/cri-dockerd'
+  ansible.builtin.shell: '/usr/local/go/bin/go build -o bin/cri-dockerd'
   args:
     chdir: ./cri-dockerd
   environment:
