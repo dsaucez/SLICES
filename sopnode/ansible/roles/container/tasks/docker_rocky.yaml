@@ -9,10 +9,10 @@
 
   - name: Prepare SE linux (2/2)
     ansible.builtin.shell: sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
-  
-  when: selinux.stdout != 'Disabled' 
 
-- name: Cleanup dependencies 
+  when: selinux.stdout != 'Disabled'
+
+- name: Cleanup dependencies
   ansible.builtin.shell: 'dnf remove -y docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-selinux docker-engine-selinux docker-engine'
 
 - name: Configure docker-ce repository

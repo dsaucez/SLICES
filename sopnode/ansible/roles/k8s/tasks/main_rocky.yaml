@@ -5,13 +5,13 @@
       cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
       [kubernetes]
       name=Kubernetes
-      baseurl=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/
+      baseurl=https://pkgs.k8s.io/core:/stable:/v1.32/rpm/
       enabled=1
       gpgcheck=1
-      gpgkey=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/repodata/repomd.xml.key
+      gpgkey=https://pkgs.k8s.io/core:/stable:/v1.32/rpm/repodata/repomd.xml.key
       exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
       EOF
 
 
 - name: Install k8s tools
-  shell: yum install -y kubelet-1.29.2-150500.1.1 kubeadm-1.29.2-150500.1.1 kubectl-1.29.2-150500.1.1 --disableexcludes=kubernetes
+  shell: yum install -y kubelet-1.32.11-150500.1.1 kubeadm-1.32.11-150500.1.1 kubectl-1.32.11-150500.1.1 --disableexcludes=kubernetes

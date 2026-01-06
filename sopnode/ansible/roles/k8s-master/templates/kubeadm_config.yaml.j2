@@ -17,7 +17,7 @@ networking:
   serviceSubnet: "{{ k8s.serviceSubnet | default('10.96.0.0/16') }}"
   podSubnet: "{{ k8s.podSubnet | default('10.244.0.0/16') }}"
   dnsDomain: "{{ k8s.dnsDomain | default('cluster.local') }}"
-kubernetesVersion: "v1.29.2"
+kubernetesVersion: "v1.32.11"
 {% if k8s.controlPlaneEndpoint is defined %}
 controlPlaneEndpoint: "{{ k8s.controlPlaneEndpoint }}"
 {% endif %}
@@ -32,10 +32,6 @@ reservedSystemCPUs: 0-1
 memorySwap: {}
 failSwapOn: false
 containerLogMaxSize: 50Mi
-featureGates:
-   CPUManager: true
-   CPUManagerPolicyOptions: true
-   CPUManagerPolicyBetaOptions: true
 ---
 apiVersion: kubeproxy.config.k8s.io/v1alpha1
 kind: KubeProxyConfiguration
